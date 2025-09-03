@@ -1,1 +1,0 @@
-# Quranic-Center.io
