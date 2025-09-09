@@ -62,7 +62,7 @@ const quranicCenters = [
         duration: '24 شهر',
         level: 'متقدم',
         instructor: 'الشيخ محمد الغامدي',
-        schedule: 'يومياً من 9:00 ص - 12:00 ظ',
+        schedule: 'يومياً من 9:00 ص - 12:00 م',
         price: 45
       },
       {
