@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم المركز - إضافة/حذف الدورات</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f6f8fa; }
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary, #1e40af) 0%, #718355 100%);
+      color: #fff;
+      padding: 2rem 0 1.5rem 0;
+      text-align: center;
+      border-radius: 0 0 1.5rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .dashboard-header h1 { margin: 0 0 0.5rem 0; font-size: 2rem; }
+    .dashboard-header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+    .courses-section {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(30,64,175,0.07);
+      padding: 2rem 1.5rem;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+    }
+    .courses-section h2 { margin-bottom: 1.5rem; color: var(--primary, #1e40af); }
+    .add-course-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .add-course-form input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+    .add-course-form button {
+      padding: 0.5rem 1.2rem;
+      background: var(--primary, #1e40af);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-course-form button:hover {
+      background: #163075;
+    }
+    .courses-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .courses-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    .courses-list li:last-child { border-bottom: none; }
+    .delete-btn {
+      background: #d32f2f;
+      color: #fff;
+      border: none;
+      border-radius: 0.4rem;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover { background: #a31515; }
+    @media (max-width: 600px) {
+      .courses-section { padding: 1rem 0.5rem; }
+      .add-course-form { flex-direction: column; gap: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a href="index.html" class="logo">
+          <span style="font-weight:bold;">معاهد الوحي</span>
+        </a>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
+          <li class="nav-item"><a href="centers.html" class="nav-link">المراكز</a></li>
+          <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li>
+          <li class="nav-item"><a href="dashbordcenters.html" class="nav-link active">لوحة مركز</a></li>
+        </ul>
+        <button class="mobile-menu-btn"></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1>لوحة تحكم المركز</h1>
+    <p>يمكنك إضافة أو حذف الدورات الخاصة بمركزك من هنا.</p>
+  </div>
+
+  <main class="container">
+    <section class="courses-section">
+      <h2>الدورات الحالية</h2>
+      <form class="add-course-form" id="addCourseForm">
+        <input type="text" id="courseName" placeholder="اسم الدورة الجديدة" required>
+        <button type="submit">إضافة دورة</button>
+      </form>
+      <ul class="courses-list" id="coursesList">
+        <!-- ستظهر الدورات هنا -->
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    // بيانات تجريبية (يمكنك ربطها بقاعدة بيانات لاحقاً)
+    let courses = ["دورة تجويد", "دورة حفظ", "دورة تفسير"];
+
+    function renderCourses() {
+      const list = document.getElementById('coursesList');
+      list.innerHTML = "";
+      if (courses.length === 0) {
+        list.innerHTML = "<li style='text-align:center;color:#888;'>لا توجد دورات حالياً</li>";
+        return;
+      }
+      courses.forEach((course, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${course}</span>
+          <button class="delete-btn" onclick="deleteCourse(${idx})">حذف</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteCourse(idx) {
+      if (confirm("هل أنت متأكد من حذف هذه الدورة؟")) {
+        courses.splice(idx, 1);
+        renderCourses();
+      }
+    }
+
+    document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('courseName');
+      const name = input.value.trim();
+      if (name) {
+        courses.push(name);
+        input.value = "";
+        renderCourses();
+      }
+    });
+
+    // عرض الدورات عند تحميل الصفحة
+    renderCourses();
+    // اجعل دالة الحذف متاحة في النطاق العام
+    window.deleteCourse = deleteCourse;
+  </script>
+</body>
+</html>

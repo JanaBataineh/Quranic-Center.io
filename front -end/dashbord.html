@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="admin-manage-centers.html">
+  <title>لوحة التحكم - معاهد الوحي</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: #f6f8fa;
+    }
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary, #1e40af) 0%, #718355 100%);
+      color: #fff;
+      padding: 2rem 0 1.5rem 0;
+      text-align: center;
+      border-radius: 0 0 1.5rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .dashboard-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+    .dashboard-header p {
+      margin: 0;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .dashboard-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(30,64,175,0.07);
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    .dashboard-card:hover {
+      box-shadow: 0 4px 24px rgba(30,64,175,0.13);
+    }
+    .dashboard-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary, #1e40af);
+    }
+    .dashboard-card .stat {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      color: #222;
+    }
+    .dashboard-card .label {
+      font-size: 1rem;
+      color: #555;
+      opacity: 0.85;
+    }
+    .dashboard-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .dashboard-actions .btn {
+      min-width: 160px;
+      font-size: 1rem;
+    }
+    @media (max-width: 600px) {
+      .dashboard-header h1 { font-size: 1.4rem; }
+      .dashboard-card .stat { font-size: 1.3rem; }
+      .dashboard-card { padding: 1.2rem 0.7rem; }
+    }
+    /* تنسيقات قسم المراجعات والنشاطات */
+.review-section, .recent-activity-section {
+  margin-top: 3rem;
+}
+
+.review-section h2, .recent-activity-section h2 {
+  border-bottom: 2px solid var(--secondary); /* خط تحت العنوان */
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.review-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.review-card p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-card strong {
+  font-size: 1.5rem;
+  color: #ff5722; /* لون مميز للأرقام */
+}
+
+/* قائمة النشاطات الحديثة */
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.activity-list li {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.activity-list li:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  margin-left: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.activity-time {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+  </style>
+  <script>
+  // تحقق من جلسة الأدمن
+  if (localStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a href="index.html" class="logo">
+          <span style="font-weight:bold;">معاهد الوحي</span>
+        </a>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
+          <li class="nav-item"><a href="centers.html" class="nav-link">المراكز</a></li>
+          <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li>
+          <li class="nav-item"><a href="dashbord.html" class="nav-link active">لوحة التحكم</a></li>
+        </ul>
+        <button class="mobile-menu-btn"></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1>لوحة التحكم</h1>
+    <p>مرحباً بك في لوحة تحكم معاهد الوحي. يمكنك إدارة المراكز والدورات والمستخدمين من هنا.</p>
+  </div>
+
+  <main class="container">
+    <!-- إحصائيات سريعة -->
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <div class="icon">🏫</div>
+        <div class="stat" id="centersCount">4</div>
+        <div class="label">عدد المراكز</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="icon">📚</div>
+        <div class="stat" id="coursesCount">9</div>
+        <div class="label">عدد الدورات</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="icon">👤</div>
+        <div class="stat" id="usersCount">25</div>
+        <div class="label">عدد المستخدمين</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="icon">🏙️</div>
+        <div class="stat" id="citiesCount">3</div>
+        <div class="label">عدد المدن</div>
+      </div>
+    </div>
+
+    <!-- إجراءات سريعة -->
+  <div class="dashboard-actions">
+  <a href="admin-manage-centers.html" class="btn btn-primary">إدارة المراكز</a> 
+  <a href="admin-manage-courses.html" class="btn btn-secondary">إدارة الدورات</a>
+  <a href="admin-manage-users.html" class="btn btn-outline">إدارة المستخدمين</a>
+  
+  <a href="admin-settings.html" class="btn btn-outline">الإعدادات</a>
+</div>
+    <!-- يمكنك إضافة المزيد من الأقسام هنا حسب الحاجة -->
+     <section class="review-section">
+    <h2>الإجراءات المطلوبة</h2>
+    <div class="review-cards">
+        
+        <div class="card review-card">
+            <h3>مراكز جديدة</h3>
+            <p><strong><span id="pendingCentersCount">0</span></strong> مركز بانتظار المراجعة.</p>
+            <a href="admin-manage-centers.html?status=pending" class="btn btn-primary btn-sm">مراجعة المراكز</a>
+        </div>
+
+        <div class="card review-card">
+            <h3>تحديثات الدورات</h3>
+            <p><strong><span id="pendingCoursesCount">0</span></strong> دورة بانتظار الموافقة.</p>
+            <a href="admin-manage-courses.html?status=pending" class="btn btn-primary btn-sm">مراجعة الدورات</a>
+        </div>
+        
+        <div class="card review-card">
+    <h3>رسائل جديدة</h3>
+    <p>لديك <strong><span id="newMessagesCount">0</span></strong> رسالة لم يتم الرد عليها.</p>
+    <a href="admin-messages.html" class="btn btn-secondary btn-sm">عرض الرسائل</a>
+</div>
+        
+    </div>
+</section>
+
+<section class="recent-activity-section">
+    <h2>أحدث النشاطات</h2>
+    <ul id="recentActivityList" class="activity-list">
+        <li><span class="activity-icon">🟢</span> تم إضافة المركز "الإمام الشافعي" للمراجعة. <span class="activity-time">منذ 5 دقائق</span></li>
+        <li><span class="activity-icon">👤</span> تم إنشاء حساب جديد للطالب "سارة علي". <span class="activity-time">منذ 3 ساعات</span></li>
+        <li><span class="activity-icon">🟡</span> المركز "الصديق" طلب تعديل على دورة "التجويد المتقدم". <span class="activity-time">منذ يوم</span></li>
+    </ul>
+</section>
+  </main>
+  <button onclick="localStorage.removeItem('isAdmin'); window.location.href='login.html';" class="btn btn-outline">تسجيل الخروج</button>
+  <script src="dashbord.js"></script>
+</body>
+</html>
