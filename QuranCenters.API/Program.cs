@@ -19,14 +19,18 @@ builder.Services.AddCors(options =>
 });
 
 // =As previous instructed:
-// 1. Get the Connection String from server settings
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// 1. سيحاول قراءة المتغير البسيط (للنشر على Railway)
+var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
+
+// 2. إذا لم يجده (لأنه يعمل محلياً)، سيقرأ من appsettings.json
+if (string.IsNullOrEmpty(connectionString))
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    // 2. Use .UseNpgsql
-    options.UseNpgsql(connectionString) 
+    options.UseNpgsql(connectionString)
 );
-
 
 // Add services to the container.
 builder.Services.AddControllers();
