@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة المراكز - لوحة التحكم</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* (... جميع تنسيقات CSS الخاصة بك موجودة هنا ...) */
+    .admin-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #5a6b47 100%);
+      color: #fff;
+      padding: 2rem 0 1.5rem 0;
+      text-align: center;
+      border-radius: 0 0 1.5rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .admin-header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+    }
+    .admin-controls {
+      display: flex;
+      justify-content: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--secondary);
+      padding-bottom: 1rem;
+    }
+    .centers-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    .centers-table th, .centers-table td {
+        padding: 1rem;
+        text-align: right;
+        border-bottom: 1px solid var(--secondary);
+    }
+    .centers-table th {
+        background-color: var(--secondary);
+        color: var(--primary-dark);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    .centers-table tr:hover {
+        background-color: #fcfcfc;
+    }
+    .action-btn {
+        margin-left: 0.5rem;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-overlay.hidden {
+      display: none;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+        margin: 0;
+        color: var(--primary-dark);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #888;
+      padding: 0.5rem;
+    }
+    .modal-body {
+        padding: 1.5rem;
+    }
+    .btn-block {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+    .form-input, .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--muted);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.3em 0.7em;
+        border-radius: 0.5rem;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: white;
+        text-align: center;
+    }
+    .badge-success { background-color: var(--primary); }
+    .badge-warning { background-color: var(--warning); }
+    .badge-danger { background-color: var(--danger); }
+  </style>
+</head>
+<body>
+  
+    <header class="admin-header">
+        <h1>إدارة المراكز القرآنية</h1>
+        <p>عرض، تعديل، وإدارة المراكز المعتمدة والمعلقة.</p>
+    </header>
+
+    <main class="container">
+        
+       <div class="admin-controls">
+            <a href="dashbord.html" class="btn btn-sm btn-outline" style="min-width: 150px; margin-left: auto;">
+                ← العودة للوحة التحكم
+            </a>
+            
+            <button class="btn btn-primary" onclick="openAddCenterModal()">إضافة مركز جديد</button>
+            <button class="btn btn-secondary" onclick="filterCenters()">عرض المراكز المعلقة</button>
+       </div>
+
+        <table class="centers-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم المركز</th>
+                    <th>المدينة</th>
+                    <th>حالة النشر</th>
+                    <th>تاريخ الإضافة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="centersTableBody">
+                </tbody>
+        </table>
+
+    </main>
+
+    <div id="addCenterModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="centerModalTitle">إضافة مركز قرآني جديد</h2>
+                <button class="modal-close" onclick="closeAddCenterModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addCenterForm">
+                    
+                    <input type="hidden" id="centerId" value=""> 
+
+                    <div class="form-group">
+                        <label for="centerName" class="form-label">اسم المركز *</label>
+                        <input type="text" id="centerName" class="form-input" placeholder="مثل: مركز الصديق لتحفيظ القرآن" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="centerCity" class="form-label">المدينة *</label>
+                        <select id="centerCity" class="form-select" required>
+                            <option value="">اختر مدينة...</option>
+                            <option value="اربد">اربد</option>
+                            <option value="البلقاء">البلقاء</option>
+                            <option value="عمان">عمان</option>
+                            <option value="الزرقاء">الزرقاء</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="centerAddress" class="form-label">العنوان التفصيلي *</label>
+                        <input type="text" id="centerAddress" class="form-input" placeholder="مثال: شارع الجامعة، بجانب المسجد الكبير" required>
+                    </div>
+
+                  <div class="form-group">
+    <label for="centerPhone" class="form-label">رقم الهاتف *</label>
+    <input type="tel" id="centerPhone" class="form-input" placeholder="+9627xxxxxxxx" required>
+</div>
+
+<div class="form-group">
+    <label for="centerEmail" class="form-label">البريد الإلكتروني *</label>
+    <input type="email" id="centerEmail" class="form-input" placeholder="info@example.com" required>
+</div>
+
+
+
+                    
+                    <div class="form-group">
+                        <label for="centerImage" class="form-label">شعار/صورة المركز</label>
+                        <input type="file" id="centerImage" class="form-input-file" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="centerEstablished" class="form-label">سنة التأسيس</label>
+                        <input type="number" id="centerEstablished" class="form-input" placeholder="مثال: 1999" min="1900" max="2025">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block" id="centerModalSubmitBtn">إرسال للموافقة</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="closeAddCenterModal()">إلغاء</button>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // ----------------------------------------------------
+    // 1. إعدادات API والمتغيرات العامة
+    // ----------------------------------------------------
+    const API_BASE_URL = 'http://localhost:5220/api/Admin'; 
+    let currentCenterId = null; 
+    let isPendingFilterActive = false; // 
+
+    // ----------------------------------------------------
+    // 2. دوال جلب البيانات من API
+    // ----------------------------------------------------
+
+    /**
+     * جلب قائمة المراكز من نقطة نهاية الـ API
+     * GET: /api/Admin/centers
+     */
+    async function getCentersFromAPI() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/centers`, {
+                method: 'GET',
+                // يجب إضافة الـ JWT Token هنا لاحقًا
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const centers = await response.json();
+            return centers;
+        } catch (error) {
+            console.error("Failed to fetch centers:", error);
+            // إظهار رسالة خطأ للمستخدم
+            document.getElementById('centersTableBody').innerHTML = '<tr><td colspan="6" style="color: var(--danger); text-align: center; padding: 1.5rem;">فشل تحميل البيانات. تأكد من أن الـ API يعمل على المنفذ الصحيح.</td></tr>';
+            return [];
+        }
+    }
+
+
+    // ----------------------------------------------------
+    // 3. دوال عرض البيانات (Rendering)
+    // ----------------------------------------------------
+    
+    // دالة مساعدة لتصنيف الحالة
+    function getStatusBadge(status) {
+        let className = '';
+        let text = '';
+        switch(status?.toLowerCase()) {
+            case 'approved': className = 'badge-success'; text = 'معتمد'; break;
+            case 'pending': className = 'badge-warning'; text = 'معلق'; break;
+            case 'rejected': className = 'badge-danger'; text = 'مرفوض'; break;
+            default: className = 'badge-secondary'; text = 'غير محدد';
+        }
+        return `<span class="badge ${className}">${text}</span>`;
+    }
+
+    /**
+     * بناء صف في جدول المراكز باستخدام بيانات الـ API
+     */
+    function createCenterRow(center) {
+        const row = document.createElement('tr');
+        const formattedDate = center.createdAt ? new Date(center.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : 'غير محدد';
+
+        row.innerHTML = `
+            <td>${center.id}</td>
+            <td>${center.name}</td>
+            <td>${center.city}</td>
+            <td>${getStatusBadge(center.status)}</td>
+            <td>${formattedDate}</td>
+            <td>
+                <button class="btn btn-sm btn-outline action-btn" onclick="editCenter('${center.id}')">تعديل</button>
+                ${center.status?.toLowerCase() === 'pending' ? 
+                    `<button class="btn btn-sm btn-success action-btn" onclick="approveCenter('${center.id}', '${center.name}')">اعتماد</button>` : ''
+                }
+                <button class="btn btn-sm btn-danger action-btn" onclick="deleteCenter('${center.id}', '${center.name}')">حذف</button>
+            </td>
+        `;
+        return row;
+    }
+    
+    /**
+     * * */
+    async function renderCenters() {
+        const tableBody = document.getElementById('centersTableBody');
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem;">جاري تحميل بيانات المراكز...</td></tr>';
+        
+        try {
+            // 1. 
+            const allCenters = await getCentersFromAPI(); 
+
+            // 2. 
+            let centersToDisplay = allCenters;
+            if (isPendingFilterActive) {
+                centersToDisplay = allCenters.filter(center => center.status.toLowerCase() === 'pending');
+            }
+
+            tableBody.innerHTML = ''; 
+        
+            // 3. 
+            if (!centersToDisplay || centersToDisplay.length === 0) {
+                const message = isPendingFilterActive 
+                    ? "لا توجد مراكز معلقة للمراجعة حالياً." 
+                    : "لا توجد مراكز متاحة للإدارة حالياً.";
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--muted);">${message}</td></tr>`;
+                return;
+            }
+
+            // 4. 
+            centersToDisplay.forEach(center => {
+                tableBody.appendChild(createCenterRow(center));
+            });
+
+        } catch (error) {
+             console.error("Critical rendering error during fetch:", error);
+             // رسالة الخطأ يتم عرضها بالفعل داخل getCentersFromAPI
+        }
+    }
+
+
+    // ----------------------------------------------------
+    // 4. دوال إدارة المودال والإجراءات (يجب أن تكون عالمية)
+    // ----------------------------------------------------
+
+    /**
+     * * */
+    function filterCenters() {
+        const pendingButton = document.querySelector('.admin-controls button[onclick="filterCenters()"]');
+        isPendingFilterActive = !isPendingFilterActive; // 
+
+        if (isPendingFilterActive) {
+            pendingButton.textContent = 'عرض كل المراكز';
+            pendingButton.classList.add('btn-primary'); // 
+            pendingButton.classList.remove('btn-secondary');
+        } else {
+            pendingButton.textContent = 'عرض المراكز المعلقة';
+            pendingButton.classList.remove('btn-primary');
+            pendingButton.classList.add('btn-secondary');
+        }
+        
+        renderCenters(); // 
+    }
+    // 
+
+    function openAddCenterModal() {
+        currentCenterId = null;
+        document.getElementById('centerModalTitle').textContent = 'إضافة مركز جديد';
+        document.getElementById('centerModalSubmitBtn').textContent = 'إرسال للموافقة';
+        document.getElementById('addCenterForm').reset();
+        document.getElementById('addCenterModal').classList.remove('hidden');
+    }
+
+    function closeAddCenterModal() {
+        document.getElementById('addCenterModal').classList.add('hidden');
+        currentCenterId = null;
+    }
+
+    async function editCenter(centerId) {
+        currentCenterId = centerId; 
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/centers/${centerId}`);
+            
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'فشل جلب بيانات المركز للتعديل.');
+                } else {
+                    throw new Error('استجابة الخادم ليست JSON. فشل جلب البيانات.');
+                }
+            }
+
+            const centerData = await response.json(); 
+            
+            document.getElementById('centerModalTitle').textContent = 'تعديل بيانات المركز';
+            document.getElementById('centerModalSubmitBtn').textContent = 'حفظ التعديلات'; 
+            
+            document.getElementById('centerName').value = centerData.name;
+            document.getElementById('centerCity').value = centerData.city;
+            document.getElementById('centerAddress').value = centerData.address;
+            document.getElementById('centerPhone').value = centerData.phone;
+            document.getElementById('centerEmail').value = centerData.email; 
+            document.getElementById('centerEstablished').value = centerData.established;
+
+            document.getElementById('addCenterModal').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Fetch Center Error:', error);
+            alert(`❌ لا يمكن تحميل بيانات المركز: ${error.message}`);
+        }
+    }
+
+    async function approveCenter(centerId, centerName) {
+        if (confirm(`هل أنت متأكد من اعتماد المركز "${centerName}"؟ سيصبح متاحًا للمستخدمين.`)) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/centers/approve/${centerId}`, {
+                    method: 'PUT',
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الاعتماد.');
+                }
+    
+                const data = await response.json();
+                alert(`✅ ${data.message}`);
+                
+            } catch (error) {
+                console.error('Approval Error:', error);
+                alert(`❌ فشل الاعتماد: ${error.message}`);
+            }
+            
+            await renderCenters(); // 
+        }
+    }
+
+    async function deleteCenter(centerId, centerName) {
+        if (confirm(`تحذير! هل أنت متأكد من حذف المركز "${centerName}" بالكامل؟`)) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/centers/${centerId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الحذف.');
+                }
+
+                const data = await response.json();
+                alert(`✅ ${data.message}`);
+                
+            } catch (error) {
+                console.error('Deletion Error:', error);
+                alert(`❌ فشل الحذف: ${error.message}`);
+            }
+
+            await renderCenters(); // 
+        }
+    }
+
+
+    // ----------------------------------------------------
+    // 5. تفعيل الأحداث عند تحميل الصفحة
+    // ----------------------------------------------------
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. 
+        renderCenters();
+
+        // 2. 
+        document.getElementById('addCenterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 
+            const centerName = document.getElementById('centerName').value;
+            const centerCity = document.getElementById('centerCity').value;
+
+            if (centerName.trim() === "" || centerCity.trim() === "") {
+                alert("❌ خطأ: يرجى ملء حقلي (اسم المركز) و (المدينة) قبل الإرسال.");
+                return; // 
+            }
+            // 
+
+            const centerId = currentCenterId;
+            const isEditing = !!centerId; 
+            
+            const formData = {
+               name: centerName,
+               city: centerCity,
+               address: document.getElementById('centerAddress').value,
+               phone: document.getElementById('centerPhone').value,
+               email: document.getElementById('centerEmail').value, 
+               established: parseInt(document.getElementById('centerEstablished').value) || 0,
+               id: centerId
+            };
+
+            try {
+                const url = isEditing ? `${API_BASE_URL}/centers/${centerId}` : `${API_BASE_URL}/centers`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `فشل في ${isEditing ? 'تعديل' : 'إضافة'} المركز.`);
+                }
+                
+                const data = await response.json();
+                alert(`✅ ${data.message || 'تمت العملية بنجاح!'}`); 
+
+            } catch (error) {
+                console.error(`${isEditing ? 'Update' : 'Create'} Error:`, error);
+                alert(`❌ فشل الاتصال: ${error.message}`);
+            }
+
+            closeAddCenterModal();
+            await renderCenters(); // 
+        });
+
+        // 3. 
+        const modalOverlay = document.getElementById('addCenterModal');
+        if (modalOverlay) {
+             modalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeAddCenterModal();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

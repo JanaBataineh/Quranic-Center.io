@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المراكز القرآنية - معاهد الوحي</title>
+    <meta name="description" content="استكشف أفضل المراكز القرآنية في المملكة الاردنية الهاشمية مع إمكانيات البحث والتصفية">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* تنسيق تجريبي لبطاقات المراكز لغرض العرض */
+        .center-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .center-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .center-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+        .card-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+<body data-page="centers">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">
+                    <span style="font-weight:bold;">معاهد الوحي</span>
+                </a>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
+                    <li class="nav-item"><a href="centers.html" class="nav-link active">المراكز</a></li>
+                    <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
+                    <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li>
+                    <li class="nav-item"><a href="login.html" class="nav-link">تسجيل الدخول</a></li>
+                </ul>
+                <button class="mobile-menu-btn"></button>
+            </div>
+        </div>
+    </nav>
+    
+    <section class="page-header" style="background: #f1f1f1; padding: 3rem 0; text-align: center;">
+        <div class="container">
+            <h1>المراكز القرآنية المعتمدة</h1>
+            <p>جميع المراكز المدرجة هنا تمت مراجعتها والموافقة عليها من قبل الإدارة.</p>
+        </div>
+    </section>
+
+    <main class="container py-8">
+        
+        <section class="centers-listings">
+            <div class="center-cards-grid" id="centersListings">
+                <p id="loadingMessage" style="text-align:center; padding: 2rem;">جاري تحميل المراكز...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // 1. الدالة لجلب البيانات من LocalStorage (التي حفظها الأدمن)
+        function getCentersFromStorage() {
+            const storedData = localStorage.getItem('mockCenters');
+            if (!storedData) {
+                 // إذا لم يكن هناك بيانات في localStorage، يمكن العودة لتحميل البيانات من data.js الأصلي
+                 // بما أننا لا نستطيع الوصول لـ data.js مباشرة، سنرجع مصفوفة فارغة لتجنب الأخطاء
+                 console.warn("Local Storage فارغ، جاري عرض المراكز التجريبية.");
+                 return [
+                    { id: '1', name: 'مركز الصديق', city: 'اربد', address: 'المغير', phone: '+96279xxxxxx', established: 1999, status: 'approved' },
+                    { id: '2', name: 'مركز ابن تيمية', city: 'البلقاء', address: 'الشمالي', phone: '+96279yyyyyy', established: 1997, status: 'approved' },
+                 ];
+            }
+            
+            try {
+                return JSON.parse(storedData);
+            } catch (e) {
+                console.error("خطأ في تحليل بيانات المراكز المخزنة:", e);
+                return [];
+            }
+        }
+
+        // 2. دالة بناء بطاقة المركز
+        function createCenterCard(center) {
+            const card = document.createElement('div');
+            card.className = 'card dashboard-card'; 
+            card.innerHTML = `
+                <div class="card-content">
+                    <h3>${center.name}</h3>
+                    <p class="center-city" style="color:var(--muted);">${center.city} | تأسس ${center.established}</p>
+                    <p class="center-address">${center.address}</p>
+                    <div class="card-actions">
+                        <a href="tel:${center.phone}" class="btn btn-secondary btn-sm">اتصل بالمركز</a>
+                        <a href="#" class="btn btn-outline btn-sm">عرض التفاصيل</a>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // 3. دالة العرض الرئيسية
+        function renderUserCenters() {
+            const container = document.getElementById('centersListings');
+            const allCenters = getCentersFromStorage();
+            
+            // 🌟 تطبيق التصفية: عرض المراكز التي حالتها 'approved' فقط 🌟
+            const approvedCenters = allCenters.filter(center => center.status === 'approved');
+
+            container.innerHTML = ''; 
+
+            if (approvedCenters.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 2rem; color: #555;">لا توجد مراكز معتمدة ومتاحة للعرض حالياً.</p>';
+                return;
+            }
+
+            approvedCenters.forEach(center => {
+                const card = createCenterCard(center);
+                container.appendChild(card);
+            });
+        }
+
+        // تشغيل دالة العرض عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', renderUserCenters);
+    </script>
+</body>
+</html>

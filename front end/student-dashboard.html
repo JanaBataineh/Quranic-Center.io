@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم الطالب - معاهد الوحي</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f6f8fa; }
+    .dashboard-header {
+      background: linear-gradient(135deg, #4A7373 0%, #6B9A9A 100%); 
+      color: #fff;
+      padding: 2rem 0 1.5rem 0;
+      text-align: center;
+      border-radius: 0 0 1.5rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .dashboard-header h1 { margin: 0 0 0.5rem 0; font-size: 2.2rem; }
+    .dashboard-header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .course-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+    }
+    .course-card h3 { color: #4A7373; margin-bottom: 0.5rem; }
+    .course-status {
+      display: inline-block; padding: 0.3em 0.7em; border-radius: 0.5rem;
+      font-size: 0.9em; font-weight: 600;
+    }
+    .status-active { background-color: #dcfce7; color: #16a34a; }
+    .status-completed { background-color: #c0c0c0; color: #444; }
+
+    /* تنسيق خاص بعرض اسم المستخدم والإشعارات في شريط التنقل */
+    .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-right: 1rem;
+    }
+    .user-welcome-text {
+        font-weight: 500; color: var(--primary-dark); font-size: 1rem;
+    }
+    .notification-btn-wrapper { position: relative; }
+    .notification-badge {
+        background: var(--danger, #f44336); color: white; border-radius: 50%; 
+        padding: 0.1rem 0.4rem; font-size: 0.75rem; position: absolute; 
+        top: -5px; right: -5px; display: none;
+    }
+    /* تنسيق الإخفاء */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body data-page="dashboard">
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a href="index.html" class="logo">
+          <span style="font-weight:bold;">معاهد الوحي</span>
+        </a>
+        
+        <ul class="nav-menu" id="main-nav-menu">
+          <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
+          <li class="nav-item"><a href="centers.html" class="nav-link">المراكز</a></li>
+          <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li> 
+          <li class="nav-item" id="dashboard-link-container"><a href="student-dashboard.html" class="nav-link active">حسابي</a></li>
+        </ul>
+        
+        <div class="user-actions" id="user-actions-container">
+            <span class="user-welcome-text" id="navbarStudentName">مرحباً خالد!</span>
+
+            <div class="notification-btn-wrapper">
+                <button class="btn btn-sm btn-secondary" onclick="showNotifications()" style="padding: 0.5rem;">
+                    <svg class="icon icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0h-6"/>
+                    </svg>
+                    <span id="notificationBadge" class="notification-badge">3</span>
+                </button>
+            </div>
+            <button onclick="logout()" class="btn btn-sm btn-danger">تسجيل الخروج</button>
+        </div>
+        
+        <li class="nav-item hidden" id="login-link-container">
+            <a href="login.html" class="btn btn-sm btn-primary">تسجيل الدخول</a>
+        </li>
+
+        <button class="mobile-menu-btn"></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-header">
+    <h1 id="studentWelcomeHeader">مرحباً بك، أيها الطالب</h1> 
+    <p>هنا يمكنك متابعة دوراتك ونتائجك وإدارة ملفك الشخصي.</p>
+  </div>
+
+  <main class="container">
+    
+    <section style="margin-bottom: 3rem;">
+        <h2>📚 دوراتي الحالية</h2>
+        <div class="courses-grid" id="studentCourses">
+            
+            <div class="course-card">
+                <h3>دورة التجويد المتقدم</h3>
+                <p>المركز: مركز الصديق</p>
+                <p>الحالة: <span class="course-status status-active">نشط</span></p>
+                <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('TJ-ADV-101')">الذهاب لصفحة الدورة</button>
+            </div>
+            
+             <div class="course-card">
+                <h3>حفظ جزء عم</h3>
+                <p>المركز: علي بن ابي طالب</p>
+                <p>الحالة: <span class="course-status status-active">نشط</span></p>
+                <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('HEFZ-J30-202')">الذهاب لصفحة الدورة</button>
+            </div>
+            
+            <div class="course-card">
+                <h3>دورة التفسير والتدبر</h3>
+                <p>المركز: ابن تيمية</p>
+                <p>الحالة: <span class="course-status status-completed">مُنجز</span></p>
+                <button class="btn btn-sm btn-secondary" style="margin-top: 1rem;" onclick="viewCertificate('TAF-105')">عرض الشهادة</button>
+            </div>
+            
+        </div>
+    </section>
+    
+    <section>
+        <h2>⚙️ إدارة الحساب</h2>
+        <div class="card">
+            <div class="card-content">
+                <form id="studentSettingsForm">
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-input" value="اسم الطالب هنا" disabled>
+                    </div>
+                     <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" value="user@example.com" disabled>
+                    </div>
+                    <button type="button" class="btn btn-outline" onclick="changePassword()">تغيير كلمة المرور</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+  </main>
+  
+  <script>
+    const currentStudent = {
+        name: "خالد محمود", 
+        email: "user@example.com",
+        notificationsCount: 3
+    };
+
+    function updateStudentInfo() {
+        const welcomeHeader = document.getElementById('studentWelcomeHeader');
+        const navName = document.getElementById('navbarStudentName');
+        const emailInput = document.querySelector('#studentSettingsForm input[type="email"]');
+        const nameInput = document.querySelector('#studentSettingsForm input[type="text"]');
+        const notificationBadge = document.getElementById('notificationBadge');
+
+        if (welcomeHeader) {
+            welcomeHeader.textContent = `مرحباً بك، ${currentStudent.name}`;
+        }
+        if (navName) {
+            navName.textContent = `مرحباً ${currentStudent.name.split(' ')[0]}!`;
+        }
+        
+        if (emailInput) {
+            emailInput.value = currentStudent.email;
+        }
+        if (nameInput) {
+            nameInput.value = currentStudent.name;
+        }
+        
+        if (currentStudent.notificationsCount > 0) {
+            notificationBadge.textContent = currentStudent.notificationsCount;
+            notificationBadge.style.display = 'inline';
+        } else {
+            notificationBadge.style.display = 'none';
+        }
+    }
+
+    function showNotifications() {
+        alert("🔔 تم النقر على الإشعارات. (ستعمل لاحقاً على التوجيه لصفحة الإشعارات).");
+        currentStudent.notificationsCount = 0;
+        updateStudentInfo(); 
+    }
+    
+    function logout() {
+        if (confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            localStorage.removeItem("isStudent");
+            window.location.href = "login.html";
+        }
+    }
+
+    function goToCourse(courseId) {
+        alert(`تم النقر على الدورة: ${courseId}. (سيتم التوجيه لصفحة تفاصيل الدورة قريباً).`);
+    }
+
+    function viewCertificate(courseId) {
+        alert(`تم النقر على عرض الشهادة للدورة المنجزة: ${courseId}. (سيتم عرض ملف الشهادة PDF قريباً).`);
+    }
+
+    function changePassword() {
+        const newPass = prompt("لإعادة تعيين كلمة المرور، يرجى إدخال كلمة المرور الجديدة (6 أحرف على الأقل):");
+        
+        if (newPass && newPass.length >= 6) {
+            alert("✅ تم إرسال طلب تغيير كلمة المرور بنجاح. سيتم تطبيق التغيير قريباً.");
+        } else if (newPass) {
+            alert("❌ يجب أن تتكون كلمة المرور من 6 أحرف أو أكثر.");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateStudentInfo);
+  </script>
+</body>
+</html>
