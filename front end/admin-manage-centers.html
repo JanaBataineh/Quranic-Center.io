@@ -237,8 +237,7 @@
     // ----------------------------------------------------
     // 1. إعدادات API والمتغيرات العامة
     // ----------------------------------------------------
-    const API_BASE_URL = 'http://localhost:5220/api/Admin'; 
-    let currentCenterId = null; 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5220') + '/api/Admin';    let currentCenterId = null; 
     let isPendingFilterActive = false; // 
 
     // ----------------------------------------------------

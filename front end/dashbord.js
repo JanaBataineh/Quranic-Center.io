@@ -26,8 +26,7 @@ async function loadAdminStatistics() {
 // داخل dashbord.js
 
 // 💡 تأكد أن هذا العنوان يتطابق مع المنفذ الذي يعمل عليه الخادم الآن
-const API_BASE_URL = 'http://localhost:5220/api'; 
-
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5220') + '/api';
 async function loadAdminStatistics() {
   try {
     // ⚠️ في بيئة حقيقية: يجب استبدال التوكن بالتوكن الحقيقي المخزن في LocalStorage بعد الدخول

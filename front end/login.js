@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const signupFields = document.getElementById('signupFields'); 
   
   // URL الأساسي لواجهة المصادقة (يجب أن يتطابق مع المنفذ الذي يعمل عليه ASP.NET Core)
-  const API_BASE_URL = 'http://localhost:5220/api/Auth';  
-  let isLogin = true;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5220') + '/api/Auth';  let isLogin = true;
 
   // 1. دالة لتبديل الحالة بين الدخول والتسجيل
   function toggleLoginState() {
