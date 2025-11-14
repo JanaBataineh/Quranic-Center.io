@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const signupFields = document.getElementById('signupFields'); 
   
   // 🌟🌟🌟 التصحيح: استخدام السيرفر المحلي 🌟🌟🌟
-  const API_BASE_URL = 'http://localhost:5220/api/Auth';
+  const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Auth';
 
   // 1. دالة لتبديل الحالة بين الدخول والتسجيل
   function toggleLoginState() {

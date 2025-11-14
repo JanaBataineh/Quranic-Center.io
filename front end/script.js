@@ -1,5 +1,5 @@
 // 🌟 جديد: تعريف رابط الـ API العام
-const PUBLIC_API_URL = 'http://localhost:5220/api/Public';
+const PUBLIC_API_URL = 'https://quranic-centerio-production.up.railway.app/api/Public';
 
 // 🌟 جديد: متغيرات لحفظ البيانات المجلوبة من الـ API
 let apiCenters = [];
