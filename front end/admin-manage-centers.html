@@ -237,21 +237,31 @@
     // ----------------------------------------------------
     // 1. إعدادات API والمتغيرات العامة
     // ----------------------------------------------------
-const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Admin';    let isPendingFilterActive = false; // 
+    
+    // 🌟 1. التأكد من أن الرابط هو السيرفر المحلي
+    const API_BASE_URL = 'http://localhost:5220/api/Admin';
+    
+    // 🌟 2. تعريف المتغيرات بشكل صحيح في النطاق العام (Global Scope)
+    let isPendingFilterActive = false; 
+    let currentCenterId = null; 
 
     // ----------------------------------------------------
     // 2. دوال جلب البيانات من API
     // ----------------------------------------------------
+    function getAuthToken() {
+        return localStorage.getItem('authToken');
+    }
 
-    /**
-     * جلب قائمة المراكز من نقطة نهاية الـ API
-     * GET: /api/Admin/centers
-     */
     async function getCentersFromAPI() {
+        const tableBody = document.getElementById('centersTableBody');
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem;">جاري تحميل بيانات المراكز...</td></tr>';
+        
         try {
             const response = await fetch(`${API_BASE_URL}/centers`, {
                 method: 'GET',
-                // يجب إضافة الـ JWT Token هنا لاحقًا
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`
+                }
             });
 
             if (!response.ok) {
@@ -262,8 +272,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
             return centers;
         } catch (error) {
             console.error("Failed to fetch centers:", error);
-            // إظهار رسالة خطأ للمستخدم
-            document.getElementById('centersTableBody').innerHTML = '<tr><td colspan="6" style="color: var(--danger); text-align: center; padding: 1.5rem;">فشل تحميل البيانات. تأكد من أن الـ API يعمل على المنفذ الصحيح.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" style="color: var(--danger); text-align: center; padding: 1.5rem;">فشل تحميل البيانات. تأكد من أن الـ API يعمل.</td></tr>';
             return [];
         }
     }
@@ -273,7 +282,6 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
     // 3. دوال عرض البيانات (Rendering)
     // ----------------------------------------------------
     
-    // دالة مساعدة لتصنيف الحالة
     function getStatusBadge(status) {
         let className = '';
         let text = '';
@@ -286,15 +294,12 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
         return `<span class="badge ${className}">${text}</span>`;
     }
 
-    /**
-     * بناء صف في جدول المراكز باستخدام بيانات الـ API
-     */
     function createCenterRow(center) {
         const row = document.createElement('tr');
         const formattedDate = center.createdAt ? new Date(center.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : 'غير محدد';
 
         row.innerHTML = `
-            <td>${center.id}</td>
+            <td>${center.id.substring(0, 8)}...</td>
             <td>${center.name}</td>
             <td>${center.city}</td>
             <td>${getStatusBadge(center.status)}</td>
@@ -310,25 +315,20 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
         return row;
     }
     
-    /**
-     * * */
     async function renderCenters() {
         const tableBody = document.getElementById('centersTableBody');
-        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem;">جاري تحميل بيانات المراكز...</td></tr>';
         
         try {
-            // 1. 
             const allCenters = await getCentersFromAPI(); 
-
-            // 2. 
             let centersToDisplay = allCenters;
+
+            // (هذا السطر يعتمد الآن على المتغير العام المعرف أعلاه)
             if (isPendingFilterActive) {
                 centersToDisplay = allCenters.filter(center => center.status.toLowerCase() === 'pending');
             }
 
             tableBody.innerHTML = ''; 
         
-            // 3. 
             if (!centersToDisplay || centersToDisplay.length === 0) {
                 const message = isPendingFilterActive 
                     ? "لا توجد مراكز معلقة للمراجعة حالياً." 
@@ -337,31 +337,27 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
                 return;
             }
 
-            // 4. 
             centersToDisplay.forEach(center => {
                 tableBody.appendChild(createCenterRow(center));
             });
 
         } catch (error) {
              console.error("Critical rendering error during fetch:", error);
-             // رسالة الخطأ يتم عرضها بالفعل داخل getCentersFromAPI
         }
     }
 
 
     // ----------------------------------------------------
-    // 4. دوال إدارة المودال والإجراءات (يجب أن تكون عالمية)
+    // 4. دوال إدارة المودال والإجراءات (معرفة في النطاق العام)
     // ----------------------------------------------------
 
-    /**
-     * * */
     function filterCenters() {
         const pendingButton = document.querySelector('.admin-controls button[onclick="filterCenters()"]');
-        isPendingFilterActive = !isPendingFilterActive; // 
+        isPendingFilterActive = !isPendingFilterActive; 
 
         if (isPendingFilterActive) {
             pendingButton.textContent = 'عرض كل المراكز';
-            pendingButton.classList.add('btn-primary'); // 
+            pendingButton.classList.add('btn-primary'); 
             pendingButton.classList.remove('btn-secondary');
         } else {
             pendingButton.textContent = 'عرض المراكز المعلقة';
@@ -369,9 +365,8 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
             pendingButton.classList.add('btn-secondary');
         }
         
-        renderCenters(); // 
+        renderCenters(); 
     }
-    // 
 
     function openAddCenterModal() {
         currentCenterId = null;
@@ -386,11 +381,15 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
         currentCenterId = null;
     }
 
-    async function editCenter(centerId) {
-        currentCenterId = centerId; 
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/centers/${centerId}`);
+  async function editCenter(centerId) {
+    prompt("انسخ الـ ID الكامل للمركز:", centerId);
+
+    currentCenterId = centerId; 
+
+    try {
+            const response = await fetch(`${API_BASE_URL}/centers/${centerId}`, {
+                headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+            });
             
             if (!response.ok) {
                 const contentType = response.headers.get("content-type");
@@ -427,6 +426,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
             try {
                 const response = await fetch(`${API_BASE_URL}/centers/approve/${centerId}`, {
                     method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
                 });
     
                 if (!response.ok) {
@@ -442,7 +442,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
                 alert(`❌ فشل الاعتماد: ${error.message}`);
             }
             
-            await renderCenters(); // 
+            await renderCenters(); 
         }
     }
 
@@ -451,6 +451,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
             try {
                 const response = await fetch(`${API_BASE_URL}/centers/${centerId}`, {
                     method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
                 });
 
                 if (!response.ok) {
@@ -466,7 +467,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
                 alert(`❌ فشل الحذف: ${error.message}`);
             }
 
-            await renderCenters(); // 
+            await renderCenters(); 
         }
     }
 
@@ -476,22 +477,20 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
     // ----------------------------------------------------
 
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. 
+        // 1. تحميل المراكز عند فتح الصفحة
         renderCenters();
 
-        // 2. 
+        // 2. ربط نموذج الإضافة/التعديل
         document.getElementById('addCenterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // 
             const centerName = document.getElementById('centerName').value;
             const centerCity = document.getElementById('centerCity').value;
 
             if (centerName.trim() === "" || centerCity.trim() === "") {
                 alert("❌ خطأ: يرجى ملء حقلي (اسم المركز) و (المدينة) قبل الإرسال.");
-                return; // 
+                return; 
             }
-            // 
 
             const centerId = currentCenterId;
             const isEditing = !!centerId; 
@@ -503,7 +502,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
                phone: document.getElementById('centerPhone').value,
                email: document.getElementById('centerEmail').value, 
                established: parseInt(document.getElementById('centerEstablished').value) || 0,
-               id: centerId
+               id: centerId // (سيكون null إذا كانت إضافة جديدة)
             };
 
             try {
@@ -512,7 +511,10 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
 
                 const response = await fetch(url, {
                     method: method,
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
                     body: JSON.stringify(formData)
                 });
 
@@ -530,10 +532,10 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Adm
             }
 
             closeAddCenterModal();
-            await renderCenters(); // 
+            await renderCenters(); 
         });
 
-        // 3. 
+        // 3. ربط إغلاق المودال
         const modalOverlay = document.getElementById('addCenterModal');
         if (modalOverlay) {
              modalOverlay.addEventListener('click', function(e) {

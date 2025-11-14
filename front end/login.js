@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // 🌟🌟🌟 التصحيح: قمنا بتعريف المتغير هنا 🌟🌟🌟
+  let isLogin = true;
+
   // تعريف العناصر من HTML
   const loginForm = document.getElementById('loginForm');
   const errorMessage = document.getElementById('errorMessage');
@@ -12,8 +15,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const accountModeInput = document.getElementById('accountMode'); 
   const signupFields = document.getElementById('signupFields'); 
   
-  // URL الأساسي لواجهة المصادقة (يجب أن يتطابق مع المنفذ الذي يعمل عليه ASP.NET Core)
-const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Auth';
+  // 🌟🌟🌟 التصحيح: استخدام السيرفر المحلي 🌟🌟🌟
+  const API_BASE_URL = 'http://localhost:5220/api/Auth';
+
   // 1. دالة لتبديل الحالة بين الدخول والتسجيل
   function toggleLoginState() {
     isLogin = !isLogin;
@@ -54,7 +58,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Aut
     errorMessage.classList.add('hidden');
     submitBtn.disabled = true;
     spinner.classList.remove('hidden');
-    submitText.textContent = isLogin ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحroscopy...';
+    submitText.textContent = isLogin ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحساب...';
 
     // بيانات النموذج
     const email = loginForm.email.value.trim();
@@ -84,21 +88,17 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Aut
 
                 const data = await response.json();
                 
-                // =============================================
-                // 🌟 1. الإصلاح الأول: تغيير .userType إلى .UserType
-                // =============================================
-     const userType = data.user_info.userType; // <-- هذا هو السطر الصحيح
+                // (user_info.userType)
+                const userType = data.user_info.userType; 
+                
                 // حفظ الرمز المميز ونوع المستخدم (مفتاح المصادقة)
                 localStorage.setItem('authToken', data.token); 
                 localStorage.setItem('currentUserType', userType); 
-                localStorage.setItem('currentStudentEmail', email); 
+                localStorage.setItem('currentStudentEmail', email); // (مهم للوحة تحكم المركز)
                 
-                // =============================================
-                // 🌟 2. الإصلاح الثاني: إضافة هذه الأعلام (Flags)
-                //    (صفحاتك الأخرى تعتمد عليها لتأكيد الدخول)
-                // =============================================
+                // (إضافة الأعلام التي تعتمد عليها الصفحات الأخرى)
                 if (userType === 'Admin') {
-                    localStorage.setItem("isAdmin", "true"); // <-- إضافة مهمة
+                    localStorage.setItem("isAdmin", "true"); 
                     window.location.href = "dashbord.html";
 
                 } else if (userType === 'Center') {
@@ -106,7 +106,7 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Aut
                     window.location.href = "dashbordcenters.html";
 
                 } else { // Student (الطالب)
-                    localStorage.setItem("isStudent", "true"); // <-- إضافة مهمة
+                    localStorage.setItem("isStudent", "true"); 
                     window.location.href = "student-dashboard.html"; 
                 }
 
@@ -124,7 +124,6 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Aut
             const lastName = loginForm.lastName.value.trim();
             const age = parseInt(loginForm.age.value.trim());
 
-            // التحقق الأساسي (على الرغم من وجود خاصية required)
             if (!firstName || !middleName || !lastName || !age || !email || password.length < 6) {
                 errorText.textContent = "يرجى ملء جميع الحقول المطلوبة (كلمة المرور 6 أحرف على الأقل).";
                 errorMessage.classList.remove('hidden');
@@ -156,25 +155,15 @@ const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Aut
                     return;
                 }
                 
-                // نجاح التسجيل (200 OK)
                 const data = await response.json();
-
-                // 🌟 ملاحظة: عند التسجيل، الكود الأصلي لم يكن يسجل الدخول تلقائياً
-                // سنقوم بتسجيل دخوله تلقائياً الآن
-                
-                // ** سنقوم بمحاكاة تسجيل الدخول مباشرة بعد التسجيل **
-                // (هذا ليس أفضل أسلوب، الأفضل أن يعيد /register الـ Token)
                 
                 alert("✅ تم إنشاء حسابك بنجاح! جاري تسجيل دخولك...");
                 
-                // ننقله لصفحة الدخول ليقوم بالدخول بنفسه
-                // (أو يمكنك استدعاء دالة Login مباشرة)
                 toggleLoginState(); // العودة لوضع تسجيل الدخول
                 
                 // تعبئة الحقول له
                 loginForm.email.value = email;
                 loginForm.password.value = password;
-
 
             } catch (error) {
                 console.error("Fetch Error:", error);

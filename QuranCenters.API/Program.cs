@@ -20,17 +20,27 @@ builder.Services.AddCors(options =>
 
 // =As previous instructed:
 // 1. سيحاول قراءة المتغير البسيط (للنشر على Railway)
+// ... (الكود السابق لـ builder.Services.AddCors)
+
 var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
 
-// 2. إذا لم يجده (لأنه يعمل محلياً)، سيقرأ من appsettings.json
 if (string.IsNullOrEmpty(connectionString))
 {
+    // وضع التطوير المحلي: استخدم SQLite
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString) // <-- 🌟 تغيير هنا
+    );
+}
+else
+{
+    // وضع النشر (Railway): استخدم PostgreSQL
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString) // <-- 🌟 تبقى كما هي
+    );
 }
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString)
-);
+// ... (باقي الكود: AddControllers, AddSwaggerGen, etc.)
 
 // Add services to the container.
 builder.Services.AddControllers();

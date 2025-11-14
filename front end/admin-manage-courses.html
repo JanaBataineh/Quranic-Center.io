@@ -6,7 +6,7 @@
   <title>إدارة الدورات - لوحة التحكم</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* تنسيقات خاصة بالصفحة الإدارية */
+    /* ... (جميع تنسيقات CSS الخاصة بك موجودة هنا كما هي) ... */
     .admin-header {
       background: linear-gradient(135deg, var(--primary-dark) 0%, #5a6b47 100%);
       color: #fff;
@@ -136,7 +136,7 @@
                 <tr>
                     <th>#</th>
                     <th>اسم الدورة</th>
-                    <th>المركز</th>
+                    <th>معرّف المركز</th>
                     <th>المستوى</th>
                     <th>السعر</th>
                     <th>حالة النشر</th>
@@ -157,7 +157,6 @@
             </div>
             <div class="modal-body">
                 <form id="addCourseForm">
-                    
                     <input type="hidden" id="courseId" value=""> 
 
                     <div class="form-group">
@@ -166,8 +165,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="courseCenter" class="form-label">المركز التابع *</label>
-                        <input type="text" id="courseCenter" class="form-input" placeholder="اسم المركز" required>
+                        <label for="courseCenterId" class="form-label">معرّف المركز (ID) *</label>
+                        <input type="text" id="courseCenterId" class="form-input" placeholder="المعرّف ID للمركز" required>
                     </div>
                     
                     <div class="form-group">
@@ -195,32 +194,53 @@
 
 <script>
     // ******************************************************
-    // دوال الحفظ والتحميل من LocalStorage
+    // 1. إعدادات API والمتغيرات العامة
     // ******************************************************
-    function getCoursesData() {
-        const storedData = localStorage.getItem('mockCourses');
-        if (storedData) {
-            return JSON.parse(storedData);
-        } else {
-            // بيانات تجريبية أولية
-            return [
-                { id: '101', name: 'دورة تمهيدية في احكام التجويد', center: 'مركز الصديق', level: 'مبتدئ', price: 20, status: 'approved' },
-                { id: '102', name: 'إجازة في القراءات العشر', center: 'مركز ابن تيمية', level: 'متقدم', price: 45, status: 'approved' },
-                { id: '103', name: 'حفظ جزء عم', center: 'مركز علي بن ابي طالب', level: 'مبتدئ', price: 15, status: 'pending' },
-                { id: '104', name: 'دورة الخط العثماني', center: 'مركز ابي بن كعب', level: 'متوسط', price: 30, status: 'approved' }
-            ];
+    
+    // 🌟 🔄 تغيير: استخدام API_BASE_URL ليشير إلى الخادم المحلي
+    const API_BASE_URL = 'http://localhost:5220/api/Admin';
+    let isPendingFilterActive = false;
+    let currentCourseId = null; // لتتبع الدورة التي يتم تعديلها
+
+    // 🌟 🔄 جديد: دالة جلب التوكن
+    function getAuthToken() {
+        return localStorage.getItem('authToken');
+    }
+
+    // ******************************************************
+    // 2. دوال جلب البيانات من API (بدلاً من LocalStorage)
+    // ******************************************************
+
+    /**
+     * 🌟 🔄 تحديث: جلب الدورات من /api/Admin/courses
+     */
+    async function getCoursesFromAPI() {
+        const tableBody = document.getElementById('coursesTableBody');
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1.5rem;">جاري تحميل بيانات الدورات...</td></tr>';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/courses`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const courses = await response.json();
+            return courses;
+        } catch (error) {
+            console.error("Failed to fetch courses:", error);
+            tableBody.innerHTML = '<tr><td colspan="7" style="color: var(--danger); text-align: center; padding: 1.5rem;">فشل تحميل بيانات الدورات. تأكد أن الـ API يعمل.</td></tr>';
+            return [];
         }
     }
 
-    function saveCoursesData(coursesArray) {
-        localStorage.setItem('mockCourses', JSON.stringify(coursesArray));
-    }
-
-    let mockCourses = getCoursesData(); 
-    let isPendingFilterActive = false;
-    
     // ******************************************************
-    // الدوال الأساسية للتحكم بالجدول (CRUD Operations)
+    // 3. دوال عرض البيانات (Rendering)
     // ******************************************************
 
     function getLevelBadge(level) {
@@ -231,79 +251,135 @@
             default: return 'badge-secondary';
         }
     }
+    
+    // 🌟 🔄 تحديث: دالة بناء الصف (تم تعديلها لتطابق الأسماء الجديدة)
+    function createCourseRow(course) {
+        const row = document.createElement('tr');
+        
+        let statusBadge;
+        let actionButtons = `
+            <button class="btn btn-sm btn-outline action-btn" onclick="openEditCourseModal('${course.id}')">تعديل</button>
+            <button class="btn btn-sm btn-danger action-btn" onclick="deleteCourse('${course.id}', '${course.name}')">حذف</button>
+        `;
 
-    function renderCourses() {
-        mockCourses = getCoursesData(); 
+        if (course.status?.toLowerCase() === 'approved') {
+            statusBadge = '<span class="badge badge-success">منشور</span>';
+        } else if (course.status?.toLowerCase() === 'pending') {
+            statusBadge = '<span class="badge badge-warning">معلق للموافقة</span>';
+            actionButtons = `
+                <button class="btn btn-sm btn-primary action-btn" onclick="approveCourse('${course.id}', '${course.name}')">موافقة</button>
+                ${actionButtons}
+            `;
+        } else {
+            statusBadge = '<span class="badge badge-secondary">غير نشط</span>';
+        }
+        
+        row.innerHTML = `
+            <td>${course.id.substring(0, 8)}...</td> <td>${course.name}</td>
+            <td>${course.centerId.substring(0, 8)}...</td> <td><span class="badge ${getLevelBadge(course.level)}">${course.level}</span></td>
+            <td>${course.price} د.أ</td>
+            <td>${statusBadge}</td>
+            <td>${actionButtons}</td>
+        `;
+        return row;
+    }
+
+    /**
+     * 🌟 🔄 تحديث: دالة العرض الرئيسية
+     */
+    async function renderCourses() {
         const tableBody = document.getElementById('coursesTableBody');
-        tableBody.innerHTML = ''; 
+        
+        try {
+            const allCourses = await getCoursesFromAPI();
+            let coursesToDisplay = allCourses;
 
-        let coursesToDisplay = mockCourses;
-
-        if (isPendingFilterActive) {
-            coursesToDisplay = mockCourses.filter(course => course.status === 'pending');
-        }
-
-        if (coursesToDisplay.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: #888; padding: 2rem;">لا توجد دورات مطابقة للمعايير المحددة حالياً.</td></tr>';
-            return;
-        }
-
-        coursesToDisplay.forEach((course) => {
-            let statusBadge;
-            let actionButtons = `
-                <button class="btn btn-sm btn-outline action-btn" onclick="openEditCourseModal('${course.id}')">تعديل</button>
-                <button class="btn btn-sm btn-danger action-btn" onclick="deleteCourse('${course.id}')">حذف</button>
-            `;
-
-            if (course.status === 'approved') {
-                statusBadge = '<span class="badge badge-success">منشور</span>';
-            } else if (course.status === 'pending') {
-                statusBadge = '<span class="badge badge-warning">معلق للموافقة</span>';
-                actionButtons = `
-                    <button class="btn btn-sm btn-primary action-btn" onclick="approveCourse('${course.id}')">موافقة</button>
-                    ${actionButtons}
-                `;
-            } else {
-                statusBadge = '<span class="badge badge-secondary">غير نشط</span>';
+            if (isPendingFilterActive) {
+                coursesToDisplay = allCourses.filter(course => course.status?.toLowerCase() === 'pending');
             }
-            
-            const row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${course.id}</td>
-                <td>${course.name}</td>
-                <td>${course.center}</td>
-                <td><span class="badge ${getLevelBadge(course.level)}">${course.level}</span></td>
-                <td>${course.price} د.أ</td>
-                <td>${statusBadge}</td>
-                <td>${actionButtons}</td>
-            `;
-        });
+
+            tableBody.innerHTML = ''; 
+
+            if (!coursesToDisplay || coursesToDisplay.length === 0) {
+                const message = isPendingFilterActive 
+                    ? "لا توجد دورات معلقة للمراجعة حالياً." 
+                    : "لا توجد دورات متاحة للإدارة حالياً.";
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #888; padding: 2rem;">${message}</td></tr>`;
+                return;
+            }
+
+            coursesToDisplay.forEach((course) => {
+                tableBody.appendChild(createCourseRow(course));
+            });
+
+        } catch (error) {
+             console.error("Critical rendering error:", error);
+        }
     }
 
-    function approveCourse(courseId) {
-        if (confirm(`هل أنت متأكد من الموافقة على الدورة ونشرها؟`)) {
-            const courseIndex = mockCourses.findIndex(c => c.id === courseId);
-            if (courseIndex !== -1) {
-                mockCourses[courseIndex].status = 'approved';
-                saveCoursesData(mockCourses); 
-                renderCourses(); 
-                alert(`تمت الموافقة على الدورة بنجاح.`);
+    // ******************************************************
+    // 4. دوال التحكم (CRUD) المتصلة بالـ API
+    // ******************************************************
+
+    /**
+     * 🌟 🔄 تحديث: الموافقة على الدورة عبر API
+     * PUT: /api/Admin/courses/approve/{id}
+     */
+    async function approveCourse(courseId, courseName) {
+        if (confirm(`هل أنت متأكد من الموافقة على الدورة "${courseName}" ونشرها؟`)) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/courses/approve/${courseId}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الاعتماد.');
+                }
+    
+                const data = await response.json();
+                alert(`✅ ${data.message || 'تمت الموافقة بنجاح.'}`);
+                await renderCourses(); // إعادة تحميل الجدول
+                
+            } catch (error) {
+                console.error('Approval Error:', error);
+                alert(`❌ فشل الاعتماد: ${error.message}`);
             }
         }
     }
 
-    function deleteCourse(courseId) {
-        if (confirm(`هل أنت متأكد من حذف هذه الدورة بشكل دائم؟`)) {
-            mockCourses = mockCourses.filter(c => c.id !== courseId);
-            saveCoursesData(mockCourses); 
-            renderCourses(); 
-            alert(`تم حذف الدورة بنجاح.`);
+    /**
+     * 🌟 🔄 تحديث: حذف الدورة عبر API
+     * DELETE: /api/Admin/courses/{id}
+     */
+    async function deleteCourse(courseId, courseName) {
+        if (confirm(`هل أنت متأكد من حذف الدورة "${courseName}" بشكل دائم؟`)) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الحذف.');
+                }
+
+                const data = await response.json();
+                alert(`✅ ${data.message || 'تم الحذف بنجاح.'}`);
+                await renderCourses(); // إعادة تحميل الجدول
+                
+            } catch (error) {
+                console.error('Deletion Error:', error);
+                alert(`❌ فشل الحذف: ${error.message}`);
+            }
         }
     }
 
+    // دالة التصفية (لم تتغير)
     function filterCourses() {
         const pendingButton = document.querySelector('.admin-controls button[onclick*="filterCourses"]');
-        
         isPendingFilterActive = !isPendingFilterActive;
 
         if (isPendingFilterActive) {
@@ -313,15 +389,15 @@
             pendingButton.classList.remove('active-filter');
             pendingButton.textContent = 'عرض الدورات المعلقة';
         }
-        
         renderCourses();
     }
 
     // ******************************************************
-    // الدوال الخاصة بالنموذج المنبثق (Modal Functions)
+    // 5. الدوال الخاصة بالنموذج المنبثق (Modal Functions)
     // ******************************************************
 
     function openAddCourseModal() {
+        currentCourseId = null;
         document.getElementById('courseModalTitle').textContent = 'إضافة دورة تدريبية جديدة';
         document.getElementById('courseModalSubmitBtn').textContent = 'إرسال للموافقة';
         document.getElementById('courseId').value = ''; 
@@ -329,74 +405,101 @@
         document.getElementById('addCourseModal').classList.remove('hidden');
     }
 
-    function openEditCourseModal(courseId) {
-        const course = mockCourses.find(c => c.id === courseId);
+    /**
+     * 🌟 🔄 تحديث: جلب بيانات الدورة الواحدة من الـ API للتعديل
+     * GET: /api/Admin/courses/{id}
+     */
+    async function openEditCourseModal(courseId) {
+        currentCourseId = courseId;
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+                 headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+            });
+            if (!response.ok) throw new Error('فشل جلب بيانات الدورة.');
+            
+            const course = await response.json();
 
-        if (!course) {
-            alert('لم يتم العثور على بيانات الدورة!');
-            return;
+            document.getElementById('courseModalTitle').textContent = `تعديل بيانات: ${course.name}`;
+            document.getElementById('courseModalSubmitBtn').textContent = 'حفظ التعديلات';
+            document.getElementById('courseId').value = course.id; 
+
+            document.getElementById('courseName').value = course.name;
+            document.getElementById('courseCenterId').value = course.centerId;
+            document.getElementById('courseLevel').value = course.level;
+            document.getElementById('coursePrice').value = course.price;
+
+            document.getElementById('addCourseModal').classList.remove('hidden');
+
+        } catch (error) {
+            alert(`❌ لا يمكن تحميل بيانات الدورة: ${error.message}`);
         }
-
-        document.getElementById('courseModalTitle').textContent = `تعديل بيانات: ${course.name}`;
-        document.getElementById('courseModalSubmitBtn').textContent = 'حفظ التعديلات';
-        document.getElementById('courseId').value = courseId; 
-
-        document.getElementById('courseName').value = course.name;
-        document.getElementById('courseCenter').value = course.center;
-        document.getElementById('courseLevel').value = course.level;
-        document.getElementById('coursePrice').value = course.price;
-
-        document.getElementById('addCourseModal').classList.remove('hidden');
     }
 
     function closeAddCourseModal() {
         document.getElementById('addCourseModal').classList.add('hidden');
         document.getElementById('addCourseForm').reset();
+        currentCourseId = null;
     }
 
-    // معالج إرسال النموذج (للإضافة والتعديل)
-    document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+    /**
+     * 🌟 🔄 تحديث: معالج إرسال النموذج (للإضافة والتعديل) عبر API
+     * POST: /api/Admin/courses (للإضافة)
+     * PUT: /api/Admin/courses/{id} (للتعديل)
+     */
+    document.getElementById('addCourseForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const courseId = document.getElementById('courseId').value;
-        const courseName = document.getElementById('courseName').value;
+        
+        const courseId = currentCourseId;
+        const isEditing = !!courseId;
         
         const formData = {
+            id: courseId,
             name: document.getElementById('courseName').value,
-            center: document.getElementById('courseCenter').value,
+            centerId: document.getElementById('courseCenterId').value, // 🌟 تغيير: أصبح ID
             level: document.getElementById('courseLevel').value,
             price: parseFloat(document.getElementById('coursePrice').value),
+            status: isEditing ? undefined : 'pending' // 🌟 إرسال "pending" فقط عند الإنشاء
         };
 
-        if (courseId) {
-            // عملية تعديل
-            const courseIndex = mockCourses.findIndex(c => c.id === courseId);
-            if (courseIndex !== -1) {
-                mockCourses[courseIndex] = { ...mockCourses[courseIndex], ...formData };
+        try {
+            const url = isEditing ? `${API_BASE_URL}/courses/${courseId}` : `${API_BASE_URL}/courses`;
+            const method = isEditing ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAuthToken()}`
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `فشل في ${isEditing ? 'تعديل' : 'إضافة'} الدورة.`);
             }
-            alert(`تم حفظ تعديلات الدورة: ${courseName}.`);
-        } else {
-            // عملية إضافة
-            const newId = (mockCourses.length > 0 ? Math.max(...mockCourses.map(c => parseInt(c.id))) + 1 : 1).toString();
-            const newCourse = {
-                id: newId, 
-                ...formData,
-                status: 'pending' 
-            };
-            mockCourses.push(newCourse);
-            alert(`تم إرسال بيانات الدورة الجديدة: ${courseName} للموافقة.`);
+            
+            const data = await response.json();
+            alert(`✅ ${data.message || 'تمت العملية بنجاح!'}`); 
+
+        } catch (error) {
+            console.error(`${isEditing ? 'Update' : 'Create'} Error:`, error);
+            alert(`❌ فشل الاتصال: ${error.message}`);
         }
-        
-        saveCoursesData(mockCourses); 
+
         closeAddCourseModal();
-        renderCourses(); 
+        await renderCourses(); // إعادة تحميل الجدول
     });
     
+    // إغلاق المودال عند النقر على الخلفية
     document.getElementById('addCourseModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeAddCourseModal();
         }
     });
 
+    // 🌟 🔄 تحديث: بدء تحميل البيانات عند فتح الصفحة
     document.addEventListener('DOMContentLoaded', renderCourses);
 </script>
 </body>
