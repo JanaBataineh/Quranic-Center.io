@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ["dotnet-sdk_9"]
+
+[phases.install]
+cmds = [
+  "cd QuranCenters.API && dotnet restore"
+]
+
+[phases.build]
+cmds = [
+  "cd QuranCenters.API && dotnet publish -c Release -o out"
+]
+
+[start]
+cmd = "cd QuranCenters.API/out && ./QuranCenters.API"
