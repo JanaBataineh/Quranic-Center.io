@@ -3,7 +3,7 @@ using QuranCenters.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Npgsql; 
+using Npgsql; // 👈 هذا السطر مهم جداً للبناء على Railway
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,13 +12,13 @@ var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    // وضع التطوير المحلي (SQLite)
+    // الوضع المحلي
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 else
 {
-    // وضع النشر على Railway (PostgreSQL)
+    // وضع النشر (Railway)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString));
 }
@@ -38,7 +38,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 3. إصلاح CORS (تحديد الروابط المسموحة بدقة)
+// 3. إعداد الـ CORS (للسماح لـ Vercel)
 const string AllowSpecificOrigins = "AllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
@@ -47,8 +47,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(
                     "https://quranic-center-io.vercel.app", // رابط موقعك
-                    "http://localhost:5500",                 // رابط الاختبار المحلي 1
-                    "http://127.0.0.1:5500"                  // رابط الاختبار المحلي 2
+                    "http://localhost:5500",
+                    "http://127.0.0.1:5500"
                   )
                   .AllowAnyHeader()
                   .AllowAnyMethod();
@@ -62,22 +62,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4. 🌟🌟 قسم التحديث التلقائي لقاعدة البيانات (الأهم) 🌟🌟
-using (var scope = app.Services.CreateScope())
+// 4. التحديث التلقائي لقاعدة البيانات (Migration)
+try
 {
-    var services = scope.ServiceProvider;
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        // يجبر النظام على إنشاء الجداول إذا لم تكن موجودة
-        context.Database.Migrate();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
         Console.WriteLine("✅ Database Migration Completed Successfully!");
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Database Migration Failed: {ex.Message}");
-    }
 }
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ Database Migration Failed: {ex.Message}");
+}
+
 
 // إعدادات الـ Pipeline
 if (app.Environment.IsDevelopment())
@@ -86,8 +85,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// تفعيل CORS
-app.UseCors(AllowSpecificOrigins);
+app.UseRouting(); // 👈 إضافة هذا السطر (مهم للترتيب)
+
+app.UseCors(AllowSpecificOrigins); // 👈 تفعيل السياسة
 
 app.UseAuthentication();
 app.UseAuthorization();
