@@ -3,7 +3,7 @@ using QuranCenters.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Npgsql; 
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,17 +40,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // ==========================================
-// 3. إعداد الـ CORS (الحل الجذري)
+// 3. إعداد الـ CORS (تحديد Vercel بالاسم)
 // ==========================================
-// نقوم بتعريف سياسة اسمها "MyCorsPolicy" تسمح للجميع
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyCorsPolicy", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
+    options.AddPolicy("AllowMyVercelApp",
+        policy =>
+        {
+            policy.WithOrigins(
+                    "https://quranic-center-io.vercel.app", // 👈 رابطك على Vercel
+                    "http://localhost:5500",                  // رابط التجربة المحلي
+                    "http://127.0.0.1:5500"                   // رابط اللايف سيرفر
+                  )
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
 
 builder.Services.AddAuthorization();
@@ -61,10 +65,10 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // ==========================================
-// 4. الـ Pipeline (الترتيب هنا مقدس!)
+// 4. الـ Pipeline
 // ==========================================
 
-// تحديث قاعدة البيانات تلقائياً
+// تحديث قاعدة البيانات
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -85,10 +89,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ⚠️ الترتيب الصحيح لحل مشكلة CORS ⚠️
 app.UseRouting();
 
-app.UseCors("MyCorsPolicy"); // 👈 يجب أن يطابق الاسم المعرف في الأعلى
+// ⚠️ تفعيل السياسة المحددة ⚠️
+app.UseCors("AllowMyVercelApp"); 
 
 app.UseAuthentication();
 app.UseAuthorization();
