@@ -3,13 +3,13 @@ using QuranCenters.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Npgsql;
+using Npgsql; 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ==========================================
+// ====================================================
 // 1. إعداد قاعدة البيانات
-// ==========================================
+// ====================================================
 var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -22,9 +22,9 @@ else
         options.UseNpgsql(connectionString));
 }
 
-// ==========================================
+// ====================================================
 // 2. إعداد الـ JWT
-// ==========================================
+// ====================================================
 var securityKey = builder.Configuration["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,36 +39,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// ==========================================
-// 3. إعداد الـ CORS (تحديد Vercel بالاسم)
-// ==========================================
+// ====================================================
+// 3. إعداد الـ CORS (مفتوح للجميع - الحل الجذري)
+// ====================================================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowMyVercelApp",
-        policy =>
-        {
-            policy.WithOrigins(
-                    "https://quranic-center-io.vercel.app", // 👈 رابطك على Vercel
-                    "http://localhost:5500",                  // رابط التجربة المحلي
-                    "http://127.0.0.1:5500"                   // رابط اللايف سيرفر
-                  )
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    // سياسة عامة تسمح للكل بدون شروط
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()   // اسمح لأي رابط (Vercel, Localhost, Mobile...)
+               .AllowAnyMethod()   // GET, POST, PUT, DELETE
+               .AllowAnyHeader();  // أي نوع بيانات
+    });
 });
 
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ==========================================
-// 4. الـ Pipeline
-// ==========================================
-
-// تحديث قاعدة البيانات
+// ====================================================
+// 4. تحديث قاعدة البيانات تلقائياً
+// ====================================================
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -89,10 +82,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// ====================================================
+// 5. ترتيب الـ Middleware (مهم جداً جداً)
+// ====================================================
+
 app.UseRouting();
 
-// ⚠️ تفعيل السياسة المحددة ⚠️
-app.UseCors("AllowMyVercelApp"); 
+// ⚠️ تفعيل السياسة المفتوحة هنا قبل المصادقة ⚠️
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
