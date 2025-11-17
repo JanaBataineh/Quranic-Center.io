@@ -1,15 +1,23 @@
+# Nixpacks.toml لمشروع QuranCenters.API مع حل موجود داخل نفس المجلد
+
 [phases.setup]
-nixPkgs = ["dotnet-sdk_9"]
+nixPkgs = ["dotnet-sdk_6"]
 
 [phases.install]
 cmds = [
-  "cd QuranCenters.API && dotnet restore"
+  "echo 'Restoring dependencies...'",
+  "cd QuranCenters.API && dotnet restore QuranCenters.API.sln"
 ]
 
 [phases.build]
 cmds = [
-  "cd QuranCenters.API && dotnet publish -c Release -o out"
+  "echo 'Building project...'",
+  "cd QuranCenters.API && dotnet publish QuranCenters.API.sln -c Release -o out"
 ]
 
 [start]
 cmd = "cd QuranCenters.API/out && ./QuranCenters.API"
+
+[options]
+# نسخ جميع ملفات المشروع
+include = ["QuranCenters.API/**"]
