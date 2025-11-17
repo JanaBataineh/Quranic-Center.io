@@ -24,5 +24,6 @@ namespace QuranCenters.API.Models
         public int Age { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

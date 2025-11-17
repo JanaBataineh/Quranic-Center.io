@@ -38,18 +38,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 3. إعداد الـ CORS (للسماح لـ Vercel)
+// 3. إعداد الـ CORS (مفتوح للجميع حالياً للتجربة)
 const string AllowSpecificOrigins = "AllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: AllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins(
-                    "https://quranic-center-io.vercel.app", // رابط موقعك
-                    "http://localhost:5500",
-                    "http://127.0.0.1:5500"
-                  )
+            policy.AllowAnyOrigin()   // 👈 التغيير الجذري: السماح لأي مصدر
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

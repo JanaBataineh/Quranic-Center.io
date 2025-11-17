@@ -459,9 +459,9 @@ function createCourseCard(course) {
           <p style="font-size: 0.875rem; margin: 0;">${course.schedule}</p>
         </div>
         <div class="flex gap-2">
-          <button class="btn btn-primary" style="flex: 1; font-size: 0.875rem;">
-            التسجيل في الدورة
-          </button>
+<button class="btn btn-primary" style="flex: 1; font-size: 0.875rem;" onclick="enrollInCourse('${course.id}')">   
+التسجيل في الدورة  
+        </button>
           <button class="btn btn-outline" style="flex: 1; font-size: 0.875rem;" onclick="showCenterDetails('${course.centerId}')">
             عرض المركز
           </button>
@@ -620,4 +620,67 @@ function getLevelClass(level) {
     if (level === 'متوسط') return 'intermediate';
     if (level === 'متقدم') return 'advanced';
     return 'default';
+}
+// ====================================================
+// 🌟 دالة تسجيل الطالب في الدورة
+// ====================================================
+async function enrollInCourse(courseId) {
+    const token = localStorage.getItem('authToken');
+    const userType = localStorage.getItem('currentUserType');
+
+    // 1. التحقق من تسجيل الدخول
+    if (!token) {
+        if(confirm("يجب تسجيل الدخول أولاً للتسجيل في الدورة. هل تريد الذهاب لصفحة الدخول؟")) {
+            window.location.href = 'login.html';
+        }
+        return;
+    }
+
+    // 2. التحقق من أن المستخدم "طالب"
+    if (userType !== 'Student') {
+        alert("عذراً، التسجيل في الدورات متاح لحسابات الطلاب فقط.");
+        return;
+    }
+
+    const originalText = event.target.innerText;
+    event.target.innerText = "جاري التسجيل...";
+    event.target.disabled = true;
+
+    try {
+        // 3. إرسال طلب التسجيل للباك إند
+        // ملاحظة: استخدم الرابط المحلي إذا كنت تجرب محلياً، أو رابط Railway للنشر
+        // const API_URL = 'http://localhost:5220/api/Student/enroll'; // محلي
+        const API_URL = 'https://quranic-centerio-production.up.railway.app/api/Student/enroll'; // Railway
+
+        const response = await fetch(`${API_URL}/${courseId}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // 4. معالجة الرد
+        if (response.ok) {
+            alert("✅ تم التسجيل في الدورة بنجاح! يمكنك متابعتها في لوحة التحكم.");
+            window.location.href = 'student-dashboard.html'; // توجيه الطالب للوحة التحكم
+        } else {
+            const errorData = await response.json();
+            if (response.status === 409) {
+                alert("⚠️ " + (errorData.message || "أنت مسجل بالفعل في هذه الدورة."));
+            } else {
+                throw new Error(errorData.message || "فشل التسجيل");
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("❌ حدث خطأ أثناء التسجيل: " + error.message);
+    } finally {
+        // إعادة الزر لحالته الطبيعية في حال الخطأ
+        if(event && event.target) {
+            event.target.innerText = originalText;
+            event.target.disabled = false;
+        }
+    }
 }

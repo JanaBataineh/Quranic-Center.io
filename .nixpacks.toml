@@ -1,23 +1,27 @@
-# Nixpacks.toml لمشروع QuranCenters.API مع حل موجود داخل نفس المجلد
+# Nixpacks.toml لمشروع .NET 6 QuranCenters.API
 
 [phases.setup]
-nixPkgs = ["dotnet-sdk_6"]
+# تثبيت نسخة .NET SDK المناسبة
+nixPkgs = ["dotnet-sdk_9"]
 
 [phases.install]
 cmds = [
   "echo 'Restoring dependencies...'",
+  # انتقل لمجلد المشروع ثم نفذ restore للملف الحل
   "cd QuranCenters.API && dotnet restore QuranCenters.API.sln"
 ]
 
 [phases.build]
 cmds = [
   "echo 'Building project...'",
+  # نفذ publish للملف الحل إلى مجلد out داخل QuranCenters.API
   "cd QuranCenters.API && dotnet publish QuranCenters.API.sln -c Release -o out"
 ]
 
 [start]
+# تشغيل التطبيق من مجلد out
 cmd = "cd QuranCenters.API/out && ./QuranCenters.API"
 
 [options]
-# نسخ جميع ملفات المشروع
+# تأكد من نسخ كل ملفات المشروع بما فيها .csproj و .sln
 include = ["QuranCenters.API/**"]

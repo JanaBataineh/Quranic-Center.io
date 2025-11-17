@@ -152,73 +152,125 @@
   </main>
   
   <script>
-    const currentStudent = {
-        name: "خالد محمود", 
-        email: "user@example.com",
-        notificationsCount: 3
-    };
+    // 1. إعدادات الاتصال
+    // 🔴 هام: استبدل الرابط أدناه برابط مشروعك على Railway
+    const API_BASE_URL = 'https://quranic-center-io.up.railway.app/api/Student'; 
+    const token = localStorage.getItem('authToken');
 
-    function updateStudentInfo() {
-        const welcomeHeader = document.getElementById('studentWelcomeHeader');
-        const navName = document.getElementById('navbarStudentName');
-        const emailInput = document.querySelector('#studentSettingsForm input[type="email"]');
-        const nameInput = document.querySelector('#studentSettingsForm input[type="text"]');
-        const notificationBadge = document.getElementById('notificationBadge');
+    // 2. التحقق من تسجيل الدخول
+    if (!token) {
+        window.location.href = 'login.html';
+    }
 
-        if (welcomeHeader) {
-            welcomeHeader.textContent = `مرحباً بك، ${currentStudent.name}`;
-        }
-        if (navName) {
-            navName.textContent = `مرحباً ${currentStudent.name.split(' ')[0]}!`;
-        }
-        
-        if (emailInput) {
-            emailInput.value = currentStudent.email;
-        }
-        if (nameInput) {
-            nameInput.value = currentStudent.name;
-        }
-        
-        if (currentStudent.notificationsCount > 0) {
-            notificationBadge.textContent = currentStudent.notificationsCount;
-            notificationBadge.style.display = 'inline';
-        } else {
-            notificationBadge.style.display = 'none';
+    // 3. دالة التشغيل الرئيسية
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadStudentProfile();
+        await loadStudentCourses();
+    });
+
+    // 4. جلب بيانات الملف الشخصي
+    async function loadStudentProfile() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('فشل جلب البيانات الشخصية');
+
+            const student = await response.json();
+
+            // تحديث الواجهة
+            const welcomeHeader = document.getElementById('studentWelcomeHeader');
+            const navName = document.getElementById('navbarStudentName');
+            
+            if(welcomeHeader) welcomeHeader.textContent = `مرحباً بك، ${student.fullName}`;
+            if(navName) navName.textContent = `مرحباً ${student.firstName}!`;
+            
+            // تعبئة النموذج (للعرض فقط)
+            const form = document.getElementById('studentSettingsForm');
+            if(form) {
+                form.querySelector('input[type="text"]').value = student.fullName;
+                form.querySelector('input[type="email"]').value = student.email;
+            }
+
+            // تحديث الإشعارات
+            if (student.notificationsCount > 0) {
+                const badge = document.getElementById('notificationBadge');
+                if(badge) {
+                    badge.textContent = student.notificationsCount;
+                    badge.style.display = 'inline';
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
         }
     }
 
-    function showNotifications() {
-        alert("🔔 تم النقر على الإشعارات. (ستعمل لاحقاً على التوجيه لصفحة الإشعارات).");
-        currentStudent.notificationsCount = 0;
-        updateStudentInfo(); 
+    // 5. جلب الدورات المسجلة للطالب
+    async function loadStudentCourses() {
+        const container = document.getElementById('studentCourses');
+        if(!container) return;
+        
+        container.innerHTML = '<p>جاري تحميل دوراتك...</p>';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/my-courses`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('فشل تحميل الدورات');
+
+            const courses = await response.json();
+
+            if (courses.length === 0) {
+                container.innerHTML = '<p>لست مسجلاً في أي دورة حالياً.</p>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <h3>${course.courseName}</h3>
+                    <p>المركز: ${course.centerName}</p>
+                    <p>الحالة: <span class="course-status status-${course.status === 'Active' ? 'active' : 'completed'}">
+                        ${course.status === 'Active' ? 'نشط' : 'مكتمل'}
+                    </span></p>
+                    <p style="font-size: 0.9rem; color: gray;">التقدم: ${course.progress || 0}%</p>
+                    <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('${course.courseId}')">
+                        الذهاب لصفحة الدورة
+                    </button>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = '<p style="color:red">حدث خطأ أثناء تحميل الدورات.</p>';
+        }
     }
-    
+
+    // 6. دوال مساعدة
     function logout() {
         if (confirm("هل أنت متأكد من تسجيل الخروج؟")) {
-            localStorage.removeItem("isStudent");
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUserType');
+            localStorage.removeItem('isStudent');
             window.location.href = "login.html";
         }
     }
 
-    function goToCourse(courseId) {
-        alert(`تم النقر على الدورة: ${courseId}. (سيتم التوجيه لصفحة تفاصيل الدورة قريباً).`);
-    }
-
-    function viewCertificate(courseId) {
-        alert(`تم النقر على عرض الشهادة للدورة المنجزة: ${courseId}. (سيتم عرض ملف الشهادة PDF قريباً).`);
+    function showNotifications() {
+        alert("لا توجد إشعارات جديدة حالياً.");
     }
 
     function changePassword() {
-        const newPass = prompt("لإعادة تعيين كلمة المرور، يرجى إدخال كلمة المرور الجديدة (6 أحرف على الأقل):");
-        
-        if (newPass && newPass.length >= 6) {
-            alert("✅ تم إرسال طلب تغيير كلمة المرور بنجاح. سيتم تطبيق التغيير قريباً.");
-        } else if (newPass) {
-            alert("❌ يجب أن تتكون كلمة المرور من 6 أحرف أو أكثر.");
-        }
+        const newPass = prompt("أدخل كلمة المرور الجديدة:");
+        if(newPass) alert("سيتم تفعيل هذه الميزة قريباً مع الباك إند.");
     }
 
-    document.addEventListener('DOMContentLoaded', updateStudentInfo);
-  </script>
+    function goToCourse(courseId) {
+        // يمكنك توجيه الطالب لصفحة التفاصيل إذا قمت بإنشائها
+        alert(`سيتم التوجيه للدورة رقم: ${courseId}`);
+    }
+</script>
 </body>
 </html>

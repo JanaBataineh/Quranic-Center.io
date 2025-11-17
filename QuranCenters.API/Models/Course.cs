@@ -16,5 +16,6 @@ namespace QuranCenters.API.Models
         [ForeignKey("Center")]
         public string CenterId { get; set; } = null!;
         public Center Center { get; set; } = null!;
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }
