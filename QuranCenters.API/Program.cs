@@ -3,27 +3,28 @@ using QuranCenters.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Npgsql; // 👈 هذا السطر مهم جداً للبناء على Railway
+using Npgsql; 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. إعداد الاتصال بقاعدة البيانات
+// ==========================================
+// 1. إعداد قاعدة البيانات
+// ==========================================
 var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
-
 if (string.IsNullOrEmpty(connectionString))
 {
-    // الوضع المحلي
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 else
 {
-    // وضع النشر (Railway)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString));
 }
 
-// 2. إعدادات الـ JWT
+// ==========================================
+// 2. إعداد الـ JWT
+// ==========================================
 var securityKey = builder.Configuration["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -38,17 +39,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 3. إعداد الـ CORS (مفتوح للجميع حالياً للتجربة)
-const string AllowSpecificOrigins = "AllowSpecificOrigins";
+// ==========================================
+// 3. إعداد الـ CORS (الحل الجذري)
+// ==========================================
+// نقوم بتعريف سياسة اسمها "MyCorsPolicy" تسمح للجميع
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: AllowSpecificOrigins,
-        policy =>
-        {
-            policy.AllowAnyOrigin()   // 👈 التغيير الجذري: السماح لأي مصدر
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("MyCorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
 builder.Services.AddAuthorization();
@@ -58,7 +60,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4. التحديث التلقائي لقاعدة البيانات (Migration)
+// ==========================================
+// 4. الـ Pipeline (الترتيب هنا مقدس!)
+// ==========================================
+
+// تحديث قاعدة البيانات تلقائياً
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -73,17 +79,16 @@ catch (Exception ex)
     Console.WriteLine($"❌ Database Migration Failed: {ex.Message}");
 }
 
-
-// إعدادات الـ Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseRouting(); // 👈 إضافة هذا السطر (مهم للترتيب)
+// ⚠️ الترتيب الصحيح لحل مشكلة CORS ⚠️
+app.UseRouting();
 
-app.UseCors(AllowSpecificOrigins); // 👈 تفعيل السياسة
+app.UseCors("MyCorsPolicy"); // 👈 يجب أن يطابق الاسم المعرف في الأعلى
 
 app.UseAuthentication();
 app.UseAuthorization();
