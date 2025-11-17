@@ -21,9 +21,7 @@ namespace QuranCenters.API.Controllers
             _context = context;
         }
 
-        // =======================================================
-        // 1. GET: /api/Admin/stats (إحصائيات لوحة التحكم)
-        // =======================================================
+        // 1. الإحصائيات
         [HttpGet("stats")]
         public async Task<IActionResult> GetStats()
         {
@@ -34,34 +32,23 @@ namespace QuranCenters.API.Controllers
                 TotalUsers = await _context.Users.CountAsync(),
                 PendingCenters = await _context.Centers.CountAsync(c => c.Status == "pending"),
                 PendingCourses = await _context.Courses.CountAsync(c => c.Status == "pending"),
-                NewMessages = 0 // (لأننا لم نقم ببناء جدول الرسائل بعد)
+                NewMessages = 0 
             };
             return Ok(stats);
         }
 
-        // =======================================================
-        // =======================================================
-        // ==
-        // ==    ( 1 )  قســم إدارة المــراكز (Centers)
-        // ==
-        // =======================================================
-        // =======================================================
-
+        // 2. إدارة المراكز (دوال موحدة)
         [HttpGet("centers")]
         public async Task<IActionResult> GetCenters()
         {
-            var centers = await _context.Centers.OrderBy(c => c.CreatedAt).ToListAsync();
-            return Ok(centers);
+            return Ok(await _context.Centers.OrderBy(c => c.CreatedAt).ToListAsync());
         }
 
         [HttpGet("centers/{id}")]
         public async Task<IActionResult> GetCenterById(string id)
         {
             var center = await _context.Centers.FindAsync(id);
-            if (center == null)
-            {
-                return NotFound(new { message = "المركز غير موجود." });
-            }
+            if (center == null) return NotFound(new { message = "المركز غير موجود." });
             return Ok(center);
         }
         
@@ -76,23 +63,19 @@ namespace QuranCenters.API.Controllers
                 Phone = centerDto.Phone,
                 Email = centerDto.Email,
                 Established = centerDto.Established,
-                Status = "pending", // دائماً يبدأ كـ "معلق"
+                Status = "pending",
                 CreatedAt = DateTime.Now
             };
-
             _context.Centers.Add(center);
             await _context.SaveChangesAsync();
-            return Ok(new { message = "تمت إضافة المركز بنجاح وهو الآن بانتظار الاعتماد.", center = center });
+            return Ok(new { message = "تمت إضافة المركز بنجاح.", center = center });
         }
 
         [HttpPut("centers/{id}")]
         public async Task<IActionResult> UpdateCenter(string id, [FromBody] CenterDto centerDto)
         {
             var center = await _context.Centers.FindAsync(id);
-            if (center == null)
-            {
-                return NotFound(new { message = "المركز غير موجود." });
-            }
+            if (center == null) return NotFound(new { message = "المركز غير موجود." });
 
             center.Name = centerDto.Name;
             center.City = centerDto.City;
@@ -102,77 +85,50 @@ namespace QuranCenters.API.Controllers
             center.Established = centerDto.Established;
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "تم تعديل بيانات المركز بنجاح.", center = center });
+            return Ok(new { message = "تم تعديل البيانات.", center = center });
         }
 
         [HttpPut("centers/approve/{id}")]
         public async Task<IActionResult> ApproveCenter(string id)
         {
             var center = await _context.Centers.FindAsync(id);
-            if (center == null)
-            {
-                return NotFound(new { message = "المركز غير موجود." });
-            }
-
+            if (center == null) return NotFound(new { message = "المركز غير موجود." });
             center.Status = "approved"; 
             await _context.SaveChangesAsync(); 
-            return Ok(new { message = $"تم اعتماد المركز \"{center.Name}\" بنجاح.", center = center });
+            return Ok(new { message = "تم اعتماد المركز.", center = center });
         }
 
         [HttpDelete("centers/{id}")]
         public async Task<IActionResult> DeleteCenter(string id)
         {
             var center = await _context.Centers.FindAsync(id);
-            if (center == null)
-            {
-                return NotFound(new { message = "المركز غير موجود." });
-            }
-
+            if (center == null) return NotFound(new { message = "المركز غير موجود." });
             _context.Centers.Remove(center); 
             await _context.SaveChangesAsync(); 
-            return Ok(new { message = $"تم حذف المركز \"{center.Name}\" بنجاح." });
+            return Ok(new { message = "تم حذف المركز." });
         }
 
-
-        // =======================================================
-        // =======================================================
-        // ==
-        // ==    ( 2 )  قســم إدارة الــدورات (Courses)
-        // ==
-        // =======================================================
-        // =======================================================
-        
+        // 3. إدارة الدورات (دوال موحدة)
         [HttpGet("courses")]
         public async Task<IActionResult> GetCourses()
         {
-            var courses = await _context.Courses.ToListAsync();
-            return Ok(courses);
+            return Ok(await _context.Courses.ToListAsync());
         }
 
         [HttpGet("courses/{id}")]
         public async Task<IActionResult> GetCourseById(string id)
         {
             var course = await _context.Courses.FindAsync(id);
-            if (course == null)
-            {
-                return NotFound(new { message = "الدورة غير موجودة." });
-            }
+            if (course == null) return NotFound(new { message = "الدورة غير موجودة." });
             return Ok(course);
         }
 
         [HttpPost("courses")]
         public async Task<IActionResult> CreateCourse([FromBody] CourseDto courseDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var centerExists = await _context.Centers.AnyAsync(c => c.Id == courseDto.CenterId);
-            if (!centerExists)
-            {
-                return BadRequest(new { message = "المركز المحدد غير موجود." });
-            }
+            if (!centerExists) return BadRequest(new { message = "المركز غير موجود." });
 
             var newCourse = new Course
             {
@@ -182,62 +138,42 @@ namespace QuranCenters.API.Controllers
                 CenterId = courseDto.CenterId,
                 Status = "pending"
             };
-
             _context.Courses.Add(newCourse);
             await _context.SaveChangesAsync();
-
-            return Ok(new { message = "تمت إضافة الدورة بنجاح، وهي بانتظار الموافقة.", course = newCourse });
+            return Ok(new { message = "تمت إضافة الدورة.", course = newCourse });
         }
 
         [HttpPut("courses/{id}")]
         public async Task<IActionResult> UpdateCourse(string id, [FromBody] CourseDto courseDto)
         {
             var course = await _context.Courses.FindAsync(id);
-
-            if (course == null)
-            {
-                return NotFound(new { message = "الدورة غير موجودة." });
-            }
-
+            if (course == null) return NotFound(new { message = "الدورة غير موجودة." });
             course.Name = courseDto.Name;
             course.Level = courseDto.Level;
             course.Price = courseDto.Price;
             course.CenterId = courseDto.CenterId;
-
             await _context.SaveChangesAsync();
-            return Ok(new { message = "تم تعديل الدورة بنجاح.", course = course });
+            return Ok(new { message = "تم تعديل الدورة.", course = course });
         }
 
         [HttpPut("courses/approve/{id}")]
         public async Task<IActionResult> ApproveCourse(string id)
         {
             var course = await _context.Courses.FindAsync(id);
-
-            if (course == null)
-            {
-                return NotFound(new { message = "الدورة غير موجودة." });
-            }
-
+            if (course == null) return NotFound(new { message = "الدورة غير موجودة." });
             course.Status = "approved";
             await _context.SaveChangesAsync();
-
-            return Ok(new { message = $"تم اعتماد الدورة \"{course.Name}\" بنجاح." });
+            return Ok(new { message = "تم اعتماد الدورة." });
         }
 
         [HttpDelete("courses/{id}")]
         public async Task<IActionResult> DeleteCourse(string id)
         {
             var course = await _context.Courses.FindAsync(id);
-
-            if (course == null)
-            {
-                return NotFound(new { message = "الدورة غير موجودة." });
-            }
-
+            if (course == null) return NotFound(new { message = "الدورة غير موجودة." });
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
-
-            return Ok(new { message = $"تم حذف الدورة \"{course.Name}\" بنجاح." });
+            return Ok(new { message = "تم حذف الدورة." });
         }
     }
 }

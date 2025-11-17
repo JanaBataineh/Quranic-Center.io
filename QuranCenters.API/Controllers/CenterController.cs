@@ -5,9 +5,12 @@ using QuranCenters.API.DTOs;
 using QuranCenters.API.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace QuranCenters.API.Controllers
 {
+    [Authorize(Roles = "Center")]
     [Route("api/[controller]")]
     [ApiController]
     public class CenterController : ControllerBase
@@ -19,93 +22,110 @@ namespace QuranCenters.API.Controllers
             _context = context;
         }
 
+        // 🌟🌟 دالة مساعدة للحصول على CenterId من التوكن
+        private string? GetCenterIdFromToken()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var center = _context.Centers.FirstOrDefault(c => c.Id == userId);
+
+            return center?.Id;
+        }
+
         // =======================================================
         // 1. GET: /api/Center/my-info
-        // (جلب بيانات المركز بناءً على الإيميل المرسل في الهيدر)
         // =======================================================
-        
-        // 🌟🌟 التصحيح هنا 🌟🌟
-        // 1. أضفنا اسم الدالة: GetMyInfo
-        // 2. أضفنا [FromHeader] لقراءة الإيميل من الطلب
         [HttpGet("my-info")]
-        public async Task<IActionResult> GetMyInfo([FromHeader(Name = "User-Email")] string userEmail)
+        public async Task<IActionResult> GetMyInfo()
         {
-            if (string.IsNullOrEmpty(userEmail))
+            var centerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(centerId))
             {
-                return Unauthorized(new { message = "بيانات التحقق (الإيميل) مفقودة." });
+                return Unauthorized(new { message = "بيانات التحقق مفقودة أو غير صالحة." });
             }
 
-            var center = await _context.Centers
-                .FirstOrDefaultAsync(c => c.Email.ToLower() == userEmail.ToLower());
+            var center = await _context.Centers.FindAsync(centerId);
 
             if (center == null)
             {
-                return NotFound(new { message = "لم يتم العثور على بيانات المركز المرتبطة بهذا الحساب." });
+                return NotFound(new { message = "لم يتم العثور على المركز المرتبط بحسابك." });
             }
 
             return Ok(center);
         }
 
         // =======================================================
-        // 2. GET: /api/Center/courses/{centerId}
-        // (جلب الدورات الخاصة بمركز معين)
+        // 2. GET: /api/Center/courses
         // =======================================================
-        [HttpGet("courses/{centerId}")]
-        public async Task<IActionResult> GetCoursesForCenter(string centerId)
+        [HttpGet("courses")]
+        public async Task<IActionResult> GetCenterCourses()
         {
-            // (TODO: يجب إضافة تحقق للتأكد من أن المستخدم يملك هذا المركز)
-            
+            var centerId = GetCenterIdFromToken();
+            if (centerId == null)
+                return Unauthorized(new { message = "غير مصرح لك." });
+
             var courses = await _context.Courses
                 .Where(c => c.CenterId == centerId)
                 .OrderBy(c => c.Name)
                 .ToListAsync();
-                
+
             return Ok(courses);
         }
 
         // =======================================================
-        // 3. POST: /api/Center/courses
-        // (إضافة دورة جديدة للمركز)
+        // 3. POST: /api/Center/courses (إضافة دورة جديدة)
         // =======================================================
-        [HttpPost("courses")]
-        public async Task<IActionResult> CreateCourse([FromBody] CourseDto courseDto)
-        {
-            // (TODO: يجب إضافة تحقق للتأكد من أن المستخدم يملك CenterId المرسل)
+[HttpPost("courses")]
+public async Task<IActionResult> CreateCourse([FromBody] CourseDto courseDto)
+{
+    if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var newCourse = new Course
-            {
-                Name = courseDto.Name,
-                Level = courseDto.Level,
-                Price = courseDto.Price,
-                CenterId = courseDto.CenterId,
-                Status = "pending" // الدورات الجديدة دائماً معلقة لموافقة الأدمن
-            };
+    // 🌟 التعديل: نأخذ الآيدي من التوكن لضمان الحماية بدلاً من البدي
+    var centerId = GetCenterIdFromToken();
+    if (centerId == null) return Unauthorized();
 
-            _context.Courses.Add(newCourse);
-            await _context.SaveChangesAsync();
+    var newCourse = new Course
+    {
+        Name = courseDto.Name,
+        Level = courseDto.Level,
+        Price = courseDto.Price,
+        CenterId = centerId, // ✅ استخدام الآيدي المستخرج من التوكن
+        Status = "pending"
+    };
 
-            return Ok(new { message = "تمت إضافة الدورة بنجاح، وهي بانتظار موافقة الأدمن.", course = newCourse });
-        }
+    _context.Courses.Add(newCourse);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "تمت إضافة الدورة بنجاح، وهي بانتظار موافقة الأدمن.", course = newCourse });
+}
 
         // =======================================================
         // 4. DELETE: /api/Center/courses/{id}
-        // (حذف دورة)
         // =======================================================
         [HttpDelete("courses/{id}")]
         public async Task<IActionResult> DeleteCourse(string id)
         {
+            var centerId = GetCenterIdFromToken();
+            if (centerId == null)
+                return Unauthorized(new { message = "غير مصرح لك." });
+
             var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
                 return NotFound(new { message = "الدورة غير موجودة." });
             }
-            
-            // (TODO: يجب إضافة تحقق للتأكد من أن المستخدم يملك هذه الدورة قبل حذفها)
+
+            // حماية IDOR — ملكية الدورة
+            if (course.CenterId != centerId)
+            {
+                return StatusCode(403, new { message = "لا تملك الصلاحية لحذف دورة لا تخص مركزك." });
+            }
 
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "تم حذف الدورة بنجاح." });
+            return Ok(new { message = $"تم حذف الدورة \"{course.Name}\" بنجاح." });
         }
     }
 }

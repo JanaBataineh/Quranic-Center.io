@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using QuranCenters.API.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL; // 🌟🌟 هذا هو السطر المفقود 🌟🌟
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var securityKey = builder.Configuration["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890";
 // 1. تعريف سياسة CORS
 const string AllowAllOriginsPolicy = "AllowAllOrigins";
 
@@ -41,8 +45,24 @@ else
 }
 
 // ... (باقي الكود: AddControllers, AddSwaggerGen, etc.)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false, // لتبسيط عملية الاختبار
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            // مفتاح التشفير السري
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey))
+        };
+    });
 
+// 3. إضافة خدمة التفويض (Authorization)
+builder.Services.AddAuthorization();
 // Add services to the container.
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -59,7 +79,7 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.UseCors(AllowAllOriginsPolicy); 
-
+app.UseAuthentication(); // 🌟 يجب أن تأتي قبل UseAuthorization()
 app.UseAuthorization();
 
 app.MapControllers();

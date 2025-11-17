@@ -1,9 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using QuranCenters.API.DTOs;
 using System.Threading.Tasks;
-using QuranCenters.API.Data;     // 1. إضافة Using
-using QuranCenters.API.Models;    // 2. إضافة Using
-using Microsoft.EntityFrameworkCore; // 3. إضافة Using
+using QuranCenters.API.Data;
+using QuranCenters.API.Models;
+using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using System.Collections.Generic;
+using System;
 
 namespace QuranCenters.API.Controllers
 {
@@ -11,33 +19,27 @@ namespace QuranCenters.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        // 4. ربط قاعدة البيانات (بدلاً من MockUsers)
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _config;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // =======================================================
-        // [نقطة نهاية التسجيل] - POST: api/Auth/register
+        // REGISTER
         // =======================================================
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto request)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            // 1. التحقق إذا كان البريد مسجل مسبقًا
             if (await _context.Users.AnyAsync(u => u.Email == request.Email.ToLower()))
-            {
-                // 409 Conflict
                 return Conflict(new { message = "هذا البريد الإلكتروني مسجل بالفعل." });
-            }
 
-            // 2. إنشاء مستخدم جديد
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -45,60 +47,59 @@ namespace QuranCenters.API.Controllers
                 LastName = request.LastName,
                 Age = request.Age,
                 Email = request.Email.ToLower(),
-                UserType = request.UserType, // "Student" أو "Center"
-
-                // ⭐️ تنبيه أمني: هذا يخزن كلمة المرور كنص عادي
-                // هذا يطابق المنطق الذي تحتاجه الآن ليعمل المشروع
-                // في مشروع حقيقي، يجب عليك عمل "Hash" لكلمة المرور هنا
-                PasswordHash = request.Password
+                UserType = request.UserType,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
             };
 
-            // 3. إضافة المستخدم وحفظ التغييرات
             await _context.Users.AddAsync(user);
+            
+            // 🌟 إذا كان المسجل مركزاً، ننشئ له سجلاً في جدول المراكز فوراً
+            if (request.UserType == "Center")
+            {
+                var center = new Center
+                {
+                    Id = user.Id, // نفس الآيدي لربط الحساب بالمركز
+                    Name = $"{request.FirstName} {request.LastName}",
+                    Email = request.Email,
+                    City = "غير محدد",
+                    Address = "غير محدد",
+                    Phone = "غير محدد",
+                    Status = "pending",
+                    CreatedAt = DateTime.Now
+                };
+                await _context.Centers.AddAsync(center);
+            }
+
             await _context.SaveChangesAsync();
 
-            // 4. إرجاع رد ناجح
-            // (يمكنك أيضاً تسجيل دخوله مباشرة وإرجاع Token)
             return Ok(new { message = "تم إنشاء الحساب بنجاح!" });
         }
 
-
         // =======================================================
-        // [نقطة نهاية الدخول] - POST: api/Auth/login
+        // LOGIN
         // =======================================================
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto request)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            // 1. البحث عن المستخدم في قاعدة البيانات الحقيقية
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email.ToLower());
 
             if (user == null)
-            {
-                // لم يتم العثور على المستخدم
                 return Unauthorized(new { message = "البريد الإلكتروني أو كلمة المرور غير صحيحة." });
-            }
 
-            // 2. التحقق من كلمة المرور (تحقق بسيط يطابق منطق التسجيل)
-            bool isPasswordValid = request.Password == user.PasswordHash;
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isPasswordValid)
-            {
-                // كلمة المرور غير صحيحة
                 return Unauthorized(new { message = "البريد الإلكتروني أو كلمة المرور غير صحيحة." });
-            }
 
-            // 3. محاكاة إنشاء الرمز المميز (JWT Token)
-            var token = $"JWT.{user.UserType}.{Guid.NewGuid().ToString().Substring(0, 8)}"; // رمز وهمي
+            // إنشاء التوكن الصحيح
+            string token = CreateToken(user);
 
-            // 4. إرجاع استجابة نجاح (مطابقة لما يتوقعه login.js)
             return Ok(new
             {
-                message = $"تم تسجيل الدخول بنجاح! مرحباً بك.",
+                message = "تم تسجيل الدخول بنجاح!",
                 token = token,
                 user_info = new
                 {
@@ -107,6 +108,37 @@ namespace QuranCenters.API.Controllers
                     FullName = $"{user.FirstName} {user.LastName}"
                 }
             });
+        }
+
+        // =======================================================
+        // CREATE TOKEN
+        // =======================================================
+        private string CreateToken(User user)
+        {
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890")
+            );
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.UserType)
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }
