@@ -1,93 +1,97 @@
 using Microsoft.EntityFrameworkCore;
 using QuranCenters.API.Data;
-using Npgsql.EntityFrameworkCore.PostgreSQL; // 🌟🌟 هذا هو السطر المفقود 🌟🌟
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Security.Claims;
+using Npgsql; 
 
 var builder = WebApplication.CreateBuilder(args);
-var securityKey = builder.Configuration["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890";
-// 1. تعريف سياسة CORS
-const string AllowAllOriginsPolicy = "AllowAllOrigins";
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: AllowAllOriginsPolicy,
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
-
-// =As previous instructed:
-// 1. سيحاول قراءة المتغير البسيط (للنشر على Railway)
-// ... (الكود السابق لـ builder.Services.AddCors)
-
+// 1. إعداد الاتصال بقاعدة البيانات
 var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    // وضع التطوير المحلي: استخدم SQLite
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    // وضع التطوير المحلي (SQLite)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString) // <-- 🌟 تغيير هنا
-    );
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 else
 {
-    // وضع النشر (Railway): استخدم PostgreSQL
+    // وضع النشر على Railway (PostgreSQL)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString) // <-- 🌟 تبقى كما هي
-    );
+        options.UseNpgsql(connectionString));
 }
 
-// ... (باقي الكود: AddControllers, AddSwaggerGen, etc.)
+// 2. إعدادات الـ JWT
+var securityKey = builder.Configuration["Jwt:Key"] ?? "ThisIsTheDefaultSecretKeyForTesting1234567890";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false, // لتبسيط عملية الاختبار
+            ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            // مفتاح التشفير السري
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey))
         };
     });
 
-// 3. إضافة خدمة التفويض (Authorization)
-builder.Services.AddAuthorization();
-// Add services to the container.
+// 3. إصلاح CORS (تحديد الروابط المسموحة بدقة)
+const string AllowSpecificOrigins = "AllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins(
+                    "https://quranic-center-io.vercel.app", // رابط موقعك
+                    "http://localhost:5500",                 // رابط الاختبار المحلي 1
+                    "http://127.0.0.1:5500"                  // رابط الاختبار المحلي 2
+                  )
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 4. 🌟🌟 قسم التحديث التلقائي لقاعدة البيانات (الأهم) 🌟🌟
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        // يجبر النظام على إنشاء الجداول إذا لم تكن موجودة
+        context.Database.Migrate();
+        Console.WriteLine("✅ Database Migration Completed Successfully!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Database Migration Failed: {ex.Message}");
+    }
+}
+
+// إعدادات الـ Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+// تفعيل CORS
+app.UseCors(AllowSpecificOrigins);
 
-app.UseCors(AllowAllOriginsPolicy); 
-app.UseAuthentication(); // 🌟 يجب أن تأتي قبل UseAuthorization()
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
-}
 
 app.Run();
