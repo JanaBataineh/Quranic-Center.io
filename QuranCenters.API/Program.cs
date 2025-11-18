@@ -10,17 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 // ====================================================
 // 1. إعداد قاعدة البيانات
 // ====================================================
-var connectionString = builder.Configuration["DATABASE_CONNECTION_STRING"];
-if (string.IsNullOrEmpty(connectionString))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-}
-else
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
+var host = Environment.GetEnvironmentVariable("PGHOST");
+var port = Environment.GetEnvironmentVariable("PGPORT");
+var database = Environment.GetEnvironmentVariable("PGDATABASE");
+var user = Environment.GetEnvironmentVariable("PGUSER");
+var password = Environment.GetEnvironmentVariable("PGPASSWORD");
+
+var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true";
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
 
 // ====================================================
 // 2. إعداد الـ JWT
