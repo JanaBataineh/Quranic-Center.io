@@ -44,12 +44,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // ====================================================
 builder.Services.AddCors(options =>
 {
-    // سياسة عامة تسمح للكل بدون شروط
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        builder.AllowAnyOrigin()   // اسمح لأي رابط (Vercel, Localhost, Mobile...)
-               .AllowAnyMethod()   // GET, POST, PUT, DELETE
-               .AllowAnyHeader();  // أي نوع بيانات
+        policy.WithOrigins("https://quranic-center-io.vercel.app") // Add your frontend URL here
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -89,11 +88,12 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 // ⚠️ تفعيل السياسة المفتوحة هنا قبل المصادقة ⚠️
-app.UseCors("AllowAll");
-
+// Use CORS
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
+app.UseDefaultFiles();
 app.MapControllers();
 
 app.Run();
