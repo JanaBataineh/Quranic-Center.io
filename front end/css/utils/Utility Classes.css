@@ -1,0 +1,61 @@
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+/* العرض والارتفاع */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.block { display: block; }
+.hidden { display: none; }
+
+/* Flexbox */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+/* المسافات (Gap) */
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+
+/* الهوامش (Margins & Padding) */
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem;}
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+
+/* الحواف والظلال */
+.rounded { border-radius: 0.25rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-full { border-radius: 9999px; }
+.shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.shadow-lg { box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+/* رؤوس الصفحات الداخلية (مثل صفحة اتصل بنا) */
+.page-header {
+  position: relative;
+  overflow: hidden;
+padding: 5rem 0;
+  text-align: center;
+  background: var(--secondary); /* استخدام لون موحد */
+  color: var(--text-light);
+}
+.section-muted {
+  background: var(--secondary);
+}

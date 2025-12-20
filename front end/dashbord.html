@@ -3,160 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="admin-manage-centers.html">
     <title>لوحة التحكم - معاهد الوحي</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* [تضمين جميع تنسيقات CSS الإضافية هنا] */
-        body { background: #f6f8fa; }
-        .dashboard-header { background: linear-gradient(135deg, var(--primary, #1e40af) 0%, #718355 100%); color: #fff; padding: 2rem 0 1.5rem 0; text-align: center; border-radius: 0 0 1.5rem 1.5rem; margin-bottom: 2rem; }
-        .dashboard-header h1 { margin: 0 0 0.5rem 0; font-size: 2.2rem; letter-spacing: 1px; }
-        .dashboard-header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
-        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .dashboard-card { background: #fff; border-radius: 1rem; box-shadow: 0 2px 12px rgba(30,64,175,0.07); padding: 2rem 1.5rem 1.5rem 1.5rem; text-align: center; position: relative; transition: box-shadow 0.2s; }
-        .dashboard-card:hover { box-shadow: 0 4px 24px rgba(30,64,175,0.13); }
-        .dashboard-card .icon { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary, #1e40af); }
-        .dashboard-card .stat { font-size: 2rem; font-weight: bold; margin-bottom: 0.25rem; color: #222; }
-        .dashboard-card .label { font-size: 1rem; color: #555; opacity: 0.85; }
-        .dashboard-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2rem; }
-        .dashboard-actions .btn { min-width: 160px; font-size: 1rem; }
-        @media (max-width: 600px) { .dashboard-header h1 { font-size: 1.4rem; } .dashboard-card .stat { font-size: 1.3rem; } .dashboard-card { padding: 1.2rem 0.7rem; } }
-        
-        .review-section, .recent-activity-section, .charts-section { margin-top: 3rem; }
-        .review-section h2, .recent-activity-section h2, .charts-section h2 { border-bottom: 2px solid var(--secondary); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-        .review-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .review-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--primary-dark); }
-        .review-card p { font-size: 1rem; margin-bottom: 1rem; }
-        .review-card strong { font-size: 1.5rem; color: #ff5722; }
-
-        /* تنسيق قسم المخططات البيانية الجديد */
-        .charts-section { margin-top: 3rem; margin-bottom: 3rem; }
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .chart-card { padding: 1.5rem; display: flex; justify-content: center; align-items: center; min-height: 350px; background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
-        .chart-card canvas { max-height: 300px; }
-
-        /* قائمة النشاطات الحديثة */
-        .activity-list { list-style: none; padding: 0; margin: 0; background: #fff; border-radius: 0.75rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
-        .activity-list li { padding: 1rem 1.5rem; border-bottom: 1px solid var(--secondary); display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; }
-        .activity-list li:last-child { border-bottom: none; }
-        .activity-icon { margin-left: 0.75rem; font-size: 1.2rem; }
-        .activity-time { color: var(--muted); font-size: 0.85rem; }
-    </style>
+    
+    
+      <link rel="stylesheet" href="dist/main.css">
     <script>
-        // تحقق من جلسة الأدمن
         if (localStorage.getItem("isAdmin") !== "true") {
             window.location.href = "login.html";
         }
     </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <a href="index.html" class="logo">
-                    <span style="font-weight:bold;">معاهد الوحي</span>
-                </a>
-                <ul class="nav-menu">
-                    <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
-                    <li class="nav-item"><a href="centers.html" class="nav-link">المراكز</a></li>
-                    <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
-                    <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li>
-                    <li class="nav-item"><a href="dashbord.html" class="nav-link active">لوحة التحكم</a></li>
-                </ul>
-                <button class="mobile-menu-btn"></button>
-            </div>
-        </div>
-    </nav>
 
-    <div class="dashboard-header">
-        <h1>لوحة التحكم</h1>
-        <p>مرحباً بك في لوحة تحكم معاهد الوحي. يمكنك إدارة المراكز والدورات والمستخدمين من هنا.</p>
+<body data-page="dashboard">
+
+    <aside class="modern-sidebar">
+        
+        <a href="index.html" class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#009ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            معاهد الوحي
+        </a>
+
+        <div class="menu-label">القائمة الرئيسية</div>
+        
+        <a href="dashbord.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            لوحة التحكم
+        </a>
+
+        <div class="menu-label">الإدارة</div>
+
+        <a href="admin-manage-centers.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4"></path></svg>
+            إدارة المراكز
+        </a>
+        
+        <a href="admin-manage-courses.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            إدارة الدورات
+        </a>
+
+        <a href="admin-manage-users.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            المستخدمين
+        </a>
+
+        <a href="admin-messages.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            الرسائل
+            <span id="msgBadge" class="badge badge-danger" style="margin-right: auto; font-size: 0.7rem;">0</span>
+        </a>
+
+        <div class="menu-label">النظام</div>
+
+        <a href="admin-settings.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            الإعدادات
+        </a>
+
+        <a href="#" onclick="logout()" class="sidebar-link" style="color: #ff5b5b; margin-top: auto;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            تسجيل الخروج
+        </a>
+    </aside>
+
+    <main class="dashboard-main">
+        
+        <header class="top-header">
+            <div>
+                <h2 style="margin:0; font-size: 1.5rem; color: white;">نظرة عامة</h2>
+                <p style="margin:0; opacity: 0.6; font-size: 0.9rem; color: #aaa;">مرحباً بك في لوحة تحكم النظام</p>
+            </div>
+            <div class="user-profile">
+                <div style="text-align: left; color: white;">
+                    <span style="display:block; font-weight:bold;">مدير النظام</span>
+                    <span style="font-size: 0.8rem; opacity: 0.7;">Admin</span>
+                </div>
+                <div class="user-avatar">A</div>
+            </div>
+        </header>
+<div style="display: grid; grid-template-columns: 3fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    
+    <div class="dashboard-cards" style="height: 20rem; ;
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+        gap: 1rem; 
+        margin-bottom: 0;">
+         <div class="modern-card">
+            <div class="icon-circle" style="background-color: #5d87ff; color: white;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4"></path></svg>
+            </div>
+            <div class="stat-value" id="centersCount">0</div>
+            <div class="stat-label">عدد المراكز</div>
+        </div>
+
+        <div class="modern-card">
+            <div class="icon-circle" style="background-color: #fa896b; color: white;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </div>
+            <div class="stat-value" id="coursesCount">0</div>
+            <div class="stat-label">الدورات النشطة</div>
+        </div>
+
+        <div class="modern-card">
+            <div class="icon-circle" style="background-color: #ffae1f; color: white;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="stat-value" id="usersCount">0</div>
+            <div class="stat-label">المستخدمين</div>
+        </div>
+
+        <div class="modern-card">
+            <div class="icon-circle" style="background-color: #49beff; color: white;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <div class="stat-value" id="citiesCount">0</div>
+            <div class="stat-label">المدن المغطاة</div>
+        </div>
+
     </div>
 
-    <main class="container">
-        <div class="dashboard-cards">
-            <div class="dashboard-card">
-                <div class="icon">🏫</div>
-                <div class="stat" id="centersCount">4</div>
-                <div class="label">عدد المراكز</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">📚</div>
-                <div class="stat" id="coursesCount">9</div>
-                <div class="label">عدد الدورات</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">👤</div>
-                <div class="stat" id="usersCount">25</div>
-                <div class="label">عدد المستخدمين</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="icon">🏙️</div>
-                <div class="stat" id="citiesCount">3</div>
-                <div class="label">عدد المدن</div>
-            </div>
-        </div>
+    <div class="card" style="background: #1e1e2d; border:none; padding: 1.5rem; color: white; height: 100%;">
+        <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">سجل النشاطات</h3>
+        <ul id="recentActivityList" class="activity-list" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            <li style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 8px; height: 8px; background: #50cd89; border-radius: 50%;"></div>
+                    <span>تم إضافة مركز جديد</span>
+                </div>
+                <span style="color: #666; font-size: 0.8rem;">5 د</span>
+            </li>
+            </ul>
+    </div>
 
-        <div class="dashboard-actions">
-            <a href="admin-manage-centers.html" class="btn btn-primary">إدارة المراكز</a> 
-            <a href="admin-manage-courses.html" class="btn btn-secondary">إدارة الدورات</a>
-            <a href="admin-manage-users.html" class="btn btn-outline">إدارة المستخدمين</a>
-            <a href="admin-settings.html" class="btn btn-outline">الإعدادات</a>
-        </div>
-        
-        <section class="charts-section">
-            <h2>رسوم بيانية إحصائية</h2>
-            <div class="charts-grid">
-                
-                <div class="card chart-card">
+</div>
+ <div class="dashboard-middle-row">
+            
+            <div class="card chart-card" style="background: #1e1e2d; border:none; min-height: 350px;">
+                <div style="width: 100%; height: 100%;">
                     <canvas id="centersByCityChart"></canvas>
                 </div>
-                
-                <div class="card chart-card">
-                    <canvas id="coursesByLevelChart"></canvas>
+            </div>
+
+            <div class="card chart-card level-stat-card">
+                <div class="level-header">
+                    <h3>المستويات</h3>
                 </div>
-                
-                <div class="card chart-card">
-                    <canvas id="coursesPerCenterChart"></canvas>
+                <div class="chart-container" style="height: 180px; position: relative;">
+                    <canvas id="coursesLevelDoughnut"></canvas>
+                    <div class="chart-center-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <div style="font-size: 0.8rem; color: #888;">الإجمالي</div>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: white;" id="totalLevelCount">0</div>
+                    </div>
+                </div>
+                <div class="chart-legend" style="margin-top: 1rem; font-size: 0.85rem;">
+                    <div class="legend-item"><span class="dot" style="background:#00e676;"></span> مبتدئ <span id="legend-beginner">0%</span></div>
+                    <div class="legend-item"><span class="dot" style="background:#ffea00;"></span> متوسط <span id="legend-intermediate">0%</span></div>
+                    <div class="legend-item"><span class="dot" style="background:#ff3d00;"></span> متقدم <span id="legend-advanced">0%</span></div>
                 </div>
             </div>
-        </section>
 
-        <section class="review-section">
-            <h2>الإجراءات المطلوبة</h2>
-            <div class="review-cards">
-                <div class="card review-card">
-                    <h3>مراكز جديدة</h3>
-                    <p><strong><span id="pendingCentersCount">0</span></strong> مركز بانتظار المراجعة.</p>
-                    <a href="admin-manage-centers.html?status=pending" class="btn btn-primary btn-sm">مراجعة المراكز</a>
-                </div>
-
-                <div class="card review-card">
-                    <h3>تحديثات الدورات</h3>
-                    <p><strong><span id="pendingCoursesCount">0</span></strong> دورة بانتظار الموافقة.</p>
-                    <a href="admin-manage-courses.html?status=pending" class="btn btn-primary btn-sm">مراجعة الدورات</a>
-                </div>
+            <div class="card" style="background: #1e1e2d; border:none; padding: 1.5rem; color: white;">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem;">الإجراءات المعلقة</h3>
                 
-                <div class="card review-card">
-                    <h3>رسائل جديدة</h3>
-                    <p>لديك <strong><span id="newMessagesCount">0</span></strong> رسالة لم يتم الرد عليها.</p>
-                    <a href="admin-messages.html" class="btn btn-secondary btn-sm">عرض الرسائل</a>
+                <div class="action-list">
+                    <div style="margin-bottom: 1.5rem;">
+                        <div class="action-item">
+                            <span style="color: #ccc;">مراكز جديدة</span>
+                            <span style="font-weight: bold;" id="pendingCentersCount">0</span>
+                        </div>
+                        <div class="mini-progress"><div class="mini-progress-bar" style="width: 70%; background: #009ef7;"></div></div>
+                        <a href="admin-manage-centers.html?status=pending" style="font-size: 0.8rem; color: #009ef7; display: block; margin-top: 5px; text-decoration: none;">مراجعة الطلبات &larr;</a>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <div class="action-item">
+                            <span style="color: #ccc;">دورات معلقة</span>
+                            <span style="font-weight: bold;" id="pendingCoursesCount">0</span>
+                        </div>
+                        <div class="mini-progress"><div class="mini-progress-bar" style="width: 40%; background: #ff5757;"></div></div>
+                        <a href="admin-manage-courses.html?status=pending" style="font-size: 0.8rem; color: #ff5757; display: block; margin-top: 5px; text-decoration: none;">مراجعة الدورات &larr;</a>
+                    </div>
+
+                    <div>
+                        <div class="action-item">
+                            <span style="color: #ccc;">رسائل غير مقروءة</span>
+                            <span style="font-weight: bold;" id="newMessagesCount">0</span>
+                        </div>
+                        <div class="mini-progress"><div class="mini-progress-bar" style="width: 20%; background: #50cd89;"></div></div>
+                        <a href="admin-messages.html" style="font-size: 0.8rem; color: #50cd89; display: block; margin-top: 5px; text-decoration: none;">فتح البريد &larr;</a>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <section class="recent-activity-section">
-            <h2>أحدث النشاطات</h2>
-            <ul id="recentActivityList" class="activity-list">
-                <li><span class="activity-icon">🟢</span> تم إضافة المركز "الإمام الشافعي" للمراجعة. <span class="activity-time">منذ 5 دقائق</span></li>
-                <li><span class="activity-icon">👤</span> تم إنشاء حساب جديد للطالب "سارة علي". <span class="activity-time">منذ 3 ساعات</span></li>
-                <li><span class="activity-icon">🟡</span> المركز "الصديق" طلب تعديل على دورة "التجويد المتقدم". <span class="activity-time">منذ يوم</span></li>
-            </ul>
-        </section>
+        </div>
+
+  
+
     </main>
-
+<script src="js/data/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="dashbord.js"></script>
-    <button onclick="localStorage.removeItem('isAdmin'); window.location.href='login.html';" class="btn btn-outline">تسجيل الخروج</button>
+<script src="js/components/charts.js"></script>
+ <script src="dist/adminDashboard.bundle.js"></script>
+
+    <script>
+             // إعدادات الشارت لتناسب الوضع الداكن
+        Chart.defaults.color = '#9899ac';
+        Chart.defaults.borderColor = '#2B2B40';
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAdmin');
+            window.location.href='login.html';
+        }
+    </script>
 </body>
 </html>

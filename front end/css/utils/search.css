@@ -1,0 +1,54 @@
+/* =========================================
+   18. Search & Filters (البحث والفلترة)
+   الهدف: قسم بحث بسيط يعتمد على كلاسات الفورم العامة
+   ========================================= */
+
+.search-section {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 0;
+}
+
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  color: var(--text-light);
+}
+
+/* حاوية حقل البحث (لضبط مكان الأيقونة) */
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+/* تخصيص الحقل داخل البحث لترك مسافة للأيقونة */
+/* ملاحظة: الألوان والحدود تأتي تلقائياً من كلاس .form-input العام */
+.search-input {
+  padding-right: 3rem; 
+}
+
+/* تنسيق أيقونة البحث */
+.search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none; /* كي لا تمنع الضغط على الحقل */
+  transition: color 0.3s ease;
+}
+
+/* تغيير لون الأيقونة عند الكتابة في الحقل */
+.search-input-wrapper:focus-within .search-icon {
+  color: var(--primary);
+}
+
+/* تنسيق النصوص بجانب الفلاتر */
+.search-filters span, 
+.search-filters svg {
+  color: var(--text-light);
+}

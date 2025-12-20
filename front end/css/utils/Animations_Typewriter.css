@@ -1,0 +1,16 @@
+/* =========================================
+   27. Animations: Typewriter (تأثير الكتابة)
+   الهدف: كلاس موحد يمكن إضافته لأي نص ليعطي تأثير المؤشر الوامض
+   ========================================= */
+.typing-cursor::after {
+  content: '|';
+  margin-right: 5px;
+  color: var(--primary);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+

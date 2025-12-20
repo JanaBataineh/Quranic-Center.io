@@ -1,0 +1,100 @@
+
+/* =========================================
+   31. Page: Centers Header (هيدر صفحة المراكز)
+   الهدف: واجهة داكنة مخصصة مع حقول بحث كبيرة
+   ========================================= */
+
+/* 1. خلفية الهيدر الداكنة */
+.courses-cards-grid {
+  display: grid;
+  /* هذا السطر السحري يجعل البطاقات تترتب بجانب بعضها تلقائياً */
+  /* minmax(300px, 1fr) يعني أن عرض البطاقة لا يقل عن 300 ولا يزيد عن المساحة المتاحة */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem; /* مسافة بين البطاقات */
+  width: 100%;
+  margin-top: 2rem;
+}
+.bw-header {
+    background-color: var(--secondary); /* لون أسود مائل للكحلي */
+        /* إضافة صورة خلفية خفيفة جداً أو تدرج لوني إذا أردت (اختياري) */
+    background-image: radial-gradient(circle at 50% 0%, #1a1d26 0%, var(--secondary) 70%);
+    padding: 8rem 0 5rem;   /* مساحة من الأعلى والأسفل */
+    text-align: center;
+    position: relative;
+}
+/*  النصوص */
+.bw-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    letter-spacing: -1px;
+}
+.bw-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted); /* رمادي فاتح */
+    max-width: 600px;
+    margin: 0 auto 4rem auto;
+    line-height: 1.6;
+}
+/* حاوية البحث والفلتر */
+.bw-search-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+/*  تنسيق حقول البحث والقوائم (الشكل الزجاجي) */
+.bw-search-wrapper, .bw-filter-wrapper {
+    position: relative;
+}
+.bw-search-wrapper { flex: 2; } /* البحث يأخذ مساحة أكبر */
+.bw-filter-wrapper { flex: 1; } /* الفلتر يأخذ مساحة أقل */
+/* حقول الإدخال الخاصة بالهيدر (نسخة مكبرة من form-input) */
+.bw-input {
+  width: 100%;
+  
+  /* استخدام متغيرات الزجاج */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  
+  border-radius: 16px;
+  color: var(--text-light);
+  padding: 1rem 3rem 1rem 1rem; /* مساحة للأيقونة */
+  font-size: 1rem;
+  
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s ease;
+}
+.bw-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* تنسيق النص التوضيحي (Placeholder) */
+.bw-input::placeholder {
+  color: var(--text-muted);
+}
+/* الأيقونات داخل الحقول */
+.bw-search-wrapper .search-icon,
+.bw-filter-wrapper .filter-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.3s ease;
+  width: 20px;
+  height: 20px;
+}
+
+.bw-search-wrapper:focus-within .search-icon {
+  color: var(--text-light);
+}

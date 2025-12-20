@@ -1,0 +1,139 @@
+@media (max-width: 992px) {
+  
+  /* --- 1. القائمة العلوية (Navigation) --- */
+  .navbar-content {
+    padding: 0 1.5rem;
+  }
+  
+  .nav-menu {
+    display: none; /* مخفي افتراضياً */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    
+    background: var(--secondary); /* لون الخلفية الداكن */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 1rem;
+    
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+    color: var(--text-light);
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+
+  /* --- 2. الهيرو (Hero Section) --- */
+  .hero-content-wrapper {
+    flex-direction: column-reverse; /* الشعار فوق والنص تحت */
+    text-align: center;
+    padding-top: 80px;
+    gap: 2rem;
+  }
+
+  .hero-text-container {
+    text-align: center;
+    padding-bottom: 3rem;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-main-logo {
+    width: 250px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+  }
+
+  /* --- 3. الشبكات والعرض (Grid & Layout) --- */
+  
+  .stats-grid,
+  .center-cards-grid,
+  .courses-cards-grid, 
+  .footer-content,
+  .hero-buttons,
+  .cta-buttons,
+  .grid-cols-2, 
+  .grid-cols-3, 
+  .grid-cols-4,
+  .bw-search-row,
+  .search-filters {
+    grid-template-columns: 1fr !important;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  /* --- 4. صفحة المراكز (Centers Page) --- */
+  .bw-title {
+    font-size: 2.5rem;
+  }
+  
+  .bw-input, .bw-select, .search-input-wrapper {
+    width: 100%;
+    padding: 1rem;
+  }
+
+
+
+  /* --- 6. لوحة التحكم (Dashboard) --- */
+  .modern-sidebar {
+    transform: translateX(100%); /* إخفاء القائمة الجانبية */
+    transition: transform 0.3s ease;
+  }
+  
+  .modern-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .dashboard-main {
+    margin-right: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .top-header, 
+  .dashboard-middle-row, 
+  .dashboard-bottom-row {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  /* جعل العنصر الأول في الصفوف يأخذ العرض كامل */
+  .dashboard-middle-row > *:first-child,
+  .dashboard-bottom-row > *:first-child {
+    grid-column: span 1;
+  }
+
+  /* إخفاء العناصر غير الضرورية */
+  .user-info {
+    display: none;
+  }
+}

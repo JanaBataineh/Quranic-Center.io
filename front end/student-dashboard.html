@@ -4,273 +4,201 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الطالب - معاهد الوحي</title>
-  <link rel="stylesheet" href="styles.css">
+  
+  <link rel="stylesheet" href="dist/main.css">
+
   <style>
-    body { background: #f6f8fa; }
-    .dashboard-header {
-      background: linear-gradient(135deg, #4A7373 0%, #6B9A9A 100%); 
-      color: #fff;
-      padding: 2rem 0 1.5rem 0;
-      text-align: center;
-      border-radius: 0 0 1.5rem 1.5rem;
-      margin-bottom: 2rem;
+    body { background: #f6f8fa;
     }
-    .dashboard-header h1 { margin: 0 0 0.5rem 0; font-size: 2.2rem; }
-    .dashboard-header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+
     .courses-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
+      gap: 2rem;
     }
     .course-card {
       background: #fff;
       border-radius: 1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
     }
-    .course-card h3 { color: #4A7373; margin-bottom: 0.5rem; }
+    .course-card:hover { transform: translateY(-5px); }
+    
     .course-status {
-      display: inline-block; padding: 0.3em 0.7em; border-radius: 0.5rem;
-      font-size: 0.9em; font-weight: 600;
+      display: inline-block; 
+      padding: 0.4em 0.8em;
+       border-radius: 2rem;
+      font-size: 0.85rem; font-weight: 600;
     }
     .status-active { background-color: #dcfce7; color: #16a34a; }
-    .status-completed { background-color: #c0c0c0; color: #444; }
+    .status-completed { background-color: #f3f4f6; color: #4b5563; }
 
-    /* تنسيق خاص بعرض اسم المستخدم والإشعارات في شريط التنقل */
-    .user-actions {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-right: 1rem;
-    }
-    .user-welcome-text {
-        font-weight: 500; color: var(--primary-dark); font-size: 1rem;
-    }
-    .notification-btn-wrapper { position: relative; }
-    .notification-badge {
-        background: var(--danger, #f44336); color: white; border-radius: 50%; 
-        padding: 0.1rem 0.4rem; font-size: 0.75rem; position: absolute; 
-        top: -5px; right: -5px; display: none;
-    }
-    /* تنسيق الإخفاء */
-    .hidden { display: none !important; }
+    /* تحسينات للقائمة العلوية */
+    .user-actions { display: flex; align-items: center; gap: 1.5rem; }
+    .user-welcome-text { font-weight: 600; color: var(--primary); }
+ 
   </style>
 </head>
 <body data-page="dashboard">
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-content">
-        <a href="index.html" class="logo">
-          <span style="font-weight:bold;">معاهد الوحي</span>
+
+    <aside class="modern-sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#009ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            معاهد الوحي
         </a>
-        
-        <ul class="nav-menu" id="main-nav-menu">
-          <li class="nav-item"><a href="index.html" class="nav-link">الرئيسية</a></li>
-          <li class="nav-item"><a href="centers.html" class="nav-link">المراكز</a></li>
-          <li class="nav-item"><a href="courses.html" class="nav-link">الدورات</a></li>
-          <li class="nav-item"><a href="contact.html" class="nav-link">اتصل بنا</a></li> 
-          <li class="nav-item" id="dashboard-link-container"><a href="student-dashboard.html" class="nav-link active">حسابي</a></li>
-        </ul>
-        
-        <div class="user-actions" id="user-actions-container">
-            <span class="user-welcome-text" id="navbarStudentName">مرحباً خالد!</span>
-
-            <div class="notification-btn-wrapper">
-                <button class="btn btn-sm btn-secondary" onclick="showNotifications()" style="padding: 0.5rem;">
-                    <svg class="icon icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0h-6"/>
-                    </svg>
-                    <span id="notificationBadge" class="notification-badge">3</span>
-                </button>
-            </div>
-            <button onclick="logout()" class="btn btn-sm btn-danger">تسجيل الخروج</button>
-        </div>
-        
-        <li class="nav-item hidden" id="login-link-container">
-            <a href="login.html" class="btn btn-sm btn-primary">تسجيل الدخول</a>
-        </li>
-
-        <button class="mobile-menu-btn"></button>
-      </div>
+       <div class="dashboard-header">
+    <div class="container">
+        <h4 id="studentWelcomeHeader"></h4> 
+        <p style="opacity: 0.9; font-size: 0.8rem; margin-top: 0.5rem;">تابع تقدمك في حفظ وتعلم كتاب الله</p>
     </div>
-  </nav>
-
-  <div class="dashboard-header">
-    <h1 id="studentWelcomeHeader">مرحباً بك، أيها الطالب</h1> 
-    <p>هنا يمكنك متابعة دوراتك ونتائجك وإدارة ملفك الشخصي.</p>
   </div>
+        <div class="menu-label">الإدارة</div>
+        <a href="student-dashboard.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            دوراتي
+        </a>
+        <a href="" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            الرسائل
+        </a>
+        <div class="menu-label">النظام</div>
+        <a href="student-settings.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            الإعدادات
+        </a>
+        <a href="#" onclick="logout()" class="sidebar-link" style="color: #ff5b5b; margin-top: auto;">
+            تسجيل الخروج
+        </a>
+    </aside>
+  
 
-  <main class="container">
+  <main class="container" style="min-height: 60vh;">
     
-    <section style="margin-bottom: 3rem;">
-        <h2>📚 دوراتي الحالية</h2>
+    <section style="margin-bottom: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2>📚 دوراتي المسجلة</h2>
+            <a href="courses.html" class="btn btn-primary btn-sm">تصفح دورات جديدة</a>
+        </div>
+        
         <div class="courses-grid" id="studentCourses">
-            
-            <div class="course-card">
-                <h3>دورة التجويد المتقدم</h3>
-                <p>المركز: مركز الصديق</p>
-                <p>الحالة: <span class="course-status status-active">نشط</span></p>
-                <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('TJ-ADV-101')">الذهاب لصفحة الدورة</button>
             </div>
-            
-             <div class="course-card">
-                <h3>حفظ جزء عم</h3>
-                <p>المركز: علي بن ابي طالب</p>
-                <p>الحالة: <span class="course-status status-active">نشط</span></p>
-                <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('HEFZ-J30-202')">الذهاب لصفحة الدورة</button>
-            </div>
-            
-            <div class="course-card">
-                <h3>دورة التفسير والتدبر</h3>
-                <p>المركز: ابن تيمية</p>
-                <p>الحالة: <span class="course-status status-completed">مُنجز</span></p>
-                <button class="btn btn-sm btn-secondary" style="margin-top: 1rem;" onclick="viewCertificate('TAF-105')">عرض الشهادة</button>
-            </div>
-            
-        </div>
     </section>
-    
-    <section>
-        <h2>⚙️ إدارة الحساب</h2>
-        <div class="card">
-            <div class="card-content">
-                <form id="studentSettingsForm">
-                    <div class="form-group">
-                        <label class="form-label">الاسم الكامل</label>
-                        <input type="text" class="form-input" value="اسم الطالب هنا" disabled>
-                    </div>
-                     <div class="form-group">
-                        <label class="form-label">البريد الإلكتروني</label>
-                        <input type="email" class="form-input" value="user@example.com" disabled>
-                    </div>
-                    <button type="button" class="btn btn-outline" onclick="changePassword()">تغيير كلمة المرور</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
   </main>
   
+  <script src="js/data/config.js"></script>
+  <script src="dist/main.bundle.js"></script>
+
   <script>
-    // 1. إعدادات الاتصال
-    // 🔴 هام: استبدل الرابط أدناه برابط مشروعك على Railway
-    const API_BASE_URL = 'https://quranic-center-io.up.railway.app/api/Student'; 
+    // ============================================
+    // منطق صفحة الطالب (Front-End Logic)
+    // ============================================
+    
+    const API_BASE_URL = CONFIG.getUrl(CONFIG.ENDPOINTS.STUDENT);
     const token = localStorage.getItem('authToken');
 
-    // 2. التحقق من تسجيل الدخول
+    // 1. حماية الصفحة: طرد غير المسجلين
     if (!token) {
         window.location.href = 'login.html';
     }
 
-    // 3. دالة التشغيل الرئيسية
+    // 2. التشغيل عند التحميل
     document.addEventListener('DOMContentLoaded', async () => {
         await loadStudentProfile();
         await loadStudentCourses();
     });
 
-    // 4. جلب بيانات الملف الشخصي
+    // 3. دالة جلب الملف الشخصي
     async function loadStudentProfile() {
         try {
             const response = await fetch(`${API_BASE_URL}/profile`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
 
-            if (!response.ok) throw new Error('فشل جلب البيانات الشخصية');
+            if (response.status === 401) {
+                logout(); // التوكن منتهي
+                return;
+            }
 
             const student = await response.json();
 
-            // تحديث الواجهة
-            const welcomeHeader = document.getElementById('studentWelcomeHeader');
-            const navName = document.getElementById('navbarStudentName');
-            
-            if(welcomeHeader) welcomeHeader.textContent = `مرحباً بك، ${student.fullName}`;
-            if(navName) navName.textContent = `مرحباً ${student.firstName}!`;
-            
-            // تعبئة النموذج (للعرض فقط)
-            const form = document.getElementById('studentSettingsForm');
-            if(form) {
-                form.querySelector('input[type="text"]').value = student.fullName;
-                form.querySelector('input[type="email"]').value = student.email;
-            }
-
-            // تحديث الإشعارات
-            if (student.notificationsCount > 0) {
-                const badge = document.getElementById('notificationBadge');
-                if(badge) {
-                    badge.textContent = student.notificationsCount;
-                    badge.style.display = 'inline';
-                }
-            }
+            // تحديث النصوص في الصفحة
+            document.getElementById('studentWelcomeHeader').textContent = `مرحباً بك، ${student.fullName}`;
+            document.getElementById('navbarStudentName').textContent = student.firstName;
+            document.getElementById('profileName').value = student.fullName;
+            document.getElementById('profileEmail').value = student.email;
 
         } catch (error) {
-            console.error(error);
+            console.error("Error loading profile:", error);
         }
     }
 
-    // 5. جلب الدورات المسجلة للطالب
+    // 4. دالة جلب الدورات
     async function loadStudentCourses() {
         const container = document.getElementById('studentCourses');
-        if(!container) return;
-        
-        container.innerHTML = '<p>جاري تحميل دوراتك...</p>';
+        container.innerHTML = '<p style="text-align:center; col-span:3;">جاري تحميل دوراتك...</p>';
 
         try {
             const response = await fetch(`${API_BASE_URL}/my-courses`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            if (!response.ok) throw new Error('فشل تحميل الدورات');
-
             const courses = await response.json();
 
             if (courses.length === 0) {
-                container.innerHTML = '<p>لست مسجلاً في أي دورة حالياً.</p>';
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 1rem;">
+                        <p style="font-size: 1.2rem; color: #666; margin-bottom: 1rem;">لست مسجلاً في أي دورة بعد.</p>
+                        <a href="courses.html" class="btn btn-primary">ابدأ رحلتك الآن</a>
+                    </div>
+                `;
                 return;
             }
 
+            // رسم الكروت بناءً على البيانات القادمة من الباك إند
             container.innerHTML = courses.map(course => `
                 <div class="course-card">
-                    <h3>${course.courseName}</h3>
-                    <p>المركز: ${course.centerName}</p>
-                    <p>الحالة: <span class="course-status status-${course.status === 'Active' ? 'active' : 'completed'}">
-                        ${course.status === 'Active' ? 'نشط' : 'مكتمل'}
-                    </span></p>
-                    <p style="font-size: 0.9rem; color: gray;">التقدم: ${course.progress || 0}%</p>
-                    <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="goToCourse('${course.courseId}')">
-                        الذهاب لصفحة الدورة
-                    </button>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                        <h3 style="margin:0; color: #2c3e50;">${course.courseName}</h3>
+                        <span class="course-status status-${course.status === 'Active' ? 'active' : 'completed'}">
+                            ${course.status === 'Active' ? 'نشط' : 'مكتمل'}
+                        </span>
+                    </div>
+                    
+                    <p style="color:#666; margin-bottom:0.5rem;">
+                        <span style="color:#4A7373;">🏛️</span> ${course.centerName}
+                    </p>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:0.5rem;">
+                            <span>نسبة الإنجاز</span>
+                            <span>${course.progress}%</span>
+                        </div>
+                        <div style="height:8px; background:#eee; border-radius:4px; overflow:hidden;">
+                            <div style="width:${course.progress}%; background: #4A7373; height:100%;"></div>
+                        </div>
+                    </div>
                 </div>
             `).join('');
 
         } catch (error) {
             console.error(error);
-            container.innerHTML = '<p style="color:red">حدث خطأ أثناء تحميل الدورات.</p>';
+            container.innerHTML = '<p style="color:red; text-align:center;">حدث خطأ أثناء تحميل الدورات.</p>';
         }
     }
 
-    // 6. دوال مساعدة
+    // 5. دالة تسجيل الخروج
     function logout() {
-        if (confirm("هل أنت متأكد من تسجيل الخروج؟")) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUserType');
-            localStorage.removeItem('isStudent');
-            window.location.href = "login.html";
-        }
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUserType');
+        localStorage.removeItem('isStudent');
+        window.location.href = 'login.html';
     }
-
-    function showNotifications() {
-        alert("لا توجد إشعارات جديدة حالياً.");
-    }
-
-    function changePassword() {
-        const newPass = prompt("أدخل كلمة المرور الجديدة:");
-        if(newPass) alert("سيتم تفعيل هذه الميزة قريباً مع الباك إند.");
-    }
-
-    function goToCourse(courseId) {
-        // يمكنك توجيه الطالب لصفحة التفاصيل إذا قمت بإنشائها
-        alert(`سيتم التوجيه للدورة رقم: ${courseId}`);
-    }
-</script>
+  </script>
 </body>
 </html>

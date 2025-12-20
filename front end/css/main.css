@@ -1,0 +1,230 @@
+/* Colors */
+:root {
+/* ========================
+     نظام الألوان (Color Palette)
+     ======================== */ 
+     /* اللون الرئيسي (فضي مائل للبيج):
+      يستخدم لخلفيات الأزرار الأساسية، 
+      الروابط النشطة في القائمة، وأيقونات التمييز */
+ --primary: #a5a5a0;
+ /* درجة أغمق من الرئيسي: يستخدم عند تمرير الماوس 
+ (Hover) على الأزرار ليعطي تفاعلاً بصرياً */
+  --primary-dark: #81837c;
+/* اللون الثانوي (أسود حالك): يستخدم كخلفية أساسية للصفحة 
+(Body) وخلفية الفوتر والأقسام الداكنة */
+  --secondary: #000000;
+  /* لون النصوص الأساسي (أبيض): يستخدم للعناوين الرئيسية 
+  (h1-h6) والنصوص داخل البطاقات الزجاجية */
+  --text-light: #ffffff;
+  /* لون النصوص الفرعية (أبيض شفاف): يستخدم للوصف تحت 
+  العناوين، التواريخ، والنصوص الأقل أهمية لتقليل التشتت */
+  --text-muted: rgba(255, 255, 255, 0.7);
+
+
+/* ========================
+     إعدادات الزجاج (Glassmorphism System)
+     تستخدم في: الكروت (Cards)
+      والنوافذ المنبثقة (Modals)
+     ======================== */
+     /* خلفية الزجاج: تدرج لوني شفاف يعطي لمعة خفيفة */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1),
+   rgba(255, 255, 255, 0.05));
+   /* حدود الزجاج: إطار أبيض شفاف جداً لتحديد حواف العنصر */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  /* ظل الزجاج: يعطي عمقاً ويرفع العنصر عن الخلفية السوداء */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  /* التغبيش: أهم عنصر، يقوم بطمس ما خلف العنصر لزيادة وضوح النص */
+  --glass-blur: blur(20px);
+  
+/* ========================
+     المسافات والأبعاد (Spacing & Sizing)
+     ======================== */
+     /* المسافة القياسية: تستخدم للهوامش الداخلية 
+     (Padding) في البطاقات */
+  --spacing-md: 1.5rem;
+  /* تدوير الحواف: يستخدم لزوايا
+   البطاقات والأزرار الكبيرة */
+  --radius-lg: 20px;
+}
+/* =========================================
+   Reset & Base Styles (تصفير الإعدادات)
+   الهدف: توحيد السلوك عبر جميع المتصفحات وإلغاء الهوامش الافتراضية
+   ========================================= */
+   * {
+  margin: 0;
+  padding: 0;
+  /* حساب العرض يشمل الحواف والهوامش 
+  الداخلية لمنع تكسر التصميم */
+  box-sizing: border-box;
+}
+/* =========================================
+   Global Body Styles (إعدادات الصفحة الرئيسية)
+   الهدف: ضبط الخطوط، الاتجاه العربي، 
+   والألوان الأساسية باستخدام المتغيرات
+   ========================================= */
+body {
+  /* الخطوط: نبدأ بأفضل خط للنظام وننتهي بخط عام */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana,
+   sans-serif, 'Arial Unicode MS', sans-serif;
+   /* دعم اللغة العربية */
+  direction: rtl;
+  text-align: right;
+  /* تحسين القراءة بزيادة المسافة بين الأسطر */
+  line-height: 1.7;
+  position: relative;
+  /* تخطيط الصفحة: تحديد أقصى عرض للمحتوى */
+    width: 100%;           /* العرض الكامل على الجوال */
+    max-width: 1400px;     /* أقصى عرض للخلفية بالكامل */
+    margin: 0 auto;/* توسيط الصفحة في الشاشات الكبيرة جداً */
+  background-color: var(--secondary); /* الخلفية السوداء */
+  color: var(--text-light);           /* النص الأبيض */
+
+}
+
+
+/* ملف main.css - للأشياء المشتركة فقط */
+
+/* 1. المتغيرات والألوان (Global Variables) */
+:root {
+    --bg-dark: #0d0d0d;
+    --bg-card: #1a1a1a;
+    --text-main: #e0e0e0;
+    --text-muted: #888;
+    --primary: #2e3a42;
+    --border: #333;
+}
+
+/* 2. أساسيات الصفحة */
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display:block ; 
+}
+
+/* 3. القائمة الجانبية (Sidebar) - مشتركة في كل الصفحات */
+aside {
+    width: 260px;
+    background: #000;
+    min-height: 100vh;
+    border-left: 1px solid var(--border);
+    padding: 20px;
+    box-sizing: border-box;
+    position: fixed; /* تثبيت القائمة */
+    right: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+/* 4. حاوية المحتوى الرئيسي - مشتركة */
+main.container {
+    margin-right: 100px; /* مسافة للقائمة الجانبية */
+    padding: 20px;
+    width: calc(100% - 260px);
+}
+
+/* 5. تنسيقات عامة (أزرار، شارات) */
+.badge { padding: 5px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
+.btn { cursor: pointer; border-radius: 4px; border: none; padding: 8px 16px; }
+
+/* 6. منع التعارض (مهم جداً لحل مشكلتك السابقة) */
+/* أي نافذة منبثقة تكون مخفية افتراضياً */
+.modal-overlay {
+    display: none; 
+}
+/* =========================================
+   تغيير لون التظليل (Selection)
+   ========================================= */
+
+::selection {
+    background-color: var(--primary); /* يخلي الخلفية بلون الثيم الأحمر */
+    color: #ffffff; /* يخلي النص أبيض */
+}
+
+/* لدعم متصفحات فايرفوكس القديمة (احتياط) */
+::-moz-selection {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+/* تنسيق زر الأيقونة */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #fff; /* لون الأيقونة أبيض ليناسب خلفيتك الداكنة */
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* تنسيق القائمة المنسدلة */
+.user-dropdown {
+    position: absolute;
+    top: 120%; /* يظهر أسفل الأيقونة */
+    left: 0; /* محاذاة لليسار (أو right: 0 حسب لغة الموقع) */
+    width: 250px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    padding: 10px 0;
+    color: #333;
+    text-align: right; /* لأن الموقع عربي */
+}
+
+/* السهم الصغير فوق القائمة (اختياري) */
+.user-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 15px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    transform: rotate(45deg);
+}
+
+/* محتوى القائمة */
+.dropdown-header {
+    padding: 10px 15px;
+}
+
+.user-name {
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+/* كلاس للإخفاء */
+.hidden {
+    display: none !important;
+}

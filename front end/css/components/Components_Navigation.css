@@ -1,0 +1,108 @@
+/* Colors */
+:root {
+  
+/* ========================
+     إعدادات الزجاج (Glassmorphism System)
+     تستخدم في: الكروت (Cards)
+     ، القائمة العلوية (Navbar)،
+      والنوافذ المنبثقة (Modals)
+     ======================== */
+     /* خلفية الزجاج: تدرج لوني شفاف يعطي لمعة خفيفة */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1),
+   rgba(255, 255, 255, 0.05));
+   /* حدود الزجاج: إطار أبيض شفاف جداً لتحديد حواف العنصر */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  /* ظل الزجاج: يعطي عمقاً ويرفع العنصر عن الخلفية السوداء */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  /* التغبيش: أهم عنصر، يقوم بطمس ما خلف العنصر لزيادة وضوح النص */
+  --glass-blur: blur(20px);
+  
+/* ========================
+     المسافات والأبعاد (Spacing & Sizing)
+     ======================== */
+     /* المسافة القياسية: تستخدم للهوامش الداخلية 
+     (Padding) في البطاقات */
+  --spacing-md: 1.5rem;
+  /* تدوير الحواف: يستخدم لزوايا
+   البطاقات والأزرار الكبيرة */
+  --radius-lg: 20px;
+}
+
+
+/* =========================================
+   7. Components: Navigation (القائمة العلوية)
+   الهدف: شريط تنقل عائم بتأثير زجاجي
+   ========================================= */
+/* Navigation */
+.navbar {
+  position: absolute; 
+  top: 20px;
+  
+  /* التوسيط */
+  left: 50%;
+  transform: translateX(-50%);/* توسيط دقيق للعنصر المطلق */
+  
+  width: 95%;           
+  max-width: 1400px;   
+  /* 3. المظهر (Glassmorphism) - استخدام المتغيرات لتوحيد الشكل */
+  background:var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  border-radius: 50px;
+  z-index: 1000;
+}
+/* تأكد أن الصورة ما زالت تغطي كامل المساحة الجديدة */
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4.5rem;
+  padding: 0 2rem;
+}
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: rgb(255, 255, 255); /* استخدام المتغير */
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.nav-link:hover{
+background-color: rgba(165, 165, 160, 0.15); /* لون أساسي شفاف */
+color: var(--primary);
+}
+
+
+.nav-link.active {
+background-color: rgba(165, 165, 160, 0.15); /* لون أساسي شفاف */
+color: var(--primary);
+}
+
+.nav-item {
+  position: relative;
+}
+/* 1. الشعار (Logo) - يمكن استخدامه في النافبار أيضاً */
+/* تنسيق قسم تسجيل الدخول مع الخلفية الجديدة */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: var(--primary);
+  text-decoration: none;
+
+}

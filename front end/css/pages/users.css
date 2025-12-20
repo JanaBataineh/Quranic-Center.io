@@ -1,0 +1,17 @@
+/* ملف users.css - خاص بصفحة إدارة المستخدمين فقط */
+
+/* 1. تنسيق جدول المستخدمين */
+.users-table th:nth-child(1) { width: 50px; } /* الـ ID */
+.users-table th:nth-child(2) { width: 25%; }  /* الاسم */
+.users-table th:nth-child(3) { width: 25%; }  /* البريد */
+
+/* 2. ألوان الشارات الخاصة بالمستخدمين */
+.badge-admin { background: #3d1a1a; color: #e74c3c; border: 1px solid #e74c3c; }
+.badge-student { background: #05202c; color: #3498db; border: 1px solid #3498db; }
+
+/* 3. تنسيق النافذة المنبثقة الخاصة بالمستخدمين */
+#userModal .modal-content {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    /* أي تنسيق خاص بنافذة المستخدم هنا */
+}

@@ -1,0 +1,28 @@
+/* =========================================
+   30. Page Specifics (خلفيات الصفحات الفرعية)
+   الهدف: تخصيص خلفية موحدة لصفحات الدخول، الاتصال، والدورات
+   ========================================= */
+
+/* تطبيق الخلفية على الـ body للصفحات المحددة */
+body[data-page="login"],
+body[data-page="contact"],
+body[data-page="courses"],
+body[data-page="centers"] {
+  background-image: url('../../img/تصميم\ بدون\ عنوان\ \(1\).png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* تثبيت الخلفية عند التمرير */
+  
+  /* إضافة لون احتياطي في حال تأخر تحميل الصورة */
+  background-color: var(--secondary);
+}
+
+/* تعديل بسيط للقسم الرئيسي في هذه الصفحات ليعمل مع النافبار */
+body[data-page="contact"] main,
+body[data-page="courses"] main,
+body[data-page="centers"] main {
+  padding-top: 120px; /* مساحة لعدم تغطية المحتوى بالنافبار */
+}
+
+

@@ -1,0 +1,65 @@
+
+/* =========================================
+   37. Dashboard: Stat Cards (بطاقات الإحصائيات)
+   ========================================= */
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.modern-card {
+  background-color: var(--sidebar-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 200px;
+}
+
+.modern-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* أيقونة البطاقة */
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.icon-circle svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.5;
+}
+
+/* الأرقام والنصوص */
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: var(--text-muted-dash);
+  font-weight: 500;
+}

@@ -1,0 +1,85 @@
+/* Hero Section */
+/* تعديل قسم الهيرو الرئيسي */
+.hero {
+    position: relative;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    
+    /* 1. هذا السطر هو المسؤول عن الطول */
+    min-height: 110vh; /* اجعلها 85% من ارتفاع الشاشة لتصل للأسفل */
+    
+    /* 2. لتوسيط المحتوى (النص) في وسط الصورة الكبيرة */
+    display: flex;
+    align-items: center;
+      padding: 5rem 0;
+      
+
+}
+
+.hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* تضمن أن الصورة تغطي المساحة كاملة دون أن تنمط */
+  z-index: 0;        /* يجعل الصورة خلف النصوص */
+  pointer-events: none;
+  object-position: bottom center;
+}
+/* تنسيق حاوية النصوص والأزرار فوق الصورة */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px; /* زيادة العرض قليلاً */
+  margin: 0 auto;
+  padding: 0 2rem;
+  
+  /* Flexbox */
+  display: flex;
+  flex-direction: row; /* ترتيب أفقي */
+  align-items: center; /* توسيط عمودي */
+  justify-content: space-between; /* مسافة بين النص والشعار */
+  gap: 4rem; /* مسافة كبيرة بين العنصرين */
+}
+
+/* حاوية النصوص (تأخذ مساحة أكبر) */
+.hero-text-container {
+  flex: 1;
+  text-align: right; /* إجبار النص على اليمين */
+}
+
+/* وصف النص */
+#typewriter-description {
+  font-size: 1.3rem;
+  opacity: 0.9;
+  margin-bottom: 2.5rem;
+  min-height: 60px;
+  color: #333; /* لون داكن ليكون واضحاً، أو var(--text-light) إذا الخلفية غامقة */
+  font-weight: 600;
+  line-height: 1.8;
+  max-width: 600px; /* لمنع السطر من أن يصبح طويلاً جداً */
+}
+
+/* حاوية الأزرار */
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-start; /* محاذاة الأزرار لليمين (بداية السطر) */
+}
+
+/* حاوية الشعار */
+.hero-logo-container {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* توسيط الشعار في مساحته */
+}
+
+.hero-main-logo {
+  max-width: 100%;
+  width: 450px; /* حجم مناسب للشعار */
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+}
+

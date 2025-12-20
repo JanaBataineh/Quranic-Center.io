@@ -1,506 +1,284 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إدارة الدورات - لوحة التحكم</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* ... (جميع تنسيقات CSS الخاصة بك موجودة هنا كما هي) ... */
-    .admin-header {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, #5a6b47 100%);
-      color: #fff;
-      padding: 2rem 0 1.5rem 0;
-      text-align: center;
-      border-radius: 0 0 1.5rem 1.5rem;
-      margin-bottom: 2rem;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الدورات - لوحة التحكم</title>
+<link rel="stylesheet" href="dist/main.css">
+    <script>
+        if (localStorage.getItem("isAdmin") !== "true") window.location.href = "login.html";
+    </script>
+<style>
+    /* تنسيقات عامة للصفحة لمحاكاة الثيم الداكن */
+    body {
+        background-color: #0d0d0d; /* خلفية سوداء */
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 20px;
     }
-    .admin-header h1 {
-        margin: 0;
-        font-size: 2.2rem;
+
+    /* حاوية الجدول */
+    .table-container {
+        width: 100%;
+        overflow-x: auto; /* للتمرير في الشاشات الصغيرة */
+        background-color: #000;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        padding: 10px;
     }
-    .admin-controls {
-      display: flex;
-      justify-content: flex-start;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid var(--secondary);
-      padding-bottom: 1rem;
-    }
-    .courses-table {
+
+    /* تنسيق الجدول */
+    .styled-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 1rem;
-        background: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-radius: 0.75rem;
-        overflow: hidden;
+        text-align: right; /* محاذاة لليمين */
     }
-    .courses-table th, .courses-table td {
-        padding: 1rem;
-        text-align: right;
-        border-bottom: 1px solid var(--secondary);
+
+    /* ترويسة الجدول */
+    .styled-table thead tr {
+        border-bottom: 1px solid #333;
     }
-    .courses-table th {
-        background-color: var(--secondary);
-        color: var(--primary-dark);
-        font-weight: 600;
-        font-size: 1rem;
+
+    .styled-table th {
+        padding: 15px;
+        color: #a0a0a0; /* لون رمادي للعناوين */
+        font-weight: bold;
+        font-size: 0.9em;
     }
-    .courses-table tr:hover {
-        background-color: #fcfcfc;
+
+    /* صفوف البيانات */
+    .styled-table tbody tr {
+        border-bottom: 1px solid #1a1a1a;
+        transition: background-color 0.2s;
     }
-    .action-btn {
-        margin-left: 0.5rem;
+
+    .styled-table tbody tr:hover {
+        background-color: #111; /* تأثير عند مرور الماوس */
     }
-    /* تنسيق زر التصفية النشط */
-    .admin-controls .active-filter {
-      background-color: var(--primary-dark); 
-      color: white;
-      border-color: var(--primary-dark);
-      box-shadow: 0 0 0 2px rgba(56, 142, 60, 0.5);
+
+    .styled-table td {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    /* تنسيق المعرف # (الهاش) */
+    .id-cell {
+        font-family: monospace;
+        color: #888;
+        font-size: 0.85em;
+    }
+
+    /* الشارات (Badges) للحالة والمستوى */
+    .badge {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8em;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .badge-status-published {
+        background-color: #0f3d2e;
+        color: #2ecc71;
+        border: 1px solid #2ecc71;
+    }
+
+    .badge-level-beginner {
+        background-color: #0f3d3d;
+        color: #1abc9c;
+        border: 1px solid #1abc9c;
     }
     
-    /* تنسيقات الـ Modal/Dialog */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 1rem;
+    .badge-level-advanced {
+        background-color: #3d1a1a;
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
     }
-    .modal-overlay.hidden { display: none; }
-    .modal-content {
-      background: white;
-      border-radius: 1rem;
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
+    
+    .badge-level-intermediate {
+        background-color: #3d341a;
+        color: #f1c40f;
+        border: 1px solid #f1c40f;
     }
-    .modal-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+    /* الأزرار */
+    .action-buttons {
+        display: flex;
+        gap: 5px;
     }
-    .modal-title { margin: 0; color: var(--primary-dark); }
-    .modal-close {
-      background: none; border: none; font-size: 2rem;
-      cursor: pointer; color: #888; padding: 0.5rem;
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85em;
+        text-decoration: none;
+        border: none;
+        color: white;
     }
-    .modal-body { padding: 1.5rem; }
-    .btn-block { width: 100%; margin-top: 0.5rem; }
-    .form-group { margin-bottom: 1.5rem; }
-    .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
-    .form-input, .form-select {
-        width: 100%; padding: 0.75rem; border: 1px solid var(--muted);
-        border-radius: 0.5rem; font-size: 1rem;
+
+    .btn-edit {
+        background-color: #0d47a1; /* أزرق */
+        border: 1px solid #2962ff;
     }
-    /* تنسيقات شارات الحالة */
-    .badge-success { background-color: var(--primary); color: white; }
-    .badge-warning { background-color: var(--warning); color: #333; }
-    .badge-danger { background-color: var(--danger); color: white; }
-    .badge-beginner { background-color: #dcfce7; color: #16a34a; }
-    .badge-intermediate { background-color: #fef3c7; color: #d97706; }
-    .badge-advanced { background-color: #fee2e2; color: #dc2626; }
-  </style>
+
+    .btn-delete {
+        background-color: transparent;
+        border: 1px solid #555;
+        color: #aaa;
+    }
+    
+    .btn-delete:hover {
+        border-color: #e74c3c;
+        color: #e74c3c;
+    }
+
+</style>
 </head>
-<body>
-  
-    <header class="admin-header">
-        <h1>إدارة الدورات التدريبية</h1>
-        <p>عرض، تعديل، وإدارة جميع الدورات المتاحة في المراكز.</p>
-    </header>
+<body data-page="dashboard">
 
-    <main class="container">
+   <aside class="modern-sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#009ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            معاهد الوحي
+        </a>
+        <div class="menu-label">القائمة الرئيسية</div>
+        <a href="dashbord.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
+            </path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+            لوحة التحكم
+        </a>
+        <div class="menu-label">الإدارة</div>
+        <a href="admin-manage-centers.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4"></path></svg>
+            إدارة المراكز
+        </a>
+        <a href="admin-manage-courses.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            إدارة الدورات
+        </a>
+        <a href="admin-manage-users.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            المستخدمين
+        </a>
+        <a href="admin-messages.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            الرسائل
+        </a>
+        <div class="menu-label">النظام</div>
+        <a href="admin-settings.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            الإعدادات
+        </a>
+        <a href="#" onclick="logout()" class="sidebar-link" style="color: #ff5b5b; margin-top: auto;">
+            تسجيل الخروج
+        </a>
+    </aside>
+    <main class="dashboard-main">
         
-        <div class="admin-controls">
-            <a href="dashbord.html" class="btn btn-sm btn-outline" style="min-width: 150px; margin-left: auto;">
-                ← العودة للوحة التحكم
-            </a>
-            <button class="btn btn-primary" onclick="openAddCourseModal()">إضافة دورة جديدة</button>
-            <button class="btn btn-secondary" onclick="filterCourses()">عرض الدورات المعلقة</button>
+        <header class="top-header">
+            <div>
+                <h2>إدارة الدورات التدريبية</h2>
+                <p class="text-muted">عرض وتعديل واعتماد الدورات المتاحة</p>
+            </div>
+            <div class="user-profile">
+                <div class="text-left">
+                    <span class="block font-bold">مدير النظام</span>
+                    <span class="text-sm text-muted">Admin</span>
+                </div>
+                <div class="user-avatar">A</div>
+            </div>
+        </header>
+     <div class="modern-table-container">
+    
+    <div class="table-controls">
+        <div class="flex gap-2">
+            <button class="btn btn-primary btn-sm"onclick="openAddCourseModal()">
+                + إضافة دورة</button>
+            <button class="btn btn-glass btn-sm" 
+            onclick="filterCourses()"id="filterBtn">
+            عرض الدورات المعلقة</button>
         </div>
+        
+        <div class="search-input-wrapper" style="max-width: 300px;">
+            <input type="text" class="form-input" placeholder="بحث عن دورة...">
+            <svg class="search-icon">
+                <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        </div>
+    </div>
 
-        <table class="courses-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>اسم الدورة</th>
-                    <th>معرّف المركز</th>
-                    <th>المستوى</th>
-                    <th>السعر</th>
-                    <th>حالة النشر</th>
-                    <th>الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody id="coursesTableBody">
-                </tbody>
-        </table>
+<div class="table-wrapper">
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>اسم الدورة</th>
+                <th>المركز</th>
+                <th>المستوى</th>
+                <th>السعر</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="coursesTableBody">
+            </tbody>
+    </table>
+</div>
+
+    </table>
+
+</div>
 
     </main>
 
-    <div id="addCourseModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="courseModalTitle">إضافة دورة تدريبية جديدة</h2>
+    <div id="addCourseModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+        
+            <div  class="modal-header flex justify-between items-center mb-4">
+                <h2 id="courseModalTitle" class="text-lg">إضافة دورة جديدة</h2>
                 <button class="modal-close" onclick="closeAddCourseModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="addCourseForm">
-                    <input type="hidden" id="courseId" value=""> 
+            </div>      
+            <form id="addCourseForm">
+                <input type="hidden" id="courseId">
 
+                <div class="form-group">
+                    <label class="form-label">اسم الدورة *</label>
+                    <input type="text" id="courseName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">معرّف المركز (ID) *</label>
+                    <input type="text" id="courseCenterId" class="form-input" placeholder="ألصق ID المركز هنا" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
                     <div class="form-group">
-                        <label for="courseName" class="form-label">اسم الدورة *</label>
-                        <input type="text" id="courseName" class="form-input" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="courseCenterId" class="form-label">معرّف المركز (ID) *</label>
-                        <input type="text" id="courseCenterId" class="form-input" placeholder="المعرّف ID للمركز" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="courseLevel" class="form-label">المستوى *</label>
-                        <select id="courseLevel" class="form-select" required>
-                            <option value="مبتدئ">مبتدئ</option>
-                            <option value="متوسط">متوسط</option>
-                            <option value="متقدم">متقدم</option>
+                        <label class="form-label">المستوى *</label>
+                        <select id="courseLevel" class="form-input" required>
+                            <option value="مبتدئ" style="color:black">مبتدئ</option>
+                            <option value="متوسط" style="color:black">متوسط</option>
+                            <option value="متقدم" style="color:black">متقدم</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="coursePrice" class="form-label">السعر (دينار أردني) *</label>
-                        <input type="number" id="coursePrice" class="form-input" required min="0">
+                        <label class="form-label">السعر (د.أ) *</label>
+                        <input type="number" id="coursePrice" class="form-input" min="0" required>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-block" id="courseModalSubmitBtn">إرسال للموافقة</button>
-                    <button type="button" class="btn btn-secondary btn-block" onclick="closeAddCourseModal()">إلغاء</button>
-                    
-                </form>
-            </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full mt-4" id="courseModalSubmitBtn">حفظ</button>
+            </form>
         </div>
     </div>
-
-
-<script>
-    // ******************************************************
-    // 1. إعدادات API والمتغيرات العامة
-    // ******************************************************
-    
-    // 🌟 🔄 تغيير: استخدام API_BASE_URL ليشير إلى الخادم المحلي
-    const API_BASE_URL = 'https://quranic-centerio-production.up.railway.app/api/Admin';
-    let isPendingFilterActive = false;
-    let currentCourseId = null; // لتتبع الدورة التي يتم تعديلها
-
-    // 🌟 🔄 جديد: دالة جلب التوكن
-    function getAuthToken() {
-        return localStorage.getItem('authToken');
-    }
-
-    // ******************************************************
-    // 2. دوال جلب البيانات من API (بدلاً من LocalStorage)
-    // ******************************************************
-
-    /**
-     * 🌟 🔄 تحديث: جلب الدورات من /api/Admin/courses
-     */
-    async function getCoursesFromAPI() {
-        const tableBody = document.getElementById('coursesTableBody');
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1.5rem;">جاري تحميل بيانات الدورات...</td></tr>';
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/courses`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${getAuthToken()}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const courses = await response.json();
-            return courses;
-        } catch (error) {
-            console.error("Failed to fetch courses:", error);
-            tableBody.innerHTML = '<tr><td colspan="7" style="color: var(--danger); text-align: center; padding: 1.5rem;">فشل تحميل بيانات الدورات. تأكد أن الـ API يعمل.</td></tr>';
-            return [];
-        }
-    }
-
-    // ******************************************************
-    // 3. دوال عرض البيانات (Rendering)
-    // ******************************************************
-
-    function getLevelBadge(level) {
-        switch (level) {
-            case 'مبتدئ': return 'badge-beginner';
-            case 'متوسط': return 'badge-intermediate';
-            case 'متقدم': return 'badge-advanced';
-            default: return 'badge-secondary';
-        }
-    }
-    
-    // 🌟 🔄 تحديث: دالة بناء الصف (تم تعديلها لتطابق الأسماء الجديدة)
-    function createCourseRow(course) {
-        const row = document.createElement('tr');
-        
-        let statusBadge;
-        let actionButtons = `
-            <button class="btn btn-sm btn-outline action-btn" onclick="openEditCourseModal('${course.id}')">تعديل</button>
-            <button class="btn btn-sm btn-danger action-btn" onclick="deleteCourse('${course.id}', '${course.name}')">حذف</button>
-        `;
-
-        if (course.status?.toLowerCase() === 'approved') {
-            statusBadge = '<span class="badge badge-success">منشور</span>';
-        } else if (course.status?.toLowerCase() === 'pending') {
-            statusBadge = '<span class="badge badge-warning">معلق للموافقة</span>';
-            actionButtons = `
-                <button class="btn btn-sm btn-primary action-btn" onclick="approveCourse('${course.id}', '${course.name}')">موافقة</button>
-                ${actionButtons}
-            `;
-        } else {
-            statusBadge = '<span class="badge badge-secondary">غير نشط</span>';
-        }
-        
-        row.innerHTML = `
-            <td>${course.id.substring(0, 8)}...</td> <td>${course.name}</td>
-            <td>${course.centerId.substring(0, 8)}...</td> <td><span class="badge ${getLevelBadge(course.level)}">${course.level}</span></td>
-            <td>${course.price} د.أ</td>
-            <td>${statusBadge}</td>
-            <td>${actionButtons}</td>
-        `;
-        return row;
-    }
-
-    /**
-     * 🌟 🔄 تحديث: دالة العرض الرئيسية
-     */
-    async function renderCourses() {
-        const tableBody = document.getElementById('coursesTableBody');
-        
-        try {
-            const allCourses = await getCoursesFromAPI();
-            let coursesToDisplay = allCourses;
-
-            if (isPendingFilterActive) {
-                coursesToDisplay = allCourses.filter(course => course.status?.toLowerCase() === 'pending');
-            }
-
-            tableBody.innerHTML = ''; 
-
-            if (!coursesToDisplay || coursesToDisplay.length === 0) {
-                const message = isPendingFilterActive 
-                    ? "لا توجد دورات معلقة للمراجعة حالياً." 
-                    : "لا توجد دورات متاحة للإدارة حالياً.";
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #888; padding: 2rem;">${message}</td></tr>`;
-                return;
-            }
-
-            coursesToDisplay.forEach((course) => {
-                tableBody.appendChild(createCourseRow(course));
-            });
-
-        } catch (error) {
-             console.error("Critical rendering error:", error);
-        }
-    }
-
-    // ******************************************************
-    // 4. دوال التحكم (CRUD) المتصلة بالـ API
-    // ******************************************************
-
-    /**
-     * 🌟 🔄 تحديث: الموافقة على الدورة عبر API
-     * PUT: /api/Admin/courses/approve/{id}
-     */
-    async function approveCourse(courseId, courseName) {
-        if (confirm(`هل أنت متأكد من الموافقة على الدورة "${courseName}" ونشرها؟`)) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/courses/approve/${courseId}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-                });
-    
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الاعتماد.');
-                }
-    
-                const data = await response.json();
-                alert(`✅ ${data.message || 'تمت الموافقة بنجاح.'}`);
-                await renderCourses(); // إعادة تحميل الجدول
-                
-            } catch (error) {
-                console.error('Approval Error:', error);
-                alert(`❌ فشل الاعتماد: ${error.message}`);
-            }
-        }
-    }
-
-    /**
-     * 🌟 🔄 تحديث: حذف الدورة عبر API
-     * DELETE: /api/Admin/courses/{id}
-     */
-    async function deleteCourse(courseId, courseName) {
-        if (confirm(`هل أنت متأكد من حذف الدورة "${courseName}" بشكل دائم؟`)) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'فشل الاتصال بالخادم أثناء الحذف.');
-                }
-
-                const data = await response.json();
-                alert(`✅ ${data.message || 'تم الحذف بنجاح.'}`);
-                await renderCourses(); // إعادة تحميل الجدول
-                
-            } catch (error) {
-                console.error('Deletion Error:', error);
-                alert(`❌ فشل الحذف: ${error.message}`);
-            }
-        }
-    }
-
-    // دالة التصفية (لم تتغير)
-    function filterCourses() {
-        const pendingButton = document.querySelector('.admin-controls button[onclick*="filterCourses"]');
-        isPendingFilterActive = !isPendingFilterActive;
-
-        if (isPendingFilterActive) {
-            pendingButton.classList.add('active-filter');
-            pendingButton.textContent = 'إلغاء تصفية الدورات';
-        } else {
-            pendingButton.classList.remove('active-filter');
-            pendingButton.textContent = 'عرض الدورات المعلقة';
-        }
-        renderCourses();
-    }
-
-    // ******************************************************
-    // 5. الدوال الخاصة بالنموذج المنبثق (Modal Functions)
-    // ******************************************************
-
-    function openAddCourseModal() {
-        currentCourseId = null;
-        document.getElementById('courseModalTitle').textContent = 'إضافة دورة تدريبية جديدة';
-        document.getElementById('courseModalSubmitBtn').textContent = 'إرسال للموافقة';
-        document.getElementById('courseId').value = ''; 
-        document.getElementById('addCourseForm').reset();
-        document.getElementById('addCourseModal').classList.remove('hidden');
-    }
-
-    /**
-     * 🌟 🔄 تحديث: جلب بيانات الدورة الواحدة من الـ API للتعديل
-     * GET: /api/Admin/courses/{id}
-     */
-    async function openEditCourseModal(courseId) {
-        currentCourseId = courseId;
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
-                 headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-            });
-            if (!response.ok) throw new Error('فشل جلب بيانات الدورة.');
-            
-            const course = await response.json();
-
-            document.getElementById('courseModalTitle').textContent = `تعديل بيانات: ${course.name}`;
-            document.getElementById('courseModalSubmitBtn').textContent = 'حفظ التعديلات';
-            document.getElementById('courseId').value = course.id; 
-
-            document.getElementById('courseName').value = course.name;
-            document.getElementById('courseCenterId').value = course.centerId;
-            document.getElementById('courseLevel').value = course.level;
-            document.getElementById('coursePrice').value = course.price;
-
-            document.getElementById('addCourseModal').classList.remove('hidden');
-
-        } catch (error) {
-            alert(`❌ لا يمكن تحميل بيانات الدورة: ${error.message}`);
-        }
-    }
-
-    function closeAddCourseModal() {
-        document.getElementById('addCourseModal').classList.add('hidden');
-        document.getElementById('addCourseForm').reset();
-        currentCourseId = null;
-    }
-
-    /**
-     * 🌟 🔄 تحديث: معالج إرسال النموذج (للإضافة والتعديل) عبر API
-     * POST: /api/Admin/courses (للإضافة)
-     * PUT: /api/Admin/courses/{id} (للتعديل)
-     */
-    document.getElementById('addCourseForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const courseId = currentCourseId;
-        const isEditing = !!courseId;
-        
-        const formData = {
-            id: courseId,
-            name: document.getElementById('courseName').value,
-            centerId: document.getElementById('courseCenterId').value, // 🌟 تغيير: أصبح ID
-            level: document.getElementById('courseLevel').value,
-            price: parseFloat(document.getElementById('coursePrice').value),
-            status: isEditing ? undefined : 'pending' // 🌟 إرسال "pending" فقط عند الإنشاء
-        };
-
-        try {
-            const url = isEditing ? `${API_BASE_URL}/courses/${courseId}` : `${API_BASE_URL}/courses`;
-            const method = isEditing ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method: method,
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getAuthToken()}`
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `فشل في ${isEditing ? 'تعديل' : 'إضافة'} الدورة.`);
-            }
-            
-            const data = await response.json();
-            alert(`✅ ${data.message || 'تمت العملية بنجاح!'}`); 
-
-        } catch (error) {
-            console.error(`${isEditing ? 'Update' : 'Create'} Error:`, error);
-            alert(`❌ فشل الاتصال: ${error.message}`);
-        }
-
-        closeAddCourseModal();
-        await renderCourses(); // إعادة تحميل الجدول
-    });
-    
-    // إغلاق المودال عند النقر على الخلفية
-    document.getElementById('addCourseModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeAddCourseModal();
-        }
-    });
-
-    // 🌟 🔄 تحديث: بدء تحميل البيانات عند فتح الصفحة
-    document.addEventListener('DOMContentLoaded', renderCourses);
-</script>
+<script src="js/data/config.js"></script>
+<script src="dist/adminCourses.bundle.js"></script>
 </body>
+
 </html>

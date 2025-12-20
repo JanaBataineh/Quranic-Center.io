@@ -1,0 +1,77 @@
+/* Login Section */
+/* =========================================
+   9. Sections: Login & Auth (تسجيل الدخول)
+   الهدف: قسم كامل بملء الشاشة مع خلفية مخصصة وصندوق دخول زجاجي
+   ========================================= */
+
+
+.login-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 👇 إعدادات صورة الخلفية */
+  background-image: url('../../img/تصميم\ بدون\ عنوان\ \(1\).png'); /* استبدل هذا بالاسم الجديد إذا غيرته */
+background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* إضافة طبقة سوداء شفافة فوق الخلفية لكي يبرز صندوق الدخول */
+.login-section::before {
+  content: '';
+  position: absolute;
+
+  /* اختصار حديث لـ top:0, right:0, bottom:0, left:0 */
+  inset: 0;
+/* طبقة سوداء نصف شفافة لتحسين قراءة النص فوق الصورة */
+  background: rgba(0, 0, 0, 0.5); /* تعتيم بنسبة 50% - عدل الرقم حسب رغبتك */
+  z-index: 1;
+}
+
+.login-container {
+  /* 1. الخلفية الشفافة الداكنة */
+  background:var(--glass-bg);
+  /* 2. تأثير الضباب (Glass Blur) */
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur); /* لدعم متصفح سفاري */
+  
+  /* 3. الحدود والظلال لتعزيز شكل الفقاعة */
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius:var(--radius-lg);/* زوايا أكثر دائرية */
+  
+  /* 4. إعدادات الحجم والموقع */
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 350px;
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
+}
+.login-card {
+  width: 100%;
+}
+/* 5. نصوص وعناوين النموذج (Typography) */
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  /* إضافة لون للأيقونة لضمان وضوحها */
+  color: var(--text-light);
+}
+
+.login-header h2 {
+  margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    color:var(--text-light); 
+}
+.login-header p {
+  font-size: 1rem;
+  margin: 0;
+  color:var(--text-muted) ; 
+
+}

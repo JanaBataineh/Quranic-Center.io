@@ -1,226 +1,344 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>الإعدادات - لوحة التحكم</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* تنسيقات خاصة بالصفحة الإدارية */
-    .admin-header {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, #5a6b47 100%);
-      color: #fff;
-      padding: 2rem 0 1.5rem 0;
-      text-align: center;
-      border-radius: 0 0 1.5rem 1.5rem;
-      margin-bottom: 2rem;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات النظام - لوحة التحكم</title>
+<link rel="stylesheet" href="dist/main.css">
+<script>
+    // كود الحماية: طرد أي شخص ليس "Admin"
+    if (localStorage.getItem("isAdmin") !== "true") {
+        window.location.href = "login.html";
     }
-    .admin-header h1 {
-        margin: 0;
-        font-size: 2.2rem;
-    }
-    .settings-container {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-    }
-    .settings-nav {
-        flex: 0 0 250px;
-        background: #fff;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        height: fit-content;
-    }
-    .settings-nav button {
-        display: block;
-        width: 100%;
-        text-align: right;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        border: none;
-        background: transparent;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .settings-nav button:hover:not(.active) {
-        background-color: var(--secondary);
-    }
-    .settings-nav button.active {
-        background-color: var(--primary);
-        color: white;
-        font-weight: bold;
-    }
-    .settings-content {
-        flex: 1;
-        min-width: 300px;
-    }
-    .setting-section {
-        background: #fff;
-        padding: 2rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
-    }
-    .setting-section.hidden {
-        display: none;
-    }
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #333;
-    }
-    .form-input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--muted);
-        border-radius: 0.5rem;
-        font-size: 1rem;
-    }
-    .return-button-container {
-        padding: 1rem;
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 1.5rem;
-    }
-  </style>
+</script>
+    <style>
+        /* =========================================
+           1. الأساسيات والوضع الداكن
+           ========================================= */
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+        }
+
+        /* القائمة الجانبية */
+        aside {
+            width: 260px;
+            background: #000;
+            height: 100vh;
+            border-left: 1px solid #333;
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px; color: #aaa; text-decoration: none;
+            border-radius: 6px; margin-bottom: 5px; transition: 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: #1a1a1a; color: white;
+        }
+
+        /* المحتوى الرئيسي */
+        main {
+            margin-right: 260px;
+            width: calc(100% - 260px);
+            padding: 40px;
+            background-color: #0d0d0d;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* =========================================
+           2. تنسيق بطاقات الإعدادات
+           ========================================= */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* شبكة متجاوبة */
+            gap: 25px;
+        }
+
+        .settings-card {
+            background-color: #000;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            border-bottom: 1px solid #222;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-header h3 { margin: 0; color: #fff; font-size: 1.2rem; }
+        .card-header i { color: #2563eb; }
+
+        /* =========================================
+           3. عناصر النموذج (Input & Toggles)
+           ========================================= */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9rem; }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        .form-input:focus { border-color: #2563eb; outline: none; background: #161616; }
+
+        /* مفتاح التبديل (Toggle Switch) */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .toggle-row:last-child { border-bottom: none; }
+        
+        .toggle-label strong { display: block; color: #ddd; margin-bottom: 4px; }
+        .toggle-label span { font-size: 0.85rem; color: #666; }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        /* حالة التفعيل */
+        input:checked + .slider { background-color: #2563eb; }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* الأزرار */
+        .btn-save {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-save:hover { background-color: #1d4ed8; }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  
-    <header class="admin-header">
-        <h1>إدارة الإعدادات</h1>
-        <p>تغيير الإعدادات العامة والأمنية للنظام.</p>
-    </header>
 
-    <main class="container">
-        <div class="return-button-container">
-            <a href="dashbord.html" class="btn btn-sm btn-outline" style="min-width: 150px;">
-                ← العودة للوحة التحكم
-            </a>
-        </div>
+ <aside class="modern-sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#009ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            معاهد الوحي
+        </a>
+        <div class="menu-label">القائمة الرئيسية</div>
+        <a href="dashbord.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
+            </path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+            لوحة التحكم
+        </a>
+        <div class="menu-label">الإدارة</div>
+        <a href="admin-manage-centers.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4"></path></svg>
+            إدارة المراكز
+        </a>
+        <a href="admin-manage-courses.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            إدارة الدورات
+        </a>
+        <a href="admin-manage-users.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            المستخدمين
+        </a>
+        <a href="admin-messages.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            الرسائل
+        </a>
+        <div class="menu-label">النظام</div>
+        <a href="admin-settings.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            الإعدادات
+        </a>
+        <a href="#" onclick="logout()" class="sidebar-link" style="color: #ff5b5b; margin-top: auto;">
+            تسجيل الخروج
+        </a>
+    </aside>
 
-        <div class="settings-container">
-            <div class="settings-nav">
-                <button class="setting-tab-btn active" data-target="general-settings">الإعدادات العامة</button>
-                <button class="setting-tab-btn" data-target="security-settings">الأمان وكلمة المرور</button>
-                <button class="setting-tab-btn" data-target="notification-settings">إعدادات الإشعارات</button>
-            </div>
+
+    <main>
+        <header style="margin-bottom: 40px;">
+            <h2 style="color: white; margin:0;">إعدادات النظام</h2>
+            <p style="color: #666; margin: 5px 0 0;">التحكم في إعدادات الموقع، الأمان، والتنبيهات</p>
+        </header>
+
+        <div class="settings-grid">
             
-            <div class="settings-content">
-                
-                <section id="general-settings" class="setting-section">
-                    <h2>الإعدادات العامة</h2>
-                    <form id="generalSettingsForm">
-                        <div class="form-group">
-                            <label for="siteName" class="form-label">اسم الموقع</label>
-                            <input type="text" id="siteName" class="form-input" value="معاهد الوحي" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminEmail" class="form-label">بريد الأدمن الافتراضي</label>
-                            <input type="email" id="adminEmail" class="form-input" value="admin@example.com" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">حفظ الإعدادات العامة</button>
-                    </form>
-                </section>
-
-                <section id="security-settings" class="setting-section hidden">
-                    <h2>الأمان وكلمة المرور</h2>
-                    <form id="securitySettingsForm">
-                        <div class="form-group">
-                            <label for="currentPassword" class="form-label">كلمة المرور الحالية *</label>
-                            <input type="password" id="currentPassword" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword" class="form-label">كلمة المرور الجديدة *</label>
-                            <input type="password" id="newPassword" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword" class="form-label">تأكيد كلمة المرور الجديدة *</label>
-                            <input type="password" id="confirmPassword" class="form-input" required>
-                        </div>
-                        <button type="submit" class="btn btn-danger">تغيير كلمة المرور</button>
-                    </form>
-                </section>
-
-                <section id="notification-settings" class="setting-section hidden">
-                    <h2>إعدادات الإشعارات</h2>
-                    <form id="notificationSettingsForm">
-                        <div class="form-group">
-                            <label for="newCenterNotification" class="form-label">
-                                <input type="checkbox" id="newCenterNotification" checked> 
-                                إرسال إشعار عند تقديم مركز جديد للموافقة.
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label for="newUserNotification" class="form-label">
-                                <input type="checkbox" id="newUserNotification"> 
-                                إرسال إشعار عند تسجيل مستخدم جديد.
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">حفظ إعدادات الإشعارات</button>
-                    </form>
-                </section>
-                
+            <div class="settings-card">
+                <div class="card-header">
+                    <i class="fas fa-globe"></i>
+                    <h3>إعدادات عامة</h3>
+                </div>
+                <form onsubmit="saveSettings(event, 'عامة')">
+                    <div class="form-group">
+                        <label>اسم الموقع</label>
+                        <input type="text" class="form-input" value="معاهد الوحي">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني للإدارة</label>
+                        <input type="email" class="form-input" value="admin@wahy.com">
+                    </div>
+                    <div class="form-group">
+                        <label>وصف الموقع (SEO)</label>
+                        <textarea class="form-input" rows="3">منصة تعليمية للمراكز القرآنية...</textarea>
+                    </div>
+                    <button type="submit" class="btn-save">حفظ التغييرات</button>
+                </form>
             </div>
-        </div>
 
+            <div class="settings-card">
+                <div class="card-header">
+                    <i class="fas fa-lock"></i>
+                    <h3>الأمان</h3>
+                </div>
+                <form onsubmit="saveSettings(event, 'الأمان')">
+                    <div class="form-group">
+                        <label>كلمة المرور الحالية</label>
+                        <input type="password" class="form-input" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور الجديدة</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <button type="submit" class="btn-save" style="background-color: #333; border: 1px solid #555;">تحديث كلمة المرور</button>
+                </form>
+            </div>
+
+            <div class="settings-card">
+                <div class="card-header">
+                    <i class="fas fa-cogs"></i>
+                    <h3>النظام والتحكم</h3>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-label">
+                        <strong>وضع الصيانة</strong>
+                        <span>إغلاق الموقع مؤقتاً أمام الزوار</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-row">
+                    <div class="toggle-label">
+                        <strong>التسجيل الجديد</strong>
+                        <span>السماح للمستخدمين بإنشاء حسابات جديدة</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-row">
+                    <div class="toggle-label">
+                        <strong>إشعارات البريد</strong>
+                        <span>إرسال تنبيهات عند تسجيل مراكز جديدة</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <button onclick="alert('تم تحديث إعدادات النظام')" class="btn-save" style="margin-top: 20px;">حفظ الحالة</button>
+            </div>
+
+        </div>
     </main>
 
-<script>
-    // ******************************************************
-    // منطق تشغيل الصفحة بالكامل
-    // ******************************************************
+    <script>
+        // دالة وهمية لحفظ الإعدادات
+        function saveSettings(event, sectionName) {
+            event.preventDefault(); // منع إعادة تحميل الصفحة
+            
+            // محاكاة عملية الحفظ
+            const btn = event.target.querySelector('button');
+            const originalText = btn.innerText;
+            
+            btn.innerText = 'جاري الحفظ...';
+            btn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                btn.innerText = 'تم الحفظ بنجاح ✔';
+                btn.style.backgroundColor = '#052c18';
+                btn.style.color = '#2ecc71';
+                btn.style.borderColor = '#2ecc71';
+                
+                // إعادة الزر لحالته الطبيعية بعد ثانيتين
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = '';
+                    btn.style.color = '';
+                    btn.style.opacity = '1';
+                    btn.style.borderColor = '';
+                }, 2000);
+                
+            }, 800); // تأخير بسيط لمحاكاة الاتصال بالسيرفر
+        }
+    </script>
+   <script src="js/data/config.js"></script> 
+<script src="dist/adminUsers.bundle.js"></script>
 
-    // 1. تفعيل التنقل بين الأقسام (Tabs)
-    document.querySelectorAll('.setting-tab-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-
-            // إزالة حالة النشاط من جميع الأزرار وإخفاء جميع الأقسام
-            document.querySelectorAll('.setting-tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.setting-section').forEach(section => section.classList.add('hidden'));
-
-            // تفعيل الزر الحالي وإظهار القسم المستهدف
-            this.classList.add('active');
-            document.getElementById(targetId).classList.remove('hidden');
-        });
-    });
-
-    // 2. محاكاة عمل نماذج الإعدادات (لتشغيل كل شيء في الصفحة)
-    
-    // دالة عامة لمحاكاة عملية الحفظ
-    function handleFormSubmit(e, formName) {
-        e.preventDefault();
-        
-        // هنا يمكن إضافة منطق التحقق من البيانات قبل إرسالها فعليًا
-        
-        const submitButton = e.target.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        
-        submitButton.disabled = true;
-        submitButton.textContent = 'جاري الحفظ...';
-        
-        // محاكاة تأخير الإرسال
-        setTimeout(() => {
-            alert(`تمت محاكاة حفظ الإعدادات بنجاح في قسم: ${formName}.`);
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-            // يمكن هنا إعادة تعيين النموذج إذا لزم الأمر
-            if(formName === 'الأمان') e.target.reset(); 
-
-        }, 1000);
-    }
-
-    // ربط الدوال بالنماذج
-    document.getElementById('generalSettingsForm').addEventListener('submit', (e) => handleFormSubmit(e, 'الإعدادات العامة'));
-    document.getElementById('securitySettingsForm').addEventListener('submit', (e) => handleFormSubmit(e, 'الأمان'));
-    document.getElementById('notificationSettingsForm').addEventListener('submit', (e) => handleFormSubmit(e, 'الإشعارات'));
-
-</script>
 </body>
 </html>

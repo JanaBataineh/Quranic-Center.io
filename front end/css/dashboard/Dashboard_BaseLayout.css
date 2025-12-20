@@ -1,0 +1,38 @@
+
+/* =========================================
+   33. Dashboard: Base Layout (تخطيط لوحة التحكم)
+   ========================================= */
+
+/* تعريف متغيرات خاصة بالداشبورد */
+:root {
+  --dash-bg: #15151e;
+  --sidebar-bg: #1e1e2d;
+  --active-color: #009ef7;
+  --text-muted-dash: #9899ac;
+}
+
+body[data-page="dashboard"] {
+  background-color: var(--dash-bg);
+  display: flex;
+  min-height: 100vh;
+  direction: rtl;
+}
+
+
+/* المحتوى الرئيسي للداشبورد */
+.dashboard-main {
+  flex: 1;
+  margin-right: 260px; /* مساحة للقائمة الجانبية */
+  padding: 2rem;
+  background-color: var(--dash-bg);
+  min-height: 100vh;
+}
+
+/* بطاقات الداشبورد (نظيفة وجاهزة) */
+.dashboard-card {
+  background: var(--sidebar-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  color: #fff;
+}

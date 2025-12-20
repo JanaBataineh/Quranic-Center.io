@@ -1,0 +1,9 @@
+/* Icons */
+/* =========================================
+   20. Icons & Utilities (الأيقونات والأدوات)
+   ========================================= */
+
+.icon { width: 1.5rem; height: 1.5rem; fill: currentColor; }
+.icon-sm { width: 1.1rem; height: 1.1rem; }
+.icon-lg { width: 2rem; height: 2rem; }
+

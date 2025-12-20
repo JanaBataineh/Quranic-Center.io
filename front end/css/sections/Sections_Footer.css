@@ -1,0 +1,62 @@
+
+/* =========================================
+   17. Sections: Footer (التذييل)
+   الهدف: قسم ختامي بسيط ومنسق يستخدم ألوان الهوية
+   ========================================= */
+
+.footer {
+  /* استخدام اللون الثانوي (الأسود) */
+  background: var(--secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4rem 0 1rem;
+  margin-top: auto; /* يضمن بقاء الفوتر في الأسفل دائماً */
+  color: var(--text-muted);
+}
+
+.footer-content {
+  display: grid;
+  /* الشبكة تتجاوب تلقائياً: أعمدة بعرض 250px كحد أدنى */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+  text-align: right;
+}
+
+.footer h4 {
+  color: var(--text-light);
+  margin-bottom: 1.25rem;
+  font-size: 1.1rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+  transform: translateX(-5px); /* حركة بسيطة لليمين عند التحويم */
+}
+
+/* القسم السفلي (حقوق النشر) */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+

@@ -1,0 +1,111 @@
+
+
+/* =========================================
+   38. Dashboard: Progress & Charts (التقدم والمخططات)
+   ========================================= */
+
+/* بطاقة إحصائيات عامة (Base Class) */
+.level-stat-card,
+.city-stat-card,
+.chart-card {
+  background: var(--sidebar-bg);
+  padding: 1.5rem;
+  border-radius: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+}
+
+/* رأس البطاقة */
+.level-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.level-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.refresh-icon {
+  background: none; border: none; color: var(--active-color); cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.refresh-icon:hover { transform: rotate(180deg); }
+
+/* الرقم الكبير في البطاقة */
+.big-score {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* قوائم التقدم (Progress Lists) */
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.prog-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.prog-label {
+  width: 60px;
+  font-size: 0.9rem;
+  color: #ccc;
+  font-weight: 500;
+}
+
+.prog-track {
+  flex-grow: 1;
+  height: 8px;
+  background-color: #323248;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prog-fill {
+  height: 100%;
+  border-radius: 10px;
+}
+
+/* ألوان أشرطة التقدم */
+.fill-green { background-color: #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.4); }
+.fill-yellow { background-color: #ffea00; box-shadow: 0 0 10px rgba(255, 234, 0, 0.4); }
+.fill-red    { background-color: #ff3d00; box-shadow: 0 0 10px rgba(255, 61, 0, 0.4); }
+.fill-blue   { background-color: #009ef7; box-shadow: 0 0 10px rgba(0, 158, 247, 0.4); }
+.fill-purple { background-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+
+/* وسيلة إيضاح المخططات (Legend) */
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.legend-item .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 10px;
+}

@@ -1,0 +1,15 @@
+/* =========================================
+   26. Components: Ratings (التقييمات)
+   ========================================= */
+/* Star Rating */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.star {
+  color: #fbbf24;
+  font-size: 1rem;
+}
+

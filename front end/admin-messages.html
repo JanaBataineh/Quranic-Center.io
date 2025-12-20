@@ -1,110 +1,343 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صندوق رسائل الإدارة - لوحة التحكم</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* تنسيقات خاصة بإدارة الرسائل */
-    .admin-header {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, #5a6b47 100%);
-      color: #fff;
-      padding: 2rem 0 1.5rem 0;
-      text-align: center;
-      border-radius: 0 0 1.5rem 1.5rem;
-      margin-bottom: 2rem;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الرسائل - لوحة التحكم</title>
+   <link rel="stylesheet" href="dist/main.css">
+   <script>
+    // كود الحماية: طرد أي شخص ليس "Admin"
+    if (localStorage.getItem("isAdmin") !== "true") {
+        window.location.href = "login.html";
     }
-    .admin-header h1 {
-        margin: 0;
-        font-size: 2.2rem;
-    }
-    .messages-container {
-        display: grid;
-        gap: 1.5rem;
-    }
-    .message-card {
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-        background: #fff;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    .message-card.unread {
-        border-right: 5px solid var(--primary);
-        background: #fcfcfc;
-    }
-    .message-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px dashed var(--secondary);
-    }
-    .message-sender {
-        font-weight: 600;
-        color: var(--primary-dark);
-        font-size: 1.1rem;
-    }
-    .message-time {
-        font-size: 0.8rem;
-        color: var(--muted);
-    }
-    .message-subject {
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-    .message-body {
-        color: #555;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        line-height: 1.6;
-    }
-  </style>
+</script>
+    <style>
+        /* =========================================
+           1. الأساسيات والوضع الداكن (Dark Theme)
+           ========================================= */
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+        }
+
+        /* القائمة الجانبية */
+        aside {
+            width: 260px;
+            background: #000;
+            height: 100vh;
+            border-left: 1px solid #333;
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px; color: #aaa; text-decoration: none;
+            border-radius: 6px; margin-bottom: 5px; transition: 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: #1a1a1a; color: white;
+        }
+
+        /* المحتوى الرئيسي (مع حل مشكلة التداخل) */
+        main {
+            margin-right: 260px; /* إزاحة بمقدار عرض القائمة */
+            width: calc(100% - 260px);
+            padding: 30px;
+            background-color: #0d0d0d;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* =========================================
+           2. تنسيق الجدول الخاص بالرسائل
+           ========================================= */
+        .table-wrapper {
+            background-color: #000;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            overflow-x: auto;
+        }
+
+        .dark-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        .dark-table th {
+            color: #888; padding: 15px; border-bottom: 1px solid #333; font-size: 0.9em;
+        }
+
+        .dark-table td {
+            padding: 15px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; color: #ddd;
+        }
+
+        .dark-table tr:hover { background-color: #111; cursor: pointer; }
+
+        /* تمييز الرسائل غير المقروءة */
+        .unread-row td {
+            font-weight: bold;
+            color: #fff;
+            background-color: rgba(37, 99, 235, 0.05); /* خلفية زرقاء خفيفة جداً */
+        }
+
+        /* الشارات */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75em; }
+        .bg-new { background: #1e3a8a; color: #93c5fd; border: 1px solid #2563eb; } /* جديد */
+        .bg-read { background: #1a1a1a; color: #666; border: 1px solid #333; } /* مقروء */
+
+        /* الأزرار */
+        .action-btn { padding: 6px 12px; border-radius: 4px; cursor: pointer; border: none; margin-left: 5px; }
+        .btn-view { background-color: #2563eb; color: white; }
+        .btn-delete { background-color: transparent; color: #ef4444; border: 1px solid #ef4444; }
+
+        /* =========================================
+           3. النافذة المنبثقة (Modal) - لعرض الرسالة
+           ========================================= */
+        .modal-overlay {
+            display: none !important; /* مخفي افتراضياً */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000; /* فوق كل شيء */
+            justify-content: center; align-items: center;
+        }
+
+        /* كلاس للإظهار */
+        .modal-overlay.show {
+            display: flex !important;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            width: 500px;
+            border: 1px solid #333;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .message-details h3 { margin-top: 0; color: white; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .detail-row { margin-bottom: 15px; }
+        .detail-label { color: #888; font-size: 0.9em; display: block; margin-bottom: 5px; }
+        .detail-value { color: #fff; background: #0d0d0d; padding: 10px; border-radius: 6px; border: 1px solid #333; line-height: 1.6; }
+
+        .close-btn { position: absolute; left: 20px; top: 20px; color: #aaa; cursor: pointer; font-size: 1.5rem; }
+    </style>
 </head>
 <body>
-  
-    <header class="admin-header">
-        <h1>صندوق رسائل التواصل</h1>
-        <p>مراجعة والرد على رسائل المستخدمين والاستفسارات الواردة.</p>
-    </header>
+<aside class="modern-sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#009ef7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            معاهد الوحي
+        </a>
+        <div class="menu-label">القائمة الرئيسية</div>
+        <a href="dashbord.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
+            </path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+            لوحة التحكم
+        </a>
+        <div class="menu-label">الإدارة</div>
+        <a href="admin-manage-centers.html" class="sidebar-linke">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4"></path></svg>
+            إدارة المراكز
+        </a>
+        <a href="admin-manage-courses.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            إدارة الدورات
+        </a>
+        <a href="admin-manage-users.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            المستخدمين
+        </a>
+        <a href="admin-messages.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            الرسائل
+        </a>
+        <div class="menu-label">النظام</div>
+        <a href="admin-settings.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            الإعدادات
+        </a>
+        <a href="#" onclick="logout()" class="sidebar-link" style="color: #ff5b5b; margin-top: auto;">
+            تسجيل الخروج
+        </a>
+    </aside>
 
-    <main class="container">
-        
-        <div class="messages-container">
-            
-            <div class="message-card unread">
-                <div class="message-header">
-                    <span class="message-sender">أحمد خالد (طالب)</span>
-                    <span class="message-time">منذ ساعتين</span>
-                </div>
-                <div class="message-subject">نوع الاستفسار: التسجيل في دورة | الموضوع: استفسار حول دورة التجويد</div>
-                <div class="message-body">
-                    <p>أرغب في معرفة المزيد عن دورة التجويد المتقدمة في مركز الصديق، وهل هناك إمكانية للدراسة عن بعد؟ شكراً.</p>
-                    <p class="text-muted">الهاتف: +96650xxxxxxx | البريد: ahmad@test.com</p>
-                </div>
-                <button class="btn btn-primary btn-sm">تمييز كمقروءة</button>
-                <button class="btn btn-outline btn-sm">الرد عبر الإيميل</button>
+    <main>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h2 style="color: white; margin:0;">الرسائل الواردة</h2>
+                <p style="color: #666; margin: 5px 0 0;">عرض رسائل التواصل والشكاوى من المستخدمين</p>
             </div>
             
-            <div class="message-card">
-                <div class="message-header">
-                    <span class="message-sender">مركز علي بن أبي طالب</span>
-                    <span class="message-time">منذ 3 أيام</span>
+            <div style="display: flex; gap: 15px;">
+                <div style="background:#111; padding:10px 20px; border-radius:8px; border:1px solid #333; text-align:center;">
+                    <span style="display:block; color:#888; font-size:0.8em;">غير مقروء</span>
+                    <span style="color:#2563eb; font-weight:bold; font-size:1.2em;" id="unreadCount">0</span>
                 </div>
-                <div class="message-subject">نوع الاستفسار: مشكلة تقنية | الموضوع: لا يمكنني رفع صور المركز</div>
-                <div class="message-body">
-                    <p>واجهت مشكلة عند محاولة رفع صور جديدة للمركز عبر لوحة التحكم، يرجى المساعدة.</p>
-                    <p class="text-muted">الهاتف: +96279xxxxxxx | البريد: info@quran-society.org</p>
-                </div>
-                <button class="btn btn-primary btn-sm">تمت المعالجة</button>
             </div>
-            
+        </header>
+
+        <div class="table-wrapper">
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>المرسل</th>
+                        <th>الموضوع</th>
+                        <th>التاريخ</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="messagesTableBody">
+                    </tbody>
+            </table>
         </div>
-        
     </main>
 
+    <div id="messageModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            
+            <div class="message-details">
+                <h3>تفاصيل الرسالة</h3>
+                
+                <div class="detail-row">
+                    <span class="detail-label">المرسل:</span>
+                    <div class="detail-value" id="msgSender"></div>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">البريد الإلكتروني:</span>
+                    <div class="detail-value" id="msgEmail"></div>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">الموضوع:</span>
+                    <div class="detail-value" id="msgSubject"></div>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">نص الرسالة:</span>
+                    <div class="detail-value" id="msgContent" style="min-height: 100px;"></div>
+                </div>
+
+                <div style="text-align: left; margin-top: 20px;">
+                    <button class="action-btn" style="background: #333; color: white;" onclick="closeModal()">إغلاق</button>
+                    <a href="#" id="replyBtn" class="action-btn btn-view" style="text-decoration:none;">رد عبر البريد</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="js/data/config.js"></script>
+<script src="dist/adminUsers.bundle.js"></script>
+
+
+    <script>
+        // 1. بيانات وهمية للرسائل
+        let messagesData = [
+            { id: 1, sender: 'محمد أحمد', email: 'mohammed@example.com', subject: 'استفسار عن دورة التجويد', content: 'السلام عليكم، هل دورة التجويد متاحة للأطفال؟', date: '2025-10-05', isRead: false },
+            { id: 2, sender: 'سارة خالد', email: 'sara@example.com', subject: 'مشكلة في تسجيل الدخول', content: 'أحاول الدخول لحسابي ولكن تظهر رسالة خطأ.', date: '2025-10-04', isRead: true },
+            { id: 3, sender: 'مركز النور', email: 'info@noor.com', subject: 'طلب اعتماد مركز', content: 'نرجو منكم مراجعة طلب اعتماد مركزنا الجديد.', date: '2025-10-03', isRead: false },
+        ];
+
+        // 2. دالة عرض الرسائل
+        function renderMessages() {
+            const tbody = document.getElementById('messagesTableBody');
+            tbody.innerHTML = '';
+            
+            let unreadCount = 0;
+
+            messagesData.forEach((msg, index) => {
+                if (!msg.isRead) unreadCount++;
+
+                // تحديد كلاس الصف (إذا غير مقروء نضيف كلاس للتمييز)
+                const rowClass = msg.isRead ? '' : 'unread-row';
+                const statusBadge = msg.isRead 
+                    ? '<span class="badge bg-read">مقروء</span>' 
+                    : '<span class="badge bg-new">جديد</span>';
+
+                const tr = `
+                    <tr class="${rowClass}">
+                        <td>${index + 1}</td>
+                        <td>${msg.sender}</td>
+                        <td>${msg.subject}</td>
+                        <td style="color:#666; font-size:0.9em;">${msg.date}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="action-btn btn-view" onclick="openMessage(${msg.id})">عرض</button>
+                            <button class="action-btn btn-delete" onclick="deleteMessage(${msg.id})">حذف</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+
+            // تحديث عداد الرسائل
+            document.getElementById('unreadCount').innerText = unreadCount;
+        }
+
+        // 3. فتح الرسالة (وعملها مقروءة)
+        function openMessage(id) {
+            const msg = messagesData.find(m => m.id === id);
+            if(!msg) return;
+
+            // تعبئة البيانات في النافذة
+            document.getElementById('msgSender').innerText = msg.sender;
+            document.getElementById('msgEmail').innerText = msg.email;
+            document.getElementById('msgSubject').innerText = msg.subject;
+            document.getElementById('msgContent').innerText = msg.content;
+            
+            // رابط الرد (mailto)
+            document.getElementById('replyBtn').href = `mailto:${msg.email}?subject=Re: ${msg.subject}`;
+
+            // تحويل الحالة إلى "مقروء" وتحديث الجدول
+            if(!msg.isRead) {
+                msg.isRead = true;
+                renderMessages(); // إعادة الرسم لتحديث اللون والعداد
+            }
+
+            // إظهار النافذة
+            document.getElementById('messageModal').classList.add('show');
+        }
+
+        // 4. حذف رسالة
+        function deleteMessage(id) {
+            if(confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+                messagesData = messagesData.filter(m => m.id !== id);
+                renderMessages();
+            }
+        }
+
+        // 5. إغلاق النافذة
+        function closeModal() {
+            document.getElementById('messageModal').classList.remove('show');
+        }
+
+        // إغلاق عند النقر في الخارج
+        window.onclick = function(e) {
+            const modal = document.getElementById('messageModal');
+            if(e.target == modal) closeModal();
+        }
+
+        // تشغيل عند البدء
+        renderMessages();
+
+    </script>
 </body>
 </html>

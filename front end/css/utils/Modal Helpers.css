@@ -1,0 +1,55 @@
+
+/* =========================================
+   25. Modal Helpers (عناصر داخلية للمودال)
+   بديل للكود السيء div[style*="border"]
+   ========================================= */
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.modal-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+/* الصناديق الداخلية (للمعلومات) */
+.info-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: background 0.3s ease;
+}
+
+.info-box:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.info-box h4 { color: var(--text-light); margin-bottom: 0.5rem; }
+.info-box p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
+/* حالة النجاح (Success State) */
+.form-success {
+  background: rgba(22, 163, 74, 0.1); /* أخضر شفاف داكن */
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  color: #4ade80;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.form-success-icon {
+  width: 4rem;
+  height: 4rem;
+  background: rgba(22, 163, 74, 0.2);
+  border: 1px solid rgba(22, 163, 74, 0.5);
+  color: #4ade80;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.5rem;
+}

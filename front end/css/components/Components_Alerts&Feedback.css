@@ -1,0 +1,30 @@
+/* =========================================
+   12. Components: Alerts & Feedback (التنبيهات)
+   ========================================= */
+/* Error Message */
+.error-message {
+background: rgba(239, 68, 68, 0.1);
+border: 1px solid rgba(239, 68, 68, 0.3);
+color: #fca5a5; /* لون أحمر فاتح مقروء على خلفية داكنة */
+border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+
+display: flex;
+align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message.hidden {
+  display: none;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--primary);
+}

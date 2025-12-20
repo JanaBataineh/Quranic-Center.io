@@ -1,0 +1,145 @@
+
+
+/* =========================================
+   40. Admin Components: Data Tables (جداول البيانات)
+   الهدف: جداول داكنة، مفصولة الصفوف، ومتجاوبة
+   ========================================= */
+
+/* 1. الحاوية الخارجية للجدول (الصندوق) */
+.modern-table-container {
+  background: var(--secondary); /* أو var(--sidebar-bg) إذا كنت عرفته */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  
+  /* مهم جداً: يجعل الجدول قابل للتمرير أفقياً في الموبايل */
+  overflow-x: auto; 
+}
+
+/* 2. الجدول نفسه */
+.modern-table {
+  width: 100%;
+  border-collapse: separate; /* ضروري لفصل الصفوف عن بعضها */
+  border-spacing: 0 0.5rem; /* المسافة بين كل صف وآخر */
+  color: var(--text-light);
+  min-width: 600px; /* لضمان عدم انضغاط الأعمدة */
+}
+
+/* 3. رأس الجدول (Thead) */
+.modern-table th {
+  text-align: right;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 4. خلايا الجدول (Tbody) */
+.modern-table td {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02); /* خلفية شفافة لكل صف */
+  vertical-align: middle;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 5. تدوير حواف الصفوف (Rounded Corners for Rows) */
+/* الخلية الأولى في الصف */
+.modern-table td:first-child { 
+  border-top-right-radius: 10px; 
+  border-bottom-right-radius: 10px; 
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+/* الخلية الأخيرة في الصف */
+.modern-table td:last-child { 
+  border-top-left-radius: 10px; 
+  border-bottom-left-radius: 10px; 
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 6. تأثير التحويم (Hover) */
+.modern-table tr:hover td {
+  background: rgba(255, 255, 255, 0.08); /* إضاءة الصف عند مرور الماوس */
+  transition: background 0.2s ease;
+}
+
+/* 7. تنسيق أزرار التحكم فوق الجدول */
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+/* حاوية الجدول */
+.table-wrapper {
+    background-color: #000; /* خلفية سوداء بالكامل */
+    border-radius: 8px;
+    padding: 20px;
+    direction: rtl; /* اتجاه من اليمين لليسار */
+    color: #fff;
+}
+
+/* تنسيق الجدول الأساسي */
+.dark-table {
+    width: 100%;
+    border-collapse: collapse; /* دمج الحدود */
+}
+
+/* تنسيق العناوين والخلايا */
+.dark-table th, 
+.dark-table td {
+    padding: 12px 10px; /* مسافة داخلية مريحة */
+    text-align: right; /* محاذاة النص لليمين */
+    border-bottom: 1px solid #222; /* خط فاصل خافت جداً */
+    vertical-align: middle;
+}
+
+/* === التحكم في عرض الأعمدة (حل مشكلة المسافات) === */
+
+/* العمود الأول (#): عرض صغير جداً لتقليل المسافة */
+.dark-table th:nth-child(1), 
+.dark-table td:nth-child(1) {
+    width: 50px; 
+    color: #666; /* لون باهت للرقم */
+}
+
+/* العمود الثاني (اسم الدورة): يأخذ مساحة جيدة */
+.dark-table th:nth-child(2), 
+.dark-table td:nth-child(2) {
+    width: 25%; 
+    font-weight: bold;
+}
+
+/* عمود الإجراءات (الأخير): عرض ثابت للأزرار */
+.dark-table th:last-child, 
+.dark-table td:last-child {
+    width: 160px;
+    text-align: center; /* توسيط الأزرار */
+}
+
+/* تنسيق الشارات (Badges) */
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    display: inline-block;
+}
+.bg-success-dark { background: #052c18; color: #2ecc71; border: 1px solid #2ecc71; }
+.bg-warning-dark { background: #2c2505; color: #f1c40f; border: 1px solid #f1c40f; }
+.bg-info-dark { background: #05202c; color: #3498db; border: 1px solid #3498db; }
+
+/* تنسيق الأزرار */
+.action-btn {
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+.btn-edit { background-color: #333; color: white; border: 1px solid #555; }
+.btn-delete { background-color: transparent; color: #e74c3c; border: 1px solid #e74c3c; }

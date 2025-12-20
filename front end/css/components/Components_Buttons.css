@@ -1,0 +1,268 @@
+:root {
+/* ========================
+     نظام الألوان (Color Palette)
+     ======================== */ 
+     /* اللون الرئيسي (فضي مائل للبيج):
+      يستخدم لخلفيات الأزرار الأساسية، 
+      الروابط النشطة في القائمة، وأيقونات التمييز */
+ --primary: #2e373e;
+ /* درجة أغمق من الرئيسي: يستخدم عند تمرير الماوس 
+ (Hover) على الأزرار ليعطي تفاعلاً بصرياً */
+  --primary-dark: #ffffff;
+/* اللون الثانوي (أسود حالك): يستخدم كخلفية أساسية للصفحة 
+(Body) وخلفية الفوتر والأقسام الداكنة */
+  --secondary: #000000;
+  /* لون النصوص الأساسي (أبيض): يستخدم للعناوين الرئيسية 
+  (h1-h6) والنصوص داخل البطاقات الزجاجية */
+  --text-light: #ffffff;
+  /* لون النصوص الفرعية (أبيض شفاف): يستخدم للوصف تحت 
+  العناوين، التواريخ، والنصوص الأقل أهمية لتقليل التشتت */
+  --text-muted: rgba(255, 255, 255, 0.7);
+
+
+/* ========================
+     إعدادات الزجاج (Glassmorphism System)
+     تستخدم في: الكروت (Cards)
+      والنوافذ المنبثقة (Modals)
+     ======================== */
+     /* خلفية الزجاج: تدرج لوني شفاف يعطي لمعة خفيفة */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1),
+   rgba(255, 255, 255, 0.05));
+   /* حدود الزجاج: إطار أبيض شفاف جداً لتحديد حواف العنصر */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  /* ظل الزجاج: يعطي عمقاً ويرفع العنصر عن الخلفية السوداء */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  /* التغبيش: أهم عنصر، يقوم بطمس ما خلف العنصر لزيادة وضوح النص */
+  --glass-blur: blur(20px);
+  
+/* ========================
+     المسافات والأبعاد (Spacing & Sizing)
+     ======================== */
+     /* المسافة القياسية: تستخدم للهوامش الداخلية 
+     (Padding) في البطاقات */
+  --spacing-md: 1.5rem;
+  /* تدوير الحواف: يستخدم لزوايا
+   البطاقات والأزرار الكبيرة */
+  --radius-lg: 20px;
+}
+/* =========================================
+   Components: Buttons (الأزرار)
+   الهدف: إنشاء أزرار قابلة لإعادة الاستخدام، مع تأثيرات تفاعلية 
+   (Micro-interactions)
+   ========================================= */
+
+/* التنسيق الأساسي المشترك (Base Style) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* استخدام حدود شفافة افتراضية لمنع اهتزاز
+   التصميم عند التبديل إلى زر بحدود */
+  border: none;
+  border-radius: 0.5rem;
+  
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  /* انتقال ناعم لجميع الخصائص */
+  transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+
+}
+/* تأثير الحركة البسيطة عند الضغط على أي زر */
+.btn:active {
+  /* عندما يقوم المستخدم بالنقر على الزر، يتقلص حجمه قليلاً جداً
+   (بنسبة 2%)، مما يعطي إيحاءً للعين بأن الزر "غار للداخل"
+    أو تم ضغطه ميكانيكياً، تماماً مثل أزرار لوحة المفاتيح الحقيقية. */
+  transform: scale(0.98);
+}
+/*الزر الرئيسي (Primary Button) */
+.btn-primary {
+  background-color: var(--primary);
+color: #fff; 
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  border-color: var(--primary);
+  border: 1px solid var(--primary);
+   color: var(--primary) ;
+  /* رفع الزر قليلاً للأعلى عند التحويم */
+  transform: translateY(-2px);
+}
+/* 3. الزر الزجاجي (Glass/Secondary Button) 
+   تم تحويله من زر خاص بالمودال إلى زر عام يمكن استخدامه في أي مكان */
+.btn-glass {
+  /* استخدام متغيرات الزجاج التي عرفناها سابقاً */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  /* إضافة لمعة علوية لإبراز الزر */
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  color: var(--text-light);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+  /* زيادة سطوع الخلفية عند التحويم */
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #ffffff ;
+  /* توهج خارجي */
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.2), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+.btn-glass:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary);
+  transform: translateY(-2px);
+  color: #ffffff !important ;
+}
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  
+}
+
+/* =========================================
+   تنسيق الزر الثانوي (Glassmorphism Style)
+   ========================================= */
+.btn-secondary {
+  /* 1. الخلفية والشفافية باستخدام متغيرات النظام */
+  background: var(--glass-bg); /* خلفية زجاجية موحدة */
+  
+  /* 2. تأثير التغبيش (Blur) */
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur); /* لدعم متصفح سفاري */
+  
+  /* 3. الحدود */
+  border: var(--glass-border);
+  
+  /* 4. النصوص والظلال */
+  color: var(--text-light);
+  box-shadow: var(--glass-shadow);
+  
+  /* 5. حركة ناعمة */
+  transition: all 0.3s ease;
+}
+
+/* تأثير عند مرور الماوس (Hover) */
+.btn-secondary:hover {
+  /* زيادة سطوع الخلفية قليلاً */
+  background: rgba(255, 255, 255, 0.2);
+  
+  /* توهج الحدود */
+  border-color: rgba(255, 255, 255, 0.6);
+  
+  /* النص يصبح أبيض ناصع */
+  color: #ffffff !important;
+  
+  /* حركة للأعلى وتوهج بسيط */
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* عند الضغط (Active) */
+.btn-secondary:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+.btn-md{
+   padding: 1rem 2rem;
+  font-size: 1.125rem;
+  /* 1. الخلفية والشفافية باستخدام متغيرات النظام */
+  background: var(--glass-bg); /* خلفية زجاجية موحدة */
+  
+  /* 2. تأثير التغبيش (Blur) */
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur); /* لدعم متصفح سفاري */
+  
+  /* 3. الحدود */
+  border: var(--glass-border);
+  
+  /* 4. النصوص والظلال */
+  color: var(--text-light);
+  box-shadow: var(--glass-shadow);
+  
+  /* 5. حركة ناعمة */
+  transition: all 0.3s ease;
+}
+.btn-md:hover{
+ /* زيادة سطوع الخلفية قليلاً */
+  background: rgba(255, 255, 255, 0.2);
+  
+  /* توهج الحدود */
+  border-color: rgba(255, 255, 255, 0.6);
+  
+  /* النص يصبح أبيض ناصع */
+  color: #ffffff !important;
+  
+  /* حركة للأعلى وتوهج بسيط */
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.btn-md:active{
+  transform: scale(0.98);
+  box-shadow: none;
+}
+.btn-ft{
+    padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  /* 1. الخلفية والشفافية باستخدام متغيرات النظام */
+  background: var(--glass-bg); /* خلفية زجاجية موحدة */
+  
+  /* 2. تأثير التغبيش (Blur) */
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur); /* لدعم متصفح سفاري */
+  
+  /* 3. الحدود */
+  border: var(--glass-border);
+  
+  /* 4. النصوص والظلال */
+  color: var(--text-light);
+  box-shadow: var(--glass-shadow);
+  
+  /* 5. حركة ناعمة */
+  transition: all 0.3s ease;
+}
+.btn-ft:hover{
+  /* زيادة سطوع الخلفية قليلاً */
+  background: rgba(255, 255, 255, 0.2);
+  
+  /* توهج الحدود */
+  border-color: rgba(255, 255, 255, 0.6);
+  
+  /* النص يصبح أبيض ناصع */
+  color: #ffffff !important;
+  
+  /* حركة للأعلى وتوهج بسيط */
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.btn-ft:active{
+    transform: scale(0.98);
+  box-shadow: none;
+}

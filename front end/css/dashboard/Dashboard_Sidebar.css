@@ -1,0 +1,67 @@
+
+/* =========================================
+   34. Dashboard: Sidebar (القائمة الجانبية)
+   ========================================= */
+
+.modern-sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3rem;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.menu-label {
+  color: var(--text-muted-dash);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin: 1.5rem 0 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: var(--text-muted-dash);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.sidebar-link:hover, 
+.sidebar-link.active {
+  background-color: rgba(0, 158, 247, 0.1);
+  color: var(--active-color);
+}
+
+/* إصلاح الأيقونات (بدون !important إذا أمكن، لكن سنستخدمه لضمان الثبات) */
+.modern-sidebar svg, 
+.sidebar-link svg {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: block;
+}
