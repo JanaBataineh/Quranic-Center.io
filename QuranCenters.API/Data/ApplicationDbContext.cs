@@ -14,7 +14,10 @@ namespace QuranCenters.API.Data
         public DbSet<Center> Centers { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Course> Courses { get; set; } 
-public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }
+        // 👇 الجدول الجديد للرسائل
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,7 +32,6 @@ public DbSet<Enrollment> Enrollments { get; set; }
             {
                 Id = ADMIN_ID,
                 Email = "admin@admin.com", 
-                // 🌟🌟 الـ HASH الثابت لكلمة المرور "admin123" 🌟🌟
                 PasswordHash = "$2a$11$8kX9V2C.9a9D6hJ3i4B5A6e7T8w0K1m2G4l6o9j4K7v1n9r2X2i3c.3s1J", 
                 UserType = "Admin",
                 FirstName = "Admin",

@@ -175,5 +175,99 @@ namespace QuranCenters.API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "تم حذف الدورة." });
         }
+  // =======================================================
+        // 4. إدارة المستخدمين (Users Management)
+        // =======================================================
+
+        // جلب جميع المستخدمين
+        // GET: api/Admin/users
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.Users
+                .OrderByDescending(u => u.CreatedAt) // ترتيب من الأحدث للأقدم
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    FullName = $"{u.FirstName} {u.MiddleName} {u.LastName}",
+                    Email = u.Email,
+                    UserType = u.UserType,
+                    CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd")
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        // حذف مستخدم
+        // DELETE: api/Admin/users/{id}
+        [HttpDelete("users/{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "المستخدم غير موجود." });
+
+            // حماية: منع حذف الأدمن الرئيسي (اختياري)
+            if (user.Email == "admin@admin.com")
+            {
+                return BadRequest(new { message = "لا يمكن حذف المسؤول الرئيسي." });
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "تم حذف المستخدم بنجاح." });
+        }
+      // =======================================================
+        // 5. إعدادات الحساب (مصحح ليعمل مع المستخدم الحالي)
+        // =======================================================
+
+        // تحديث البريد الإلكتروني
+        [HttpPut("update-email")]
+        public async Task<IActionResult> UpdateAdminEmail([FromBody] string newEmail)
+        {
+            // 1. الحصول على معرف المستخدم الحالي من التوكن
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound(new { message = "المستخدم غير موجود." });
+
+            // 2. التحقق من عدم تكرار الإيميل
+            if (await _context.Users.AnyAsync(u => u.Email == newEmail && u.Id != userId))
+            {
+                return BadRequest(new { message = "هذا البريد الإلكتروني مستخدم بالفعل." });
+            }
+
+            user.Email = newEmail;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "تم تحديث البريد الإلكتروني بنجاح." });
+        }
+
+        // تغيير كلمة المرور
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            // 1. الحصول على معرف المستخدم الحالي من التوكن
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound(new { message = "المستخدم غير موجود." });
+
+            // 2. التحقق من كلمة المرور القديمة الخاصة بهذا المستخدم
+            bool isCorrect = BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash);
+            if (!isCorrect)
+            {
+                return BadRequest(new { message = "كلمة المرور الحالية غير صحيحة." });
+            }
+
+            // 3. تشفير وحفظ كلمة المرور الجديدة
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "تم تغيير كلمة المرور بنجاح." });
+        }
     }
 }

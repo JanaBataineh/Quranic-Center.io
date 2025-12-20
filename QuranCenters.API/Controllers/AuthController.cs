@@ -12,7 +12,7 @@ using System.Text;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System;
-
+using Google.Apis.Auth;
 namespace QuranCenters.API.Controllers
 {
     [Route("api/[controller]")]
@@ -48,8 +48,7 @@ namespace QuranCenters.API.Controllers
                 Age = request.Age,
                 Email = request.Email.ToLower(),
                 UserType = request.UserType,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
-            };
+PasswordHash = request.Password,            };
 
             await _context.Users.AddAsync(user);
             
@@ -65,7 +64,7 @@ namespace QuranCenters.API.Controllers
                     Address = "غير محدد",
                     Phone = "غير محدد",
                     Status = "pending",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 };
                 await _context.Centers.AddAsync(center);
             }
@@ -89,11 +88,10 @@ namespace QuranCenters.API.Controllers
             if (user == null)
                 return Unauthorized(new { message = "البريد الإلكتروني أو كلمة المرور غير صحيحة." });
 
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+bool isPasswordValid = request.Password == user.PasswordHash;
 
-            if (!isPasswordValid)
-                return Unauthorized(new { message = "البريد الإلكتروني أو كلمة المرور غير صحيحة." });
-
+if (!isPasswordValid)
+    return Unauthorized(new { message = "البريد الإلكتروني أو كلمة المرور غير صحيحة." });
             // إنشاء التوكن الصحيح
             string token = CreateToken(user);
 
@@ -140,5 +138,56 @@ namespace QuranCenters.API.Controllers
 
             return tokenHandler.WriteToken(token);
         }
+
+        [HttpPost("google-login")]
+public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto model)
+{
+    try
+    {
+        // 1. التحقق من التوكن مع سيرفرات جوجل
+        var payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken);
+
+        // 2. البحث عن المستخدم في قاعدتنا
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == payload.Email);
+
+        if (user == null)
+        {
+            // 3. إذا لم يكن موجوداً، ننشئ له حساب طالب تلقائياً
+            user = new User
+            {
+                Email = payload.Email,
+                FirstName = payload.GivenName ?? "User",
+                LastName = payload.FamilyName ?? "New",
+                MiddleName = "-",
+                Age = 0, // قيمة افتراضية
+                UserType = "Student", // نوع الحساب الافتراضي
+                // كلمة سر عشوائية لأنه سيدخل عبر جوجل دائماً
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()) 
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
+        // 4. إصدار التوكن الخاص بنظامنا (نفس دالة Login العادية)
+        var token = CreateToken(user);
+
+        return Ok(new
+        {
+            message = "تم تسجيل الدخول بنجاح عبر Google!",
+            token = token,
+            user_info = new
+            {
+                Email = user.Email,
+                UserType = user.UserType,
+                FullName = $"{user.FirstName} {user.LastName}"
+            }
+        });
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { message = "فشل التحقق من Google", error = ex.Message });
+    }
+}
     }
 }

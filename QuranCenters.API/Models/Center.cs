@@ -14,6 +14,6 @@ namespace QuranCenters.API.Models
         public string Email { get; set; } = null!; // 
         public int Established { get; set; }
         public string Status { get; set; } = "pending"; 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

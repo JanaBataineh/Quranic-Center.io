@@ -19,7 +19,7 @@ namespace QuranCenters.API.Models
         public Course Course { get; set; } = null!;
 
         // تفاصيل إضافية عن التسجيل
-        public DateTime EnrollmentDate { get; set; } = DateTime.Now;
+        public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "Active"; // Active, Completed
         public int Progress { get; set; } = 0; // نسبة الإنجاز
     }

@@ -3,24 +3,38 @@ using QuranCenters.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Npgsql; 
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ====================================================
-// 1. إعداد قاعدة البيانات
+// 1. إعداد قاعدة البيانات (الذكي) 🧠
 // ====================================================
-var host = Environment.GetEnvironmentVariable("PGHOST");
-var port = Environment.GetEnvironmentVariable("PGPORT");
-var database = Environment.GetEnvironmentVariable("PGDATABASE");
-var user = Environment.GetEnvironmentVariable("PGUSER");
-var password = Environment.GetEnvironmentVariable("PGPASSWORD");
 
-var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true";
+string connectionString;
 
+// محاولة جلب متغيرات البيئة (للعمل على Railway)
+var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+
+if (!string.IsNullOrEmpty(pgHost))
+{
+    // نحن على السيرفر (Railway)
+    var pgPort = Environment.GetEnvironmentVariable("PGPORT");
+    var pgDb = Environment.GetEnvironmentVariable("PGDATABASE");
+    var pgUser = Environment.GetEnvironmentVariable("PGUSER");
+    var pgPass = Environment.GetEnvironmentVariable("PGPASSWORD");
+
+    connectionString = $"Host={pgHost};Port={pgPort};Database={pgDb};Username={pgUser};Password={pgPass};Ssl Mode=Require;Trust Server Certificate=true";
+}
+else
+{
+    // نحن على الجهاز المحلي (Localhost) - اقرأ من الملف
+connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
+
+// تسجيل خدمة قاعدة البيانات
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-
 
 // ====================================================
 // 2. إعداد الـ JWT
@@ -39,16 +53,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// ====================================================
-// 3. إعداد الـ CORS (مفتوح للجميع - الحل الجذري)
-// ====================================================
+// 3. إعداد الـ CORS (مفتوح للعمل المحلي)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://quranic-center-io.vercel.app") // Add your frontend URL here
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyOrigin()   // اسمح لأي مصدر (مثل Live Server)
+              .AllowAnyMethod()   // اسمح بـ GET, POST, PUT, DELETE
+              .AllowAnyHeader();  // اسمح بأي ترويسة
     });
 });
 
@@ -82,18 +94,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // ====================================================
-// 5. ترتيب الـ Middleware (مهم جداً جداً)
+// 5. ترتيب الـ Middleware
 // ====================================================
 
 app.UseRouting();
-
-// ⚠️ تفعيل السياسة المفتوحة هنا قبل المصادقة ⚠️
-// Use CORS
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAll"); // تفعيل CORS
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.UseDefaultFiles();
 app.MapControllers();
 
 app.Run();

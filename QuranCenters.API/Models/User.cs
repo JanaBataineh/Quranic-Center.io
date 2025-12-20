@@ -23,7 +23,7 @@ namespace QuranCenters.API.Models
         public string LastName { get; set; } = null!; // 
         public int Age { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }
