@@ -244,41 +244,57 @@
                 <h2 id="courseModalTitle" class="text-lg">إضافة دورة جديدة</h2>
                 <button class="modal-close" onclick="closeAddCourseModal()">&times;</button>
             </div>      
-            <form id="addCourseForm">
-                <input type="hidden" id="courseId">
+<form id="addCourseForm">
+    <input type="hidden" id="courseId">
 
-                <div class="form-group">
-                    <label class="form-label">اسم الدورة *</label>
-                    <input type="text" id="courseName" class="form-input" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">معرّف المركز (ID) *</label>
-                    <input type="text" id="courseCenterId" class="form-input" placeholder="ألصق ID المركز هنا" required>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="form-group">
-                        <label class="form-label">المستوى *</label>
-                        <select id="courseLevel" class="form-input" required>
-                            <option value="مبتدئ" style="color:black">مبتدئ</option>
-                            <option value="متوسط" style="color:black">متوسط</option>
-                            <option value="متقدم" style="color:black">متقدم</option>
-                        </select>
-                    </div>
+    <div class="form-group">
+        <label class="form-label">اسم الدورة *</label>
+        <input type="text" id="courseName" class="form-input" required>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">المركز التابع له *</label>
+        <select id="courseCenterId" class="form-input" required>
+            <option value="">جاري تحميل المراكز...</option>
+        </select>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+            <label class="form-label">المستوى *</label>
+            <select id="courseLevel" class="form-input" required>
+                <option value="مبتدئ" style="color:black">مبتدئ</option>
+                <option value="متوسط" style="color:black">متوسط</option>
+                <option value="متقدم" style="color:black">متقدم</option>
+            </select>
+        </div>
 
-                    <div class="form-group">
-                        <label class="form-label">السعر (د.أ) *</label>
-                        <input type="number" id="coursePrice" class="form-input" min="0" required>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-full mt-4" id="courseModalSubmitBtn">حفظ</button>
-            </form>
+        <div class="form-group">
+            <label class="form-label">السعر (د.أ) *</label>
+            <input type="number" id="coursePrice" class="form-input" min="0" required>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px; width: 100%;" id="courseModalSubmitBtn">حفظ</button>
+</form>
         </div>
     </div>
 <script src="js/data/config.js"></script>
-<script src="dist/adminCourses.bundle.js"></script>
+<script src="js/admin-manage-courses.js"></script>
+<script>
+    // ==========================================
+// دالة تسجيل الخروج (عامة)
+// ==========================================
+window.logout = function() {
+    // 1. حذف التوكن والبيانات
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUserType');
+    localStorage.removeItem('isAdmin');
+    
+    // 2. التوجيه لصفحة الدخول
+    window.location.href = 'login.html';
+}
+</script>
 </body>
 
 </html>

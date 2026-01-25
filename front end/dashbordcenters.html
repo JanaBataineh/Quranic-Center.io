@@ -1,209 +1,2648 @@
 <!DOCTYPE html>
+
+
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة تحكم المركز - إدارة البيانات والدورات</title>
-<link rel="stylesheet" href="dist/main.css">
-
-  <style>
-    body { background: #f6f8fa; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المركز - الرئيسية</title>
     
-    /* تنسيقات لوحة التحكم الرئيسية */
-    .dashboard-header {
-      background: linear-gradient(135deg, var(--primary, #1e40af) 0%, #718355 100%);
-      color: #fff;
-      padding: 2rem 0 1.5rem 0;
-      text-align: center;
-      border-radius: 0 0 1.5rem 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .dashboard-header h1 { margin: 0 0 0.5rem 0; font-size: 2rem; }
-    .dashboard-header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
-
-    /* تنسيق المحتوى لتقسيمه إلى قائمة جانبية وقسم محتوى */
-    .center-dashboard-content {
-        display: flex;
-        gap: 2rem;
-        padding: 0 1rem;
-        max-width: 1200px;
-        margin: 0 auto 3rem;
-    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    .sidebar {
-        flex: 0 0 250px; /* عرض ثابت للقائمة الجانبية */
-        background: #fff;
-        padding: 1rem;
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        height: fit-content;
+   <style>
+    /* === 1. الخلفية والتصميم العام (Dark Theme) === */
+    body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
     }
-    .sidebar button {
-        display: block;
-        width: 100%;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
-        text-align: right;
-        background: none;
-        border: none;
+
+    /* === 2. الناف بار الزجاجي === */
+    .navbar-glass {
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .navbar-brand { color: #fff !important; }
+
+    /* === 3. القائمة الجانبية === */
+    .sidebar-block {
+        background: rgba(20, 20, 20, 0.6);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .sidebar-header {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        padding: 15px;
+        font-weight: bold;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* تحويل الروابط لأزرار تبديل */
+    .list-group-item {
+        background: transparent !important; 
+        color: #ccc; 
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         cursor: pointer;
-        font-size: 1.1rem;
-        color: var(--text-color);
-        border-radius: 0.5rem;
-        transition: all 0.2s;
-        font-weight: 500;
+        transition: 0.2s;
     }
-    .sidebar button.active, .sidebar button:hover {
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        font-weight: 600;
+    .list-group-item:hover { 
+        background: rgba(255, 255, 255, 0.1) !important; 
+        color: #fff; 
+        padding-right: 20px; /* حركة بسيطة عند التحويم */
     }
-
-    .main-content-area {
-        flex-grow: 1;
-        background: #fff;
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        padding: 2rem;
-    }
-    
-    /* تنسيق قسم إدارة المركز (النموذج) */
-    .center-management-section h2 {
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.75rem;
-        margin-bottom: 1.5rem;
-        color: var(--primary-dark);
-    }
-    .center-management-section .form-group {
-        margin-bottom: 1.5rem;
-    }
-    .center-management-section .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: var(--text-color);
-    }
-    .center-management-section .form-input, 
-    .center-management-section textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        transition: border-color 0.2s;
-    }
-    .center-management-section .form-input:focus, 
-    .center-management-section textarea:focus {
-        border-color: var(--primary);
-        outline: none;
-    }
-    .center-management-section textarea {
-        resize: vertical;
-        min-height: 100px;
+    .list-group-item.active { 
+        background: rgba(13, 110, 253, 0.6) !important; 
+        color: #fff; 
     }
 
-    /* 🌟 تنسيق قسم إدارة الدورات (من الملف الأصلي) 🌟 */
-    .courses-section h2, .courses-section h3 {
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.75rem;
-        margin-bottom: 1.5rem;
-        color: var(--primary-dark);
-    }
-    .add-course-form {
-        display: flex;
-        gap: 1rem;
+    /* === 4. بطاقات الإحصائيات (معدلة للوضع الداكن) === */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
         margin-bottom: 2rem;
-        background: var(--secondary);
-        padding: 1rem;
-        border-radius: 0.5rem;
     }
-    .add-course-form input[type="text"] {
-        flex-grow: 1;
+    .stat-card {
+        background: rgba(30, 30, 40, 0.6); /* خلفية زجاجية داكنة */
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.2s;
     }
-    .courses-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .stat-card:hover {
+        transform: translateY(-5px);
+        background: rgba(40, 40, 50, 0.8);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
-    .courses-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      border-bottom: 1px solid var(--border);
+    .stat-icon {
+        width: 50px; height: 50px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem;
     }
-    .courses-list li:last-child {
-      border-bottom: none;
-    }
-    .delete-btn {
-      background-color: var(--danger);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .delete-btn:hover {
-      background-color: var(--danger-dark);
-    }
-    .hidden {
-        display: none !important;
-    }
-  </style>
-</head>
-<body data-page="dashboard">
-    <div class="dashboard-header">
-        <h1>لوحة تحكم المركز</h1>
-        <p>مرحباً بك، <span id="centerNameHeader">المركز المسجَّل</span>. هنا يمكنك إدارة بياناتك ودوراتك.</p>
-    </div>
+    .stat-info h3 { margin: 0; font-size: 0.9rem; color: #aaa; }
+    .stat-number { margin: 0; font-size: 1.8rem; font-weight: 700; color: #fff; }
 
-    <div class="center-dashboard-content">
-        <div class="sidebar">
-            <button class="tab-btn active" data-target="center-info">إدارة معلومات المركز</button>
-            <button class="tab-btn" data-target="center-courses">إدارة الدورات</button>
-            <button class="btn btn-danger btn-block" style="margin-top: 1.5rem;" onclick="logout()">تسجيل الخروج</button>
-        </div>
-
-        <div class="main-content-area">
-
-            <section class="center-management-section" id="center-info">
-                <h2>تعديل بيانات المركز</h2>
-                <form id="centerInfoForm">
-                    <div class="form-group">
-                        <label for="centerName" class="form-label">اسم المركز</label>
-                        <input type="text" id="centerName" class="form-input" disabled> </div>
-                    </form>
-            </section>
-
-            <section class="courses-section hidden" id="center-courses">
-                <h2>إدارة دوراتك</h2>
-                
-                <h3 style="font-size: 1.25rem;">إضافة دورة جديدة</h3>
-                <form id="addCourseForm" class="add-course-form">
-                    <input type="text" id="courseName" class="form-input" placeholder="اسم الدورة" required>
-                    <select id="courseLevel" class="form-select" style="width: 150px;">
-                        <option value="مبتدئ">مبتدئ</option>
-                        <option value="متوسط">متوسط</option>
-                        <option value="متقدم">متقدم</option>
-                    </select>
-                    <input type="number" id="coursePrice" class="form-input" placeholder="السعر" style="width: 100px;" required min="0">
-                    <button type="submit" class="btn btn-primary">إضافة</button>
-                </form>
+    /* === 5. الجداول (Dark Mode) === */
+    .table-glass {
+        color: #e0e0e0;
+        vertical-align: middle;
+    }
+    .table-glass th {
+        background: rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    .table-glass td {
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
     
-                <h3 style="font-size: 1.25rem;">دوراتك الحالية</h3>
-                <ul id="coursesList" class="courses-list">
-                    <li>جاري تحميل الدورات...</li>
+    /* الأقسام المخفية */
+    section { display: none; animation: fadeIn 0.4s ease; }
+    section.active-section { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* فورم إدارة الدورات */
+    .glass-form {
+        background: rgba(0,0,0,0.2);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .form-control {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+    }
+    .form-control:focus {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        box-shadow: none;
+        border-color: #0d6efd;
+    }
+    .form-control::placeholder { color: #bbb; }
+    .hover-scale {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+.hover-scale:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+}
+ </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container-fluid justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <i class="fa-solid fa-mosque fa-lg"></i> 
+            <span>منصة المراكز القرآنية</span>
+        </a>
+
+<div class="dropdown me-3">
+    <button class="btn btn-link text-white position-relative" type="button" id="notificationBtn" data-bs-toggle="dropdown">
+        <i class="fa-solid fa-bell fa-lg"></i>
+        <span id="notif-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+            0
+        </span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg" id="notif-list" style="width: 300px; max-height: 400px; overflow-y: auto;">
+        <li class="dropdown-header border-bottom border-secondary pb-2">الإشعارات الأخيرة</li>
+        <div id="notif-items">
+            <li class="p-3 text-center text-muted small">لا توجد إشعارات جديدة</li>
+        </div>
+    </ul>
+</div>
+
+        <div class="d-flex align-items-center">
+
+
+            <div class="dropdown me-3">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-white" data-bs-toggle="dropdown">
+                    <img src="https://ui-avatars.com/api/?name=Center+Admin&background=198754&color=fff" class="rounded-circle border" width="40">
+                    <div class="ms-2 d-none d-md-block fw-bold" style="font-size: 0.9rem;">
+<span id="nav-center-name">جاري التحميل...</span>
+<div id="nav-center-role" class="text-white-50" style="font-size: 0.75rem;">مدير المركز</div>                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border-0 mt-2">
+                    <li><button class="dropdown-item py-2 text-danger" onclick="location.href='login.html'"><i class="fa-solid fa-right-from-bracket ms-2"></i> تسجيل خروج</button></li>
                 </ul>
+            </div>
+      
+      
+      
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-block">
+                <div class="sidebar-header"><i class="fa-solid fa-bars ms-2"></i> لوحة المركز</div>
+                <div class="list-group list-group-flush sidebar-menu">
+                    <button class="list-group-item list-group-item-action active" data-target="dashboard-overview">
+                        <i class="fa-solid fa-gauge-high ms-2"></i> الرئيسية
+                    </button>
+                    <button class="list-group-item list-group-item-action" data-target="center-courses">
+                        <i class="fa-solid fa-layer-group ms-2"></i> إدارة الدورات
+                    </button>
+                    <button class="list-group-item list-group-item-action" data-target="center-students">
+    <i class="fa-solid fa-users ms-2"></i> الطلاب والتسجيلات
+    <span class="badge bg-danger rounded-pill me-auto" style="font-size: 0.7rem;">3</span>
+</button>
+<button class="list-group-item list-group-item-action" data-target="center-teachers">
+    <i class="fa-solid fa-chalkboard-user ms-2"></i> الهيئة التدريسية
+</button>
+
+
+<button class="list-group-item list-group-item-action" data-target="center-settings-full">
+    <i class="fa-solid fa-gears ms-2"></i> إعدادات المركز
+</button>
+
+
+
+<button class="list-group-item list-group-item-action" data-target="center-events">
+    <i class="fa-solid fa-calendar-check ms-2"></i> الأنشطة والفعاليات
+</button>
+<button class="list-group-item list-group-item-action" data-target="center-tasks">
+    <i class="fa-solid fa-list-check ms-2"></i> مهامي (Tasks)
+</button>
+
+
+<button class="dropdown-item py-2 text-danger" onclick="localStorage.clear(); location.href='login.html'">
+        <i class="fa-solid fa-right-from-bracket ms-2"></i> تسجيل خروج
+    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            
+            <section id="dashboard-overview" class="active-section">
+                <h3 class="mb-4 text-white"><i class="fa-solid fa-chart-pie ms-2"></i> ملخص النشاط</h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(13, 110, 253, 0.2); color: #0d6efd;">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>عدد الطلاب</h3>
+                            <p class="stat-number" id="total-students">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(25, 135, 84, 0.2); color: #198754;">
+                            <i class="fa-solid fa-chalkboard"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>الدورات النشطة</h3>
+                            <p class="stat-number" id="total-courses">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255, 193, 7, 0.2); color: #ffc107;">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>المعلمين</h3>
+                            <p class="stat-number" id="total-teachers">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-form">
+                    <h5 class="mb-3 text-white">آخر الطلاب المسجلين</h5>
+                    <div class="table-responsive">
+                        <table class="table table-glass text-center">
+                            <thead>
+                                <tr>
+                                    <th>اسم الطالب</th>
+                                    <th>الدورة</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-students-table">
+                                <tr><td colspan="4">جاري التحميل...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
+
+<section id="center-courses">
+    <h3 class="mb-4 text-white"><i class="fa-solid fa-book-open ms-2"></i> إدارة الدورات</h3>
+    
+    <div class="glass-form mb-4">
+        <h5 class="mb-3">إضافة دورة جديدة</h5>
+        <div class="row g-3">
+            <div class="col-md-5">
+                <input type="text" id="course-name" class="form-control" placeholder="اسم الدورة (مثال: أحكام التجويد)">
+            </div>
+<div class="col-md-3">
+    <select id="course-teacher" class="form-control" style="background-color: rgba(255,255,255,0.1); color: #fff;">
+        <option value="" selected>اختر المعلم...</option>
+        </select>
+</div>
+
+            <div class="col-md-3">
+                <select id="course-level" class="form-control" style="background-color: rgba(255,255,255,0.1); color: #fff;">
+                    <option value="" disabled selected>اختر المستوى</option>
+                    <option style="background: #333;" value="مبتدئ">مبتدئ</option>
+                    <option style="background: #333;" value="متوسط">متوسط</option>
+                    <option style="background: #333;" value="متقدم">متقدم</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="number" id="course-price" class="form-control" placeholder="السعر (د.أ)">
+            </div>
+            <div class="col-md-2">
+                <button onclick="addNewCourse()" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-plus"></i> إضافة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-form">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="m-0">الدورات الحالية</h5>
+            <button onclick="loadCenterCourses()" class="btn btn-sm btn-outline-light">
+                <i class="fa-solid fa-rotate"></i> تحديث
+            </button>
+        </div>
+        
+  <div class="table-responsive"> 
+        <table class="table table-dark table-hover" style="background: transparent;">
+            <thead>
+                <tr>
+                    <th>اسم الدورة</th>
+                    <th>المستوى</th>
+                    <th>السعر</th>
+                    <th>عدد الطلاب</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="courses-tbody">
+                <tr>
+                    <td colspan="6" class="text-center text-white-50">جاري التحميل...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</section>
+
+ 
+            </div>
 
         </div>
     </div>
 
 
-<script src="js/data/config.js"></script>
-    <script src="js/pages/center-dashboard.js"></script>
+</section>
+
+<section id="center-teachers">
+    <div class="d-flex justify-content-between align-items-center mb-4 text-white">
+        <h3 class="m-0"><i class="fa-solid fa-chalkboard-user ms-2"></i> الهيئة التدريسية</h3>
+        
+        <button class="btn btn-primary" onclick="showInviteModal()">
+            <i class="fa-solid fa-user-plus me-2"></i> دعوة معلم جديد
+        </button>
+    </div>
+
+    <div class="glass-form">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-white m-0">قائمة المعلمين المعتمدين</h5>
+            <button onclick="loadTeachers()" class="btn btn-sm btn-outline-light">
+                <i class="fa-solid fa-rotate"></i> تحديث
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-glass align-middle text-center">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">#</th>
+                        <th>اسم المعلم</th>
+                        <th>المعرف (ID)</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="teachers-table-body">
+                    <tr><td colspan="5" class="text-center text-white-50">جاري تحميل البيانات...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
 
+
+<section id="center-settings-full">
+    <h3 class="mb-4 text-white"><i class="fa-solid fa-sliders ms-2"></i> إعدادات المركز العامة</h3>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-form text-center h-100">
+                <h5 class="text-white-50 mb-4">شعار وهويّة المركز</h5>
+                
+                <div class="position-relative d-inline-block mb-3">
+                    <img src="https://ui-avatars.com/api/?name=Center+Logo&background=198754&color=fff&size=128" class="rounded-circle border border-3 border-secondary p-1" width="120" height="120" id="centerLogoPreview">
+                    <label for="logoUpload" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer hover-scale" style="width: 35px; height: 35px; cursor: pointer;">
+                        <i class="fa-solid fa-camera small"></i>
+                    </label>
+                    <input type="file" id="logoUpload" hidden accept="image/*">
+                </div>
+
+                <h5 class="text-white">مركز الإيمان القرآني</h5>
+                <p class="text-white-50 small">عمان، الأردن - شارع الجامعة</p>
+                
+                <hr class="border-secondary my-3">
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-light btn-sm"><i class="fa-solid fa-eye ms-2"></i> معاينة الملف العام</button>
+                    <button class="btn btn-outline-warning btn-sm"><i class="fa-solid fa-share-nodes ms-2"></i> رابط التسجيل العام</button>
+                </div>
+            </div>
+        </div>
+
+<div class="col-md-8">
+    <div class="glass-form mb-4">
+        <h5 class="text-white mb-3"><i class="fa-regular fa-id-card ms-2"></i> البيانات الأساسية</h5>
+        <form onsubmit="event.preventDefault(); saveCenterSettings();">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="text-white-50 small mb-1">اسم المركز (عربي)</label>
+                    <input type="text" id="settings-name-ar" class="form-control bg-dark text-white border-secondary">
+                </div>
+                <div class="col-md-6">
+                    <label class="text-white-50 small mb-1">اسم المركز (إنجليزي)</label>
+                    <input type="text" id="settings-name-en" class="form-control bg-dark text-white border-secondary">
+                </div>
+                <div class="col-md-6">
+                    <label class="text-white-50 small mb-1">رقم الهاتف</label>
+                    <input type="tel" id="settings-phone" class="form-control bg-dark text-white border-secondary">
+                </div>
+                <div class="col-md-6">
+                    <label class="text-white-50 small mb-1">البريد الإلكتروني</label>
+                    <input type="email" id="settings-email" class="form-control bg-dark text-white-50 border-secondary" disabled title="لا يمكن تغيير البريد">
+                </div>
+                <div class="col-12">
+                    <label class="text-white-50 small mb-1">وصف مختصر (يظهر للطلاب)</label>
+                    <textarea id="settings-desc" class="form-control bg-dark text-white border-secondary" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4">حفظ التغييرات</button>
+            </div>
+        </form>
+    </div>
+    
+    </div>
+    </div>
+</section>
+
+
+
+<section id="center-events">
+    <h3 class="mb-4 text-white"><i class="fa-solid fa-tent ms-2"></i> الأنشطة والفعاليات</h3>
+
+    <div class="row g-4">
+        <div class="col-lg-8" id="events-list-container">
+            <div class="text-center text-white-50 py-5">جاري تحميل الفعاليات...</div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-form h-100">
+                <h5 class="text-white mb-3">إنشاء فعالية جديدة</h5>
+                <form id="add-event-form">
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">اسم الفعالية</label>
+                        <input type="text" id="event-title" class="form-control bg-dark text-white border-secondary" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">التاريخ</label>
+                        <input type="date" id="event-date" class="form-control bg-dark text-white border-secondary" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">الوقت</label>
+                        <input type="time" id="event-time" class="form-control bg-dark text-white border-secondary" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">رسوم التسجيل (اختياري)</label>
+                        <input type="number" id="event-fee" class="form-control bg-dark text-white border-secondary" placeholder="0.00">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mt-2">نشر الفعالية</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="center-tasks">
+    <h3 class="mb-4 text-white"><i class="fa-solid fa-clipboard-list ms-2"></i> لوحة المهام الشخصية</h3>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="glass-form h-100 bg-opacity-10 bg-secondary">
+            <h6 class="text-white border-bottom border-secondary pb-2 mb-3">قيد الانتظار (To Do)</h6>
+            <div id="todo-tasks-container"></div>
+            <button class="btn btn-outline-light btn-sm w-100 mt-2" onclick="showAddTaskModal()"><i class="fa-solid fa-plus"></i> مهمة جديدة</button>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-form h-100 bg-opacity-10 bg-primary">
+            <h6 class="text-white border-bottom border-secondary pb-2 mb-3">جاري العمل (Doing)</h6>
+            <div id="doing-tasks-container"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-form h-100 bg-opacity-10 bg-success">
+            <h6 class="text-white border-bottom border-secondary pb-2 mb-3">مكتملة (Done)</h6>
+            <div id="done-tasks-container"></div>
+        </div>
+    </div>
+</div>
+
+
+</section>
+
+
+        </div>
+     </div>
+     </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/pages/center-dashboard.js"></script>
+
+
+<script>
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. عرض اسم المركز والمسمى الوظيفي فوراً
+    const storedName = localStorage.getItem('currentUserName');
+    const navNameElement = document.getElementById('nav-center-name');
+    const navRoleElement = document.getElementById('nav-center-role');
+
+    if (storedName && storedName !== "undefined") {
+        if (navNameElement) navNameElement.textContent = storedName;
+    } else {
+        if (navNameElement) navNameElement.textContent = "مركز قرآني";
+    }
+
+    // تغيير النص السفلي
+    if (navRoleElement) navRoleElement.textContent = "مدير المركز";
+
+
+    // 2. إدارة التنقل بين الصفحات (Sidebar Navigation)
+    const buttons = document.querySelectorAll('.sidebar-menu button');
+    const sections = document.querySelectorAll('section');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // إزالة التفعيل من جميع الأزرار
+            buttons.forEach(b => b.classList.remove('active'));
+            // تفعيل الزر الحالي
+            btn.classList.add('active');
+
+            // إخفاء جميع الأقسام
+            sections.forEach(sec => sec.classList.remove('active-section'));
+
+            // إظهار القسم المطلوب
+            const targetId = btn.getAttribute('data-target');
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                targetSection.classList.add('active-section');
+            }
+
+            // 3. تحميل البيانات الخاصة بكل قسم عند فتحه
+            if (targetId === 'center-teachers') loadTeachers();
+            if (targetId === 'requests') loadRequests();
+            if (targetId === 'center-courses') 
+            {
+                loadTeachersForCourseForm();
+                loadCenterCourses();
+            }
+            if (targetId === 'center-students') {
+                loadCenterStudents();
+                loadCoursesForFilter();
+            }
+            
+
+
+            if (targetId === 'center-settings-full') loadCenterSettings();
+        });
+    });
+
+    // 4. تحميل البيانات الأولية عند فتح الصفحة
+    loadStats();          // إحصائيات الداشبورد
+
+    loadCenterSettings(); // للتأكد من تحديث كافة بيانات الإعدادات
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// تعريف رابط الـ API (ضعه في بداية السكربت إذا لم يكن موجوداً)
+const API_BASE_URL = "http://localhost:5220/api";
+
+async function loadStats() {
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    // ✅ التعديل الضروري هنا: التحقق من أن القيمة ليست "undefined" كنص
+    if (!centerId || centerId === "undefined" || centerId === "null") {
+        console.error("لم يتم العثور على معرف المركز (ID غير صالح)");
+        // اختياري: يمكنك توجيه المستخدم لصفحة الدخول هنا
+        // window.location.href = 'login.html'; 
+        return;
+    }
+
+    try {
+        const url = `${API_BASE_URL}/Center/dashboard-stats/${centerId}`;
+console.log("الرابط المرسل للسيرفر هو: ", url); // 👈 صوري لي نتيجة هذا السطر من الكونسول
+        const res = await fetch(`${API_BASE_URL}/Center/dashboard-stats/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+
+            // 1. تحديث البطاقات العلوية (Cards)
+            document.getElementById('total-students').textContent = data.studentCount||0;
+            document.getElementById('total-courses').textContent = data.coursesCount||0;
+            document.getElementById('total-teachers').textContent = data.teacherCount||0;
+
+            // 2. تحديث جدول آخر الطلاب
+            const tbody = document.getElementById('recent-students-table');
+            tbody.innerHTML = ""; // مسح "جاري التحميل"
+
+            if (!data.recentStudents||data.recentStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-white-50">لا يوجد طلاب مسجلين حديثاً</td></tr>';
+                return;
+            }
+
+            data.recentStudents.forEach(item => {
+                // تحديد لون الحالة
+                let statusBadge = '';
+                if (item.status === 'active' || item.status === 'approved') {
+                    statusBadge = '<span class="badge bg-success">نشط</span>';
+                } else if (item.status === 'pending') {
+                    statusBadge = '<span class="badge bg-warning text-dark">انتظار</span>';
+                } else {
+                    statusBadge = `<span class="badge bg-secondary">${item.status}</span>`;
+                }
+
+                const row = `
+                    <tr>
+                        <td class="text-white fw-bold">${item.studentName}</td>
+                        <td class="text-white-50">${item.courseName}</td>
+                        <td class="text-white-50 small">${item.date}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+        } else {
+            console.error("فشل جلب الإحصائيات: ", res.status);
+            // طباعة رسالة الخطأ من السيرفر إن وجدت
+            const errorText = await res.text();
+            console.log("Server Error:", errorText);
+        }
+    } catch (e) {
+        console.error("Error:", e);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    // التعامل مع أزرار القبول والرفض (محاكاة)
+document.querySelectorAll('.btn-success').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if(confirm('هل أنت متأكد من قبول هذا الطالب؟')) {
+            const row = this.closest('tr');
+            // تغيير الحالة إلى نشط
+            row.querySelector('.badge').className = 'badge bg-success';
+            row.querySelector('.badge').textContent = 'نشط';
+            // إخفاء أزرار القبول والرفض
+            this.parentElement.innerHTML = `
+                <button class="btn btn-sm btn-outline-light ms-1" title="التفاصيل"><i class="fa-solid fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-danger" title="حذف"><i class="fa-solid fa-trash"></i></button>
+            `;
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+document.querySelectorAll('.btn-danger').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if(this.title === 'رفض' && confirm('هل أنت متأكد من رفض الطلب؟')) {
+            const row = this.closest('tr');
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 300);
+       
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+// التعامل مع إضافة معلم جديد
+document.getElementById('addTeacherForm')?.addEventListener('submit', function(e) {
+    e.preventDefault(); // منع إعادة تحميل الصفحة
+    
+    // جلب القيم (محاكاة)
+    const name = this.querySelector('input[type="text"]').value;
+    const specialty = this.querySelector('select').options[this.querySelector('select').selectedIndex].text;
+    
+    if(name) {
+        const tbody = document.getElementById('teachers-table-body');
+        const newRow = `
+            <tr style="animation: fadeIn 0.5s">
+                <td><img src="https://ui-avatars.com/api/?name=${name}&background=random" class="rounded-circle border border-secondary" width="40"></td>
+                <td class="fw-bold text-white">${name}</td>
+                <td><span class="badge bg-primary">${specialty}</span></td>
+                <td>0 طالب</td>
+                <td><span class="badge bg-success">نشط</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-ban"></i></button>
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('afterbegin', newRow); // إضافة في الأعلى
+        this.reset(); // مسح الفورم
+        alert('تم إضافة المعلم بنجاح');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// التعامل مع تسجيل دفعة جديدة
+document.getElementById('addPaymentForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const student = this.querySelector('input[list]').value;
+    const amount = this.querySelector('input[type="number"]').value;
+    
+    if(student && amount) {
+        const tbody = document.getElementById('finance-table-body');
+        const date = new Date().toISOString().split('T')[0];
+        
+        const newRow = `
+            <tr style="animation: fadeIn 0.5s; background: rgba(25, 135, 84, 0.1);">
+                <td class="text-white-50">#NEW-${Math.floor(Math.random()*1000)}</td>
+                <td class="fw-bold text-white">${student}</td>
+                <td>دفعة جديدة</td>
+                <td>${date}</td>
+                <td class="text-success fw-bold">${parseFloat(amount).toFixed(2)}</td>
+                <td><span class="badge bg-success">مدفوع</span></td>
+                <td><button class="btn btn-sm btn-outline-light"><i class="fa-solid fa-print"></i></button></td>
+            </tr>
+        `;
+        
+        tbody.insertAdjacentHTML('afterbegin', newRow);
+        
+        // تحديث إجمالي الدخل (تجميلي)
+        // يمكنك إضافة كود هنا لجمع المبلغ مع الرقم الموجود في البطاقة العلوية
+        
+        this.reset();
+        alert('تم تسجيل الدفعة بنجاح!');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// تبديل الأيام في الجدول
+document.querySelectorAll('.day-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // إزالة التفعيل من الجميع
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active', 'btn-primary'));
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.add('btn-outline-light'));
+        
+        // تفعيل الزر الحالي
+        this.classList.remove('btn-outline-light');
+        this.classList.add('active', 'btn-primary');
+
+        // (محاكاة) تغيير المحتوى
+        const container = document.querySelector('.schedule-container');
+        container.style.opacity = '0.5';
+        setTimeout(() => {
+            container.style.opacity = '1';
+            // هنا يمكنك تغيير البيانات بناءً على اليوم المختار
+        }, 200);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+// إظهار/إخفاء فورم الإضافة
+function toggleAddSessionForm() {
+    const form = document.getElementById('addSessionForm');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        form.style.animation = 'fadeIn 0.5s';
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// دالة إظهار القائمة عند الضغط على "عرض القائمة"
+function loadAttendanceList() {
+    // هنا يمكنك وضع كود التحقق من اختيار الدورة والتاريخ
+    const list = document.getElementById('attendanceList');
+    list.style.display = 'none'; // إعادة تعيين للإيماءة الحركية
+    setTimeout(() => {
+        list.style.display = 'block';
+        list.style.animation = 'fadeIn 0.5s';
+    }, 100);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// دالة محاكاة الحفظ
+function saveAttendance() {
+    // محاكاة عملية الحفظ
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ms-2"></i> جاري الحفظ...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-check ms-2"></i> تم الحفظ!';
+        btn.classList.replace('btn-success', 'btn-outline-success');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            btn.classList.replace('btn-outline-success', 'btn-success');
+            alert("تم حفظ سجل الحضور والإنجاز بنجاح.");
+        }, 1500);
+    }, 1000);
+}
+
+
+
+
+
+
+
+
+
+// (اختياري) تفاعل عند اختيار "غائب" لتعطيل خانة الملاحظات
+document.querySelectorAll('input[type=radio]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const row = this.closest('tr');
+        const input = row.querySelector('input[type="text"]');
+        
+        if (this.id.startsWith('a')) { // إذا كان الـ ID يبدأ بـ a يعني Absent
+            input.disabled = true;
+            input.placeholder = "سبب الغياب (اختياري)";
+        } else {
+            input.disabled = false;
+            input.placeholder = "مثال: حفظ سورة الناس";
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+// معاينة الشعار عند الرفع
+document.getElementById('logoUpload')?.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('centerLogoPreview').src = e.target.result;
+            // يمكنك هنا إضافة كود لحفظ الصورة في LocalStorage أو إرسالها للسيرفر
+            alert("تم تحديث شعار المركز (معاينة)");
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+// 1. التعامل مع القوالب الجاهزة
+function fillTemplate(type) {
+    const titleInput = document.querySelector('#sendMessageForm input[type="text"]');
+    const bodyInput = document.querySelector('#sendMessageForm textarea');
+    
+    if (type === 'holiday') {
+        titleInput.value = "إعلان عطلة رسمية";
+        bodyInput.value = "السادة أولياء الأمور والطلاب الأعزاء،\nنود إعلامكم بأن يوم غد سيكون عطلة رسمية للمركز، وسيتم تعويض الحصص لاحقاً.\nإدارة المركز.";
+    } else if (type === 'fees') {
+        titleInput.value = "تذكير بسداد الرسوم الشهرية";
+        bodyInput.value = "عزيزي الطالب،\nنرجو التكرم بمراجعة القسم المالي لتسديد الرسوم المستحقة عن هذا الشهر.\nشكراً لتعاونكم.";
+    } else if (type === 'welcome') {
+        titleInput.value = "أهلاً بكم في الفصل الدراسي الجديد";
+        bodyInput.value = "نرحب بكم أجمل ترحيب في مركز الإيمان، ونتمنى لكم فصلاً دراسياً مليئاً بالإنجاز وحفظ كتاب الله.";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// 2. محاكاة عملية الإرسال
+document.getElementById('sendMessageForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = this.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    const title = this.querySelector('input[type="text"]').value;
+    const recipient = this.querySelector('select').options[this.querySelector('select').selectedIndex].text;
+    
+    if(!title) return alert("يرجى كتابة عنوان الرسالة");
+
+    // تغيير شكل الزر (Loading)
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ms-2"></i> جاري الإرسال...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        // إعادة الزر وإظهار نجاح
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // إضافة الرسالة للجدول
+        const tbody = document.getElementById('messagesLog');
+        const date = new Date().toISOString().split('T')[0];
+        const newRow = `
+            <tr style="animation: fadeIn 0.5s; background: rgba(255,255,255,0.05);">
+                <td class="text-white-50 small">${date}</td>
+                <td class="text-white fw-bold">${title}</td>
+                <td>${recipient}</td>
+                <td><i class="fa-regular fa-clock text-white-50"></i> الآن</td>
+                <td><span class="badge bg-info">قيد المعالجة</span></td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('afterbegin', newRow);
+        
+        // مسح الحقول
+        this.reset();
+        alert("تم جدولة الرسالة للإرسال بنجاح!");
+    }, 1500);
+});
+
+
+
+
+
+
+// 1. إظهار/إخفاء فورم جدولة الاختبار
+function toggleExamForm() {
+    const form = document.getElementById('newExamForm');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+
+
+
+
+
+
+
+// 2. تحديث معاينة الشهادة عند الضغط على الزر
+function previewCertificate(name, course) {
+    document.getElementById('certStudentName').innerText = name;
+    document.getElementById('certCourseName').innerText = course;
+    // انتقال ناعم (Scroll) لقسم المعاينة في الشاشات الصغيرة
+    if(window.innerWidth < 992) {
+        document.getElementById('certificatePreview').scrollIntoView({behavior: "smooth"});
+    }
+}
+// متغيرات المقصف
+let cart = [];
+let total = 0;
+
+
+
+
+
+
+
+function addToCart(name, price) {
+    cart.push({name, price});
+    updateCartDisplay();
+}
+
+
+
+
+
+
+
+
+
+function updateCartDisplay() {
+    const tbody = document.querySelector('#cartTable tbody');
+    const emptyMsg = document.getElementById('emptyCartMsg');
+    const totalEl = document.getElementById('cartTotal');
+    
+    tbody.innerHTML = '';
+    total = 0;
+
+    if (cart.length === 0) {
+        emptyMsg.style.display = 'block';
+    } else {
+        emptyMsg.style.display = 'none';
+        cart.forEach((item) => {
+            total += item.price;
+            const row = `<tr><td>${item.name}</td><td>1</td><td>${item.price.toFixed(2)}</td></tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+    totalEl.innerText = total.toFixed(2) + ' د.أ';
+}
+
+
+
+
+
+
+
+
+
+
+function clearCart() {
+    cart = [];
+    updateCartDisplay();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================
+   إدارة الدورات (Courses Management)
+   ========================================= */
+
+// 1. جلب وعرض الدورات
+async function loadCenterCourses() {
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const tbody = document.getElementById('courses-tbody'); // تأكدي من وجود هذا الـ ID في الـ HTML
+
+if (!tbody) {
+        console.error("عنصر الجدول (courses-tbody) غير موجود في ملف HTML");
+        return;
+    }
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">جاري التحميل...</td></tr>';
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+if (!centerId) {
+         tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center">يرجى تسجيل الدخول مجدداً</td></tr>';
+         return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/my-courses/${centerId}`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+             }
+        });
+
+        if (res.ok) {
+            const courses = await res.json();
+
+            if (courses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">لا توجد دورات حالياً.</td></tr>';
+                return;
+            }
+
+
+tbody.innerHTML = courses.map(course => `
+                <tr>
+                    <td>${course.name}</td>
+                    <td>${course.level}</td>
+                    <td>${course.price} د.أ</td>
+                    <td>${course.studentsCount} طالب</td>
+                    <td><span class="badge ${course.status === 'active' ? 'bg-success' : 'bg-secondary'}">${course.status}</span></td>
+                    <td>
+                        <button onclick="deleteCourse('${course.id}')" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } else {
+            console.error("Server Error:", res.status);
+tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center">فشل تحميل البيانات من السيرفر</td></tr>';
+        }
+
+    } catch (e) {
+        console.error(e);
+tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center">حدث خطأ في الاتصال</td></tr>';
+    }
+}
+
+
+let selectedTeacherId = null; // المتغير السحري لحفظ الهوية
+let searchTimeout;
+
+// 1. دالة البحث (تعمل عند الكتابة)
+async function searchForTeacher() {
+    // نستخدم الـ ID الجديد الذي وضعناه في HTML
+    const searchInput = document.getElementById('invite-teacher-search');
+    const resultsContainer = document.getElementById('teacher-search-results');
+    const query = searchInput.value;
+
+    // تنظيف النتائج إذا مسحتِ النص
+    if (!query || query.length < 2) {
+        resultsContainer.innerHTML = '';
+        return;
+    }
+
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        try {
+            const token = localStorage.getItem('authToken');
+            // تأكدي أن هذا الرابط مطابق للسيرفر
+            const res = await fetch(`${API_BASE_URL}/CenterStaff/search?query=${query}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const users = await res.json();
+                // عرض النتائج
+                resultsContainer.innerHTML = users.map(user => `
+                    <button type="button" class="list-group-item list-group-item-action" 
+                            onclick="selectTeacher('${user.id}', '${user.fullName}')">
+                        <strong>${user.fullName}</strong>
+                        <small class="d-block text-muted">${user.phoneNumber}</small>
+                    </button>
+                `).join('');
+            }
+        } catch (e) {
+            console.error("خطأ في البحث:", e);
+        }
+    }, 400);
+}
+
+// 2. دالة الاختيار (تعمل عند الضغط على اسم من القائمة)
+function selectTeacher(id, name) {
+    selectedTeacherId = id; // حفظنا الـ ID
+    const input = document.getElementById('invite-teacher-search');
+    input.value = name; // وضعنا الاسم في المربع
+    document.getElementById('teacher-search-results').innerHTML = ''; // إخفاء القائمة
+}
+
+// 3. دالة الإرسال للسيرفر
+async function sendTeacherInvite() {
+    if (!selectedTeacherId) {
+        alert("الرجاء اختيار معلم من القائمة الظاهرة بعد البحث!");
+        return;
+    }
+
+    const centerId = localStorage.getItem('currentCenterId'); // أو userId حسب نظامك
+    const token = localStorage.getItem('authToken');
+console.log("رقم المركز المرسل:", centerId); 
+    console.log("رقم المعلم المرسل:", selectedTeacherId);
+    try {
+        // انتبهي: هل أضفتِ هذا الرابط في السيرفر؟ (الخطوة 3 في الأسفل)
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/invite-teacher`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                centerId: centerId,
+                teacherId: selectedTeacherId 
+            })
+        });
+
+        if (res.ok) {
+            alert("✅ تم إضافة المعلم بنجاح");
+            location.reload(); // تحديث الصفحة لرؤية المعلم الجديد
+        } else {
+            const data = await res.json();
+            alert("❌ فشل: " + (data.message || "خطأ غير معروف"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("حدث خطأ في الاتصال");
+    }
+}
+
+
+// دالة مساعدة لعرض النتائج كقائمة لاختيار المعلم
+function displayTeacherSearchResults(users) {
+    const resultsContainer = document.getElementById('teacher-search-results');
+    if (!resultsContainer) return;
+
+    resultsContainer.innerHTML = users.map(user => `
+        <div class="p-2 border-bottom cursor-pointer hover-bg-light" onclick="selectTeacher('${user.id}', '${user.fullName}')">
+            <strong>${user.fullName}</strong> - <small>${user.phoneNumber}</small>
+        </div>
+    `).join('');
+}
+
+
+
+
+
+
+// 2. إضافة دورة جديدة
+async function addNewCourse() {
+    const name = document.getElementById('course-name').value;
+    const level = document.getElementById('course-level').value;
+    const price = document.getElementById('course-price').value;
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const teacherId = document.getElementById('course-teacher').value;
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    if (!name || !level || !price) {
+        alert("يرجى تعبئة جميع الحقول المطلوبة (الاسم، المستوى، السعر)");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/courses/add`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: name,
+                level: level,
+                price: parseFloat(price),
+                centerId: centerId,
+                teacherId: teacherId
+            })
+        });
+
+        if (res.ok) {
+            alert("✅ تم إضافة الدورة بنجاح!");
+            // تفريغ الحقول
+            document.getElementById('course-name').value = '';
+            document.getElementById('course-price').value = '';
+            // تحديث القائمة
+            loadCenterCourses();
+        } else {
+            alert("فشل إضافة الدورة");
+        }
+
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// 3. حذف دورة
+async function deleteCourse(courseId) {
+    if(!confirm("هل أنت متأكد من حذف هذه الدورة؟ سيتم حذف جميع تسجيلات الطلاب المرتبطة بها!")) return;
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/courses/${courseId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            alert("تم الحذف بنجاح");
+            loadCenterCourses(); // تحديث القائمة
+        } else {
+const errorData = await res.json();
+    alert(`فشل الحذف: ${errorData.message || "خطأ غير معروف"}`);
+        }
+    } catch (e) { console.error(e); }
+}
+
+
+
+
+
+
+
+
+// 1. جلب الطلاب وعرضهم (النسخة المطلوبة: المرفوض يختفي)
+async function loadCenterStudents() {
+    const tbody = document.getElementById('students-table-body');
+    const storedUserId = localStorage.getItem('userId');
+    const storedCenterId = localStorage.getItem('currentCenterId');
+    const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                     ? storedUserId 
+                     : storedCenterId;
+    const token = localStorage.getItem('authToken');
+
+    // الفلاتر
+    const nameFilter = document.getElementById('filter-name').value;
+    const courseFilter = document.getElementById('filter-course').value;
+    const statusFilter = document.getElementById('filter-status').value;
+
+    if (!centerId || centerId === "undefined") {
+        if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-danger text-center">يرجى تسجيل الدخول</td></tr>';
+        return;
+    }
+
+    let url = `${API_BASE_URL}/Center/students/${centerId}?dummy=1`;
+    if(nameFilter) url += `&name=${nameFilter}`;
+    if(courseFilter && courseFilter !== 'all') url += `&courseId=${courseFilter}`;
+    if(statusFilter && statusFilter !== 'all') url += `&status=${statusFilter}`;
+
+    try {
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            const students = await res.json();
+            tbody.innerHTML = '';
+
+            // تصفية النتائج: إذا كان الطالب مرفوضاً، لا نعرضه أبداً (إلا إذا اخترتِ فلتر "المرفوضين" عمداً لرؤيتهم)
+            // بما أنك تريدين حذفه من الجدول، سنقوم بفلترة القائمة هنا
+            const visibleStudents = students.filter(s => {
+                // إذا كان الفلتر "الكل"، نخفي المرفوضين
+                if (statusFilter === 'all' && s.status.toLowerCase() === 'rejected') return false;
+                return true;
+            });
+
+            if (visibleStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-white-50 p-4">لا يوجد طلاب</td></tr>';
+                return;
+            }
+
+            visibleStudents.forEach((student, index) => {
+                const status = student.status.toLowerCase();
+                
+                let badgeHtml = '';
+                let actionButtons = '';
+
+                // --- 1. حالة قيد الانتظار (يظهر في الجدول) ---
+                if (status === 'pending') {
+                    badgeHtml = '<span class="badge bg-warning text-dark">قيد الانتظار</span>';
+                    // الأزرار: قبول (يصبح نشط) أو حذف (يصبح مرفوض ويختفي)
+                    actionButtons = `
+                        <button onclick="updateStatus(${student.enrollmentId}, 'active')" class="btn btn-sm btn-success ms-1" title="قبول الطالب">
+                            <i class="fa-solid fa-check"></i> قبول
+                        </button>
+                        <button onclick="updateStatus(${student.enrollmentId}, 'rejected')" class="btn btn-sm btn-danger" title="حذف من الجدول">
+                            <i class="fa-solid fa-trash"></i> حذف
+                        </button>
+                    `;
+                } 
+// --- 2. حالة مقبول/نشط (نسخة آمنة من سطر واحد) ---
+else if (status === 'active' || status === 'approved') {
+    badgeHtml = '<span class="badge bg-success">مشترك (نشط)</span>';
+    // لاحظي: جعلنا الكود كله في سطر واحد لتجنب الأخطاء
+    actionButtons = `<button onclick="updateStatus('${student.enrollmentId}', 'rejected')" class="btn btn-sm btn-outline-danger" title="إلغاء"><i class="fa-solid fa-trash"></i> إلغاء</button>`;
+}
+                // --- 3. حالة مرفوض (لن يصل الكود هنا أصلاً بسبب الفلتر في الأعلى) ---
+                // ولكن وضعناه للاحتياط في حال اخترتِ فلتر "المرفوضين" لرؤية المحذوفين
+                else if (status === 'rejected') {
+                    badgeHtml = '<span class="badge bg-danger">مرفوض</span>';
+                    actionButtons = `
+                        <button onclick="alert('تم حذف هذا الطالب من القائمة')" class="btn btn-sm btn-outline-secondary" disabled title="مرفوض">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>
+                    `;
+                }
+
+                // رسم الصف
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <div class="fw-bold text-white">${student.studentName}</div>
+                            <small class="text-white-50">${student.phone}</small>
+                        </td>
+                        <td>${student.courseName}</td>
+                        <td>${student.date}</td>
+                        <td>${badgeHtml}</td>
+                        <td class="text-center">${actionButtons}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        } 
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="6" class="text-danger text-center">خطأ في الاتصال</td></tr>';
+    }
+}
+
+
+
+
+
+
+
+
+
+// 2. تحديث حالة الطالب (قبول / رفض)
+async function updateStatus(enrollmentId, newStatus) {
+    if(!confirm("هل أنت متأكد من تغيير حالة الطالب؟")) return;
+
+    const token = localStorage.getItem('authToken');
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/enrollments/${enrollmentId}/status`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (res.ok) {
+            // إعادة تحميل الجدول
+            loadCenterStudents();
+            // تحديث إحصائيات الداشبورد أيضاً
+            loadStats(); 
+        } else {
+            alert("فشلت العملية");
+        }
+    } catch(e) { console.error(e); }
+}
+
+
+
+
+
+
+
+
+
+// 3. (إضافي) ملء قائمة الفلتر بالدورات
+async function loadCoursesForFilter() {
+    
+    const select = document.getElementById('filter-course');
+    const storedUserId = localStorage.getItem('userId');
+    const storedCenterId = localStorage.getItem('currentCenterId');
+    const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                     ? storedUserId 
+                     : storedCenterId;
+    const token = localStorage.getItem('authToken');
+    if(!select || !centerId) return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/my-courses/${centerId}`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+             }
+        });
+        if (res.ok) {
+        const courses = await res.json();
+        const options = courses.map(c => 
+                `<option style="background: #333;" value="${c.id}">${c.name}</option>`
+            ).join('');
+        
+        // إبقاء خيار "الكل" ومسح الباقي
+        select.innerHTML = '<option style="background: #333;" value="all">جميع الدورات</option>' + options;
+        } else {
+            console.error("فشل جلب دورات الفلتر");
+        }
+    } catch(e) {
+        console.error("خطأ في الاتصال في الفلتر:", e);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 1. جلب المعلمين
+async function loadTeachers() {
+    const tbody = document.getElementById('teachers-table-body');
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    // ✅ التعديل هنا: التحقق الصارم
+    if (!centerId || centerId === "undefined") {
+        console.error("Invalid Center ID for Teachers");
+        if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-danger text-center">يرجى تسجيل الدخول مجدداً</td></tr>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/center-teachers/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            const teachers = await res.json();
+            tbody.innerHTML = '';
+            
+            if (teachers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-white-50 text-center">لا يوجد معلمين مضافين حالياً</td></tr>';
+                return;
+            }
+
+            teachers.forEach(t => {
+let statusBadge = '';
+    
+    if (t.status === 'Accepted' || t.status === 'active') {
+        statusBadge = '<span class="badge bg-success">معتمد</span>';
+    } else if (t.status === 'Pending') {
+        statusBadge = '<span class="badge bg-warning text-dark">بانتظار الموافقة</span>';
+    } else {
+        statusBadge = '<span class="badge bg-secondary">غير نشط</span>';
+    }
+
+                const row = `
+                    <tr>
+                        <td>
+                            <img src="https://ui-avatars.com/api/?name=${t.fullName}&background=random&color=fff" class="rounded-circle border border-secondary" width="40" height="40">
+                        </td>
+                        <td class="fw-bold text-white">${t.fullName}</td>
+                        <td><span class="badge bg-info text-dark">${t.specialty}</span></td>
+                        <td>${t.studentsCount} طالب</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button onclick="deleteTeacher('${t.id}')" class="btn btn-sm btn-outline-danger" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        } else {
+            console.error("Server Error:", res.status);
+            tbody.innerHTML = '<tr><td colspan="6" class="text-danger text-center">فشل تحميل البيانات</td></tr>';
+        }
+
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="6" class="text-danger text-center">خطأ في الاتصال</td></tr>';
+    }
+}
+
+
+
+
+
+
+
+
+
+// 2. إضافة معلم جديد
+async function addTeacher() {
+    const name = document.getElementById('teacher-name').value;
+    const specialty = document.getElementById('teacher-specialty').value;
+    const phone = document.getElementById('teacher-phone').value;
+    const centerId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    // ✅ التحقق من الـ ID قبل الإرسال
+    if (!centerId || centerId === "undefined") {
+        alert("خطأ: معرف المركز غير صالح. يرجى إعادة تسجيل الدخول.");
+        return;
+    }
+
+    if (!name || !phone) {
+        alert("يرجى إدخال الاسم ورقم الهاتف");
+        return;
+    }
+
+    const newTeacher = {
+        fullName: name,
+        specialty: specialty,
+        phone: phone,
+        centerId: centerId
+    };
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/add`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(newTeacher)
+        });
+
+        if (res.ok) {
+            alert("تم إضافة المعلم بنجاح!");
+            // تفريغ الحقول
+            document.getElementById('teacher-name').value = '';
+            document.getElementById('teacher-phone').value = '';
+            // تحديث الجدول
+            loadTeachers();
+            // تحديث الإحصائيات العلوية أيضاً
+            loadStats();
+        } else {
+            alert("حدث خطأ أثناء الإضافة");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال بالسيرفر");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 3. حذف معلم
+async function deleteTeacher(id) {
+    if(!confirm("هل أنت متأكد من حذف هذا المعلم؟")) return;
+    const token = localStorage.getItem('authToken');
+    const storedUserId = localStorage.getItem('userId');
+    const storedCenterId = localStorage.getItem('currentCenterId');
+    const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                     ? storedUserId 
+                     : storedCenterId;
+
+    try {
+        const res =await fetch(`${API_BASE_URL}/CenterStaff/remove-teacher/${id}?centerId=${centerId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            alert("تم حذف المعلم بنجاح");
+            loadTeachers(); // تحديث الجدول
+            if (typeof loadStats === 'function') loadStats(); // تحديث الإحصائيات
+        } else {
+            const data = await res.json();
+            alert("فشل الحذف: " + (data.message || "خطأ غير معروف"));
+        }
+    } catch(e) { 
+        console.error(e);
+        alert("حدث خطأ في الاتصال");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// متغير لتخزين اليوم المختار حالياً (الافتراضي: السبت)
+let currentSelectedDay = 'sat';
+
+// 1. تحميل الجدول حسب اليوم
+async function loadSchedule(day) {
+    currentSelectedDay = day; // تحديث اليوم المختار
+    const container = document.getElementById('schedule-container');
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    // ✅ التعديل هنا: التحقق الصارم من ID
+    if (!centerId || centerId === "undefined") {
+        console.error("Invalid Center ID for Schedule");
+        container.innerHTML = '<p class="text-center text-danger mt-5">يرجى تسجيل الدخول مجدداً لعرض الجدول</p>';
+        return;
+    }
+
+    container.innerHTML = '<p class="text-center text-white-50 mt-5">جاري التحميل...</p>';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Schedules/${centerId}/${day}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            const sessions = await res.json();
+            container.innerHTML = '';
+
+            if (sessions.length === 0) {
+                container.innerHTML = '<p class="text-center text-white-50 mt-5">لا توجد حصص مجدولة لهذا اليوم.</p>';
+                return;
+            }
+
+            sessions.forEach(session => {
+                const card = `
+                <div class="glass-form mb-3 d-flex align-items-center position-relative overflow-hidden session-card">
+                    <div class="position-absolute top-0 end-0 bottom-0 bg-primary" style="width: 5px;"></div>
+                    
+                    <div class="p-3 text-center border-start border-secondary" style="min-width: 100px;">
+                        <div class="fw-bold text-white h5 mb-0">${session.startTime}</div>
+                        <div class="badge bg-dark mt-2">مجدول</div>
+                    </div>
+
+                    <div class="p-3 flex-grow-1">
+                        <h5 class="text-white mb-1"><i class="fa-solid fa-book-open ms-2 text-primary"></i> ${session.courseName}</h5>
+                        <div class="d-flex gap-3 text-white-50 small mt-2">
+                            <span><i class="fa-solid fa-user ms-1"></i> ${session.teacherName}</span>
+                            <span><i class="fa-solid fa-location-dot ms-1"></i> ${session.location}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3">
+                        <button onclick="deleteSession(${session.id})" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += card;
+            });
+        } else {
+            console.error("Server Error:", res.status);
+            container.innerHTML = '<p class="text-center text-danger mt-5">فشل تحميل الجدول</p>';
+        }
+
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-center text-danger mt-5">خطأ في الاتصال</p>';
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 2. تعبئة القوائم المنسدلة (دورات ومعلمين)
+async function populateScheduleForm() {
+    const courseSelect = document.getElementById('schedule-course');
+    const teacherSelect = document.getElementById('schedule-teacher');
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    if (!centerId || centerId === "undefined") return; // ✅ تعديل
+
+    // ... باقي الكود كما هو ...
+    try {
+        // جلب الدورات
+        const resCourses = await fetch(`${API_BASE_URL}/Center/courses/${centerId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if(resCourses.ok) {
+            const courses = await resCourses.json();
+            courseSelect.innerHTML = '<option value="" disabled selected>اختر الدورة...</option>';
+            courses.forEach(c => courseSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+        }
+
+        // جلب المعلمين
+        const resTeachers = await fetch(`${API_BASE_URL}/Teachers/${centerId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if(resTeachers.ok) {
+            const teachers = await resTeachers.json();
+            teacherSelect.innerHTML = '<option value="" disabled selected>اختر المعلم...</option>';
+            teachers.forEach(t => teacherSelect.innerHTML += `<option value="${t.id}">${t.fullName}</option>`);
+        }
+    } catch(e) { console.error(e); }
+}
+
+
+
+
+
+
+
+
+
+
+
+// 3. إضافة حصة جديدة
+async function addSession() {
+    // ... جلب القيم من الـ DOM ...
+    const courseId = document.getElementById('schedule-course').value;
+    const teacherId = document.getElementById('schedule-teacher').value;
+    const time = document.getElementById('schedule-time').value;
+    const location = document.getElementById('schedule-location').value;
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+
+    // ✅ التحقق
+    if (!centerId || centerId === "undefined") {
+        alert("يرجى تسجيل الدخول");
+        return;
+    }
+
+    if (!courseId || !teacherId || !time) {
+        alert("يرجى تعبئة جميع الحقول");
+        return;
+    }
+
+    const newSession = {
+        centerId: centerId,
+        courseId: courseId,
+        teacherId: parseInt(teacherId),
+        day: currentSelectedDay, 
+        startTime: time,
+        location: location
+    };
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Schedules/add`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(newSession)
+        });
+
+        if (res.ok) {
+            alert("تم إضافة الحصة بنجاح");
+            toggleAddSessionForm(); 
+            loadSchedule(currentSelectedDay); 
+        } else {
+            alert("حدث خطأ في الإضافة");
+        }
+    } catch (e) { console.error(e); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 4. حذف حصة
+async function deleteSession(id) {
+    if(!confirm("حذف هذه الحصة؟")) return;
+    const token = localStorage.getItem('authToken');
+    await fetch(`${API_BASE_URL}/Schedules/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    loadSchedule(currentSelectedDay);
+}
+
+
+
+
+
+
+
+
+// 5. تفعيل أزرار الأيام
+document.querySelectorAll('.day-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // تغيير الستايل
+        document.querySelectorAll('.day-btn').forEach(b => {
+            b.classList.remove('active', 'btn-primary');
+            b.classList.add('btn-outline-light');
+        });
+        this.classList.remove('btn-outline-light');
+        this.classList.add('active', 'btn-primary');
+
+        // تحميل بيانات اليوم المختار
+        const day = this.getAttribute('data-day');
+        loadSchedule(day);
+    });
+});
+
+
+
+
+
+
+
+
+// 1. تعبئة قائمة الدورات في صفحة الحضور
+async function loadCoursesForAttendance() {
+    const select = document.getElementById('attendance-course');
+// نحاول جلب userId، إذا لم نجده أو كان "undefined"، نجلب currentCenterId
+const storedUserId = localStorage.getItem('userId');
+const storedCenterId = localStorage.getItem('currentCenterId');
+const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") 
+                 ? storedUserId 
+                 : storedCenterId;
+                     const token = localStorage.getItem('authToken');
+    
+    // تعيين تاريخ اليوم كقيمة افتراضية
+    document.getElementById('attendance-date').valueAsDate = new Date();
+
+    if(!select || !centerId) return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/courses/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const courses = await res.json();
+        
+        select.innerHTML = '<option value="" disabled selected>-- اختر الدورة --</option>';
+        courses.forEach(c => {
+            select.innerHTML += `<option style="background: #333;" value="${c.id}">${c.name}</option>`;
+        });
+    } catch(e) {}
+}
+
+
+
+
+
+
+
+
+// 2. عرض قائمة الطلاب للحضور
+async function loadAttendanceList() {
+    const courseId = document.getElementById('attendance-course').value;
+    const date = document.getElementById('attendance-date').value;
+    const listDiv = document.getElementById('attendanceList');
+    const tbody = document.getElementById('attendance-table-body');
+    const token = localStorage.getItem('authToken');
+
+    if (!courseId || !date) {
+        alert("يرجى اختيار الدورة والتاريخ");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Attendance/sheet?courseId=${courseId}&date=${date}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const students = await res.json();
+
+        tbody.innerHTML = '';
+        document.getElementById('attendance-count').innerText = `عدد الطلاب: ${students.length}`;
+        listDiv.style.display = 'block';
+
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-white-50">لا يوجد طلاب مسجلين في هذه الدورة</td></tr>';
+            return;
+        }
+
+        students.forEach(student => {
+            // إنشاء معرف فريد لكل مجموعة راديو
+            const groupName = `status_${student.enrollmentId}`;
+            
+            const row = `
+                <tr data-enrollment-id="${student.enrollmentId}">
+                    <td>
+                        <div class="fw-bold text-white">${student.studentName}</div>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm w-100" role="group">
+                            <input type="radio" class="btn-check" name="${groupName}" id="p_${student.enrollmentId}" value="present" ${student.status === 'present' ? 'checked' : ''}>
+                            <label class="btn btn-outline-success" for="p_${student.enrollmentId}">حاضر</label>
+
+                            <input type="radio" class="btn-check" name="${groupName}" id="a_${student.enrollmentId}" value="absent" ${student.status === 'absent' ? 'checked' : ''}>
+                            <label class="btn btn-outline-danger" for="a_${student.enrollmentId}">غائب</label>
+
+                            <input type="radio" class="btn-check" name="${groupName}" id="l_${student.enrollmentId}" value="late" ${student.status === 'late' ? 'checked' : ''}>
+                            <label class="btn btn-outline-warning" for="l_${student.enrollmentId}">تأخير</label>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" class="notes-input form-control form-control-sm bg-transparent text-white border-secondary" 
+                               value="${student.notes}" placeholder="ملاحظات / إنجاز">
+                    </td>
+                    <td>
+                        <select class="rating-input form-select form-select-sm bg-dark text-white border-secondary">
+                            <option value="0" ${student.rating == 0 ? 'selected' : ''}>-</option>
+                            <option value="1" ${student.rating == 1 ? 'selected' : ''}>⭐ 1</option>
+                            <option value="2" ${student.rating == 2 ? 'selected' : ''}>⭐⭐ 2</option>
+                            <option value="3" ${student.rating == 3 ? 'selected' : ''}>⭐⭐⭐ 3</option>
+                            <option value="4" ${student.rating == 4 ? 'selected' : ''}>⭐⭐⭐⭐ 4</option>
+                            <option value="5" ${student.rating == 5 ? 'selected' : ''}>⭐⭐⭐⭐⭐ 5</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+    } catch (e) {
+        console.error(e);
+        alert("حدث خطأ في جلب البيانات");
+    }
+}
+
+
+
+
+
+
+
+
+
+// 3. حفظ السجل
+async function saveAttendance() {
+    const courseId = document.getElementById('attendance-course').value;
+    const date = document.getElementById('attendance-date').value;
+    const rows = document.querySelectorAll('#attendance-table-body tr');
+    const token = localStorage.getItem('authToken');
+
+    if(rows.length === 0) return;
+
+    const records = [];
+    rows.forEach(row => {
+        const enrollmentId = row.getAttribute('data-enrollment-id');
+        // البحث عن الراديو المختار في هذا الصف
+        const checkedRadio = row.querySelector(`input[name="status_${enrollmentId}"]:checked`);
+        const status = checkedRadio ? checkedRadio.value : 'present';
+        const notes = row.querySelector('.notes-input').value;
+        const rating = row.querySelector('.rating-input').value;
+
+        records.push({
+            enrollmentId: parseInt(enrollmentId),
+            status: status,
+            notes: notes,
+            rating: parseInt(rating)
+        });
+    });
+
+    const payload = {
+        courseId: courseId,
+        date: date,
+        records: records
+    };
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Attendance/save`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("✅ تم حفظ سجل الحضور والإنجاز بنجاح!");
+        } else {
+            alert("❌ فشل الحفظ");
+        }
+    } catch(e) { console.error(e); }
+}
+
+
+
+
+
+
+
+
+
+
+
+// دالة تحميل التقارير
+async function loadReports() {
+    const centerId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    if(!centerId) return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Reports/summary/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        // 1. تحديث نسب الحضور والغياب
+        updateProgressBar('report-attendance', data.attendanceRate);
+        updateProgressBar('report-absence', data.absenceRate);
+
+        // 2. تحديث قائمة الدورات الأكثر طلباً
+        const coursesContainer = document.getElementById('report-top-courses');
+        coursesContainer.innerHTML = '';
+
+        if (data.topCourses.length === 0) {
+            coursesContainer.innerHTML = '<p class="text-center text-white-50 mt-4">لا توجد بيانات كافية</p>';
+        } else {
+            // حساب المجموع الكلي للطلاب لحساب النسبة المئوية لكل دورة
+            const totalStudents = data.topCourses.reduce((sum, c) => sum + c.studentCount, 0);
+
+            data.topCourses.forEach((course, index) => {
+                const percentage = totalStudents > 0 ? Math.round((course.studentCount / totalStudents) * 100) : 0;
+                
+                // تلوين الأيقونات بالتناوب
+                const icons = ['fa-book-open text-primary', 'fa-star text-warning', 'fa-mosque text-success'];
+                const badges = ['bg-primary', 'bg-warning text-dark', 'bg-success'];
+                
+                const item = `
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                        <i class="fa-solid ${icons[index] || icons[0]} fa-lg"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white mb-0">${course.name}</h6>
+                        <small class="text-white-50">${course.studentCount} طالب مسجل</small>
+                    </div>
+                    <span class="badge ${badges[index] || badges[0]} rounded-pill">${percentage}%</span>
+                </div>
+                `;
+                coursesContainer.innerHTML += item;
+            });
+        }
+
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+
+
+
+
+
+
+
+
+// دالة مساعدة لتحديث شريط التقدم والنص
+function updateProgressBar(idPrefix, value) {
+    const bar = document.getElementById(`${idPrefix}-bar`);
+    const text = document.getElementById(`${idPrefix}-text`);
+    if(bar && text) {
+        bar.style.width = `${value}%`;
+        text.innerText = `${value}%`;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// ============================================
+// دالة جلب إعدادات المركز (محدثة لإصلاح مشكلة الاسم)
+// ============================================
+async function loadCenterSettings() {
+    const storedUserId = localStorage.getItem('userId');
+    const storedCenterId = localStorage.getItem('currentCenterId');
+    const centerId = (storedCenterId && storedCenterId !== "undefined") ? storedCenterId : storedUserId;
+    const token = localStorage.getItem('authToken');
+    
+    if(!centerId || centerId === "undefined") return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/profile/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            
+            // التعديل هنا: استخدام data.name (بحروف صغيرة لأن JSON يحولها غالباً) 
+            // أو data.Name بناءً على ما يرجعه السيرفر
+            const centerName = data.name || data.Name || data.firstName || "مركز قرآني";
+
+            // تحديث العناصر في الواجهة
+            const navName = document.getElementById('nav-center-name');
+            if (navName) navName.textContent = centerName;
+
+            const sidebarHeader = document.querySelector('.sidebar-header');
+            if (sidebarHeader) sidebarHeader.innerHTML = `<i class="fa-solid fa-bars ms-2"></i> ${centerName}`;
+            
+            // تحديث الذاكرة المحلية لضمان الاستمرارية
+            localStorage.setItem('currentUserName', centerName);
+        }
+    } catch (e) {
+        console.error("خطأ في الاتصال:", e);
+    }
+}
+
+
+
+// 2. حفظ التغييرات
+async function saveCenterSettings() {
+    const centerId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    // ✅ التحقق قبل الحفظ
+    if(!centerId || centerId === "undefined") {
+        alert("خطأ: يجب تسجيل الدخول لحفظ الإعدادات");
+        return;
+    }
+
+    const payload = {
+        firstName: document.getElementById('settings-name-ar').value,
+        lastName: document.getElementById('settings-name-en').value,
+        phone: document.getElementById('settings-phone').value,
+        description: document.getElementById('settings-desc').value
+    };
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Center/profile/${centerId}`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("✅ تم حفظ إعدادات المركز بنجاح");
+            // تحديث اسم المركز في أعلى الصفحة (الناف بار) إذا تغير
+            const headerTitle = document.querySelector('.sidebar-header h5');
+            if(headerTitle) headerTitle.innerText = payload.firstName;
+        } else {
+            alert("فشل الحفظ");
+        }
+    } catch (e) { console.error(e); }
+}
+
+
+
+
+
+
+
+// 3. (إضافي) معاينة الشعار فورياً عند الرفع
+document.getElementById('logoUpload')?.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('centerLogoPreview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+// دوال إدارة المعلمين للمركز
+const CENTER_ID = localStorage.getItem('userId');
+
+function showInviteModal() {
+const modalEl = document.getElementById('inviteTeacherModal');
+
+    if(modalEl) {
+        new bootstrap.Modal(modalEl).show();
+    } else {
+        alert("خطأ: نافذة الدعوة غير موجودة في الصفحة");
+    }
+}
+
+
+
+async function loadMyTeachers() {
+    const container = document.getElementById('teachers-list-container');
+if(!container) return;
+
+    const token = localStorage.getItem('authToken');
+    try {
+      const res = await fetch(`${API_BASE_URL}/CenterStaff/my-teachers/${CENTER_ID}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+ 
+        if(res.ok) {
+            const teachers = await res.json();
+            container.innerHTML = '';
+        if(teachers.length === 0) {
+            container.innerHTML = '<div class="col-12 text-center text-white-50">لم يتم إضافة معلمين بعد.</div>';
+            return;
+        }
+
+        teachers.forEach(t => {
+            container.innerHTML += `
+            <div class="col-md-4">
+                <div class="p-3 border border-secondary rounded bg-dark bg-opacity-25 d-flex align-items-center gap-3">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-user text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-white m-0">${t.fullName}</h6>
+                        <small class="text-white-50">ID: ${t.teacherId}</small>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    } catch(e) { 
+        console.error(e);
+        container.innerHTML = 'فشل التحميل';
+     }
+    }
+
+
+// ============================================
+// إدارة طلبات الانضمام (للمعلم/للمركز) - النسخة النهائية الموحدة
+// ============================================
+
+// 1. تعريف المتغير (تأكد من عدم وجود تعريف آخر له في نفس الملف)
+const CURRENT_USER_ID = localStorage.getItem('userId'); 
+
+// 2. دالة عرض الطلبات
+async function loadRequests() {
+    const container = document.getElementById('requests-container');
+    if(!container) return;
+    
+    container.innerHTML = '<div class="text-center text-white-50"><i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...</div>';
+
+    try {
+        const token = localStorage.getItem('authToken');
+        
+        // جلب الطلبات من السيرفر
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/teacher-requests/${CURRENT_USER_ID}`, {
+             headers: { 'Authorization': `Bearer ${token}` }
+        }); 
+        
+        if (!res.ok) throw new Error("فشل الجلب");
+
+        const requests = await res.json();
+        container.innerHTML = '';
+        
+        // حالة عدم وجود طلبات
+        if(requests.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="fa-solid fa-envelope-open text-white-50 fa-3x mb-3"></i>
+                    <p class="text-white-50">لا توجد دعوات انضمام جديدة.</p>
+                </div>`;
+            return;
+        }
+
+        // عرض البطاقات
+        requests.forEach(req => {
+            const date = new Date(req.date).toLocaleDateString('ar-EG');
+            container.innerHTML += `
+            <div class="col-md-6 fade-in">
+                <div class="glass-card p-4 border-start border-4 border-warning position-relative overflow-hidden">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="text-white fw-bold mb-1">${req.centerName}</h5>
+                            <p class="text-white-50 small mb-2"><i class="fa-regular fa-clock me-1"></i> تاريخ الدعوة: ${date}</p>
+                            <span class="badge bg-info bg-opacity-25 text-info">دعوة انضمام للكادر</span>
+                        </div>
+                        <i class="fa-solid fa-building-columns fa-3x text-white-50 opacity-25"></i>
+                    </div>
+                    <hr class="border-secondary my-3">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success btn-sm flex-grow-1 fw-bold" onclick="respondToInvite(${req.requestId}, 'Accepted')">
+                            <i class="fa-solid fa-check me-1"></i> قبول
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm flex-grow-1" onclick="respondToInvite(${req.requestId}, 'Rejected')">
+                            <i class="fa-solid fa-xmark me-1"></i> رفض
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        });
+    } catch(e) { 
+        console.error(e);
+        container.innerHTML = '<p class="text-danger text-center">فشل تحميل الطلبات</p>'; 
+    }
+}
+
+// 3. دالة الاستجابة للدعوة (قبول أو رفض)
+async function respondToInvite(requestId, status) {
+    const actionText = status === 'Accepted' ? "قبول" : "رفض";
+    if(!confirm(`هل أنت متأكد من ${actionText} الدعوة؟`)) return;
+
+    try {
+        const token = localStorage.getItem('authToken');
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/respond-request`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ requestId: requestId, status: status })
+        });
+        
+        if(res.ok) {
+            alert(`تم ${actionText} الدعوة بنجاح!`);
+            loadRequests(); // تحديث القائمة لإزالة الطلب الذي تم الرد عليه
+        } else {
+            alert("حدث خطأ أثناء تنفيذ العملية.");
+        }
+    } catch(e) { 
+        alert("فشل الاتصال بالسيرفر"); 
+    }
+}
+
+
+// دالة لتعبئة قائمة المعلمين في فورم إضافة الدورة
+async function loadTeachersForCourseForm() {
+    const select = document.getElementById('course-teacher');
+    const storedUserId = localStorage.getItem('userId');
+    const storedCenterId = localStorage.getItem('currentCenterId');
+    const centerId = (storedUserId && storedUserId !== "undefined" && storedUserId !== "null") ? storedUserId : storedCenterId;
+    const token = localStorage.getItem('authToken');
+
+    if (!select || !centerId) return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/center-teachers/${centerId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const teachers = await res.json();
+            
+            // تفريغ القائمة وإضافة الخيار الافتراضي
+            select.innerHTML = '<option value="" style="color: black;">-- اختر المعلم --</option>';
+            
+            teachers.forEach(t => {
+                // إضافة المعلم للقائمة
+                select.innerHTML += `<option style="background: #333;" value="${t.id}">${t.fullName}</option>`;
+            });
+        }
+    } catch (e) {
+        console.error("خطأ في تحميل المعلمين للقائمة:", e);
+    }
+}
+
+
+</script>
+
+<div class="modal fade" id="inviteTeacherModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="fa-solid fa-user-plus text-info me-2"></i> إضافة معلم</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+<div class="modal-body">
+    <div class="mb-3">
+        <label class="form-label text-white-50">ابحث عن المعلم (الاسم أو الهاتف)</label>
+        
+        <input type="text" 
+               id="invite-teacher-search" 
+               class="form-control" 
+               placeholder="اكتب اسم المعلم هنا..." 
+               oninput="searchForTeacher()" 
+               autocomplete="off">
+        
+        <div id="teacher-search-results" class="list-group mt-1" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
+</div>
+<div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+    <button type="button" class="btn btn-primary" onclick="sendTeacherInvite()">إرسال الدعوة</button>
+</div>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

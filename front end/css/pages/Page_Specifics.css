@@ -8,7 +8,7 @@ body[data-page="login"],
 body[data-page="contact"],
 body[data-page="courses"],
 body[data-page="centers"] {
-  background-image: url('../../img/تصميم\ بدون\ عنوان\ \(1\).png');
+  background-image: url('../../img/login-bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

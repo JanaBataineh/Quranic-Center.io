@@ -5,11 +5,12 @@ module.exports = {
   // نقاط الدخول
   entry: {
     main: './js/main.js',
+    login: './js/pages/login.js',
+
+    adminDashboard: './js/pages/admin/dashboard.js',
     adminCenters: './js/pages/admin/centers.js',
     adminCourses: './js/pages/admin/courses.js',
     adminUsers: './js/pages/admin/users.js',
-    adminDashboard: './js/pages/admin/dashboard.js',
-    login: './js/pages/login.js'
   },
   
   output: {

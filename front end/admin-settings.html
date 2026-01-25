@@ -339,6 +339,19 @@
     </script>
    <script src="js/data/config.js"></script> 
 <script src="dist/adminUsers.bundle.js"></script>
-
+<script>
+    // ==========================================
+// دالة تسجيل الخروج (عامة)
+// ==========================================
+window.logout = function() {
+    // 1. حذف التوكن والبيانات
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUserType');
+    localStorage.removeItem('isAdmin');
+    
+    // 2. التوجيه لصفحة الدخول
+    window.location.href = 'login.html';
+}
+</script>
 </body>
 </html>

@@ -5,16 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>إدارة المراكز - لوحة التحكم</title>
 <link rel="stylesheet" href="dist/main.css">
+<link rel="icon" href="data:,">
+<style>
+    /* جعل النص داخل خيارات القائمة باللون الأسود والخلفية بيضاء */
+select option {
+    color: black !important;
+    background-color: white !important;
+}
+</style>
 <script>
-    // حماية الصفحة: توجيه المستخدم لصفحة الدخول إذا لم يكن مركزاً
+    // حماية الصفحة: التأكد من أن المستخدم هو Admin
+    // قمنا بتعريف التوكن هنا ليكون متاحاً للصفحة وللملف الخارجي
+    const globalToken = localStorage.getItem("authToken"); 
     const userType = localStorage.getItem("currentUserType");
-    const token = localStorage.getItem("authToken");
-    
-    // التحقق: يجب أن يكون مسجلاً ونوعه "Center"
-    if (!token || (userType !== "Center" && userType !== "center")) {
+    const isAdmin = localStorage.getItem("isAdmin");
+
+    if (!globalToken || (userType?.toLowerCase() !== "admin" && isAdmin !== "true")) {
         window.location.href = "login.html";
     }
 </script>
+
 </head>
 <body data-page="dashboard">
 
@@ -107,44 +117,129 @@
                 <button class="modal-close" onclick="closeAddCenterModal()" >&times;</button>
             </div>
             <div class="modal-body">
-                <form id="addCenterForm">
-                    <input type="hidden" id="centerId" value=""> 
-                    
-                    <div class="form-group">
-                        <label class="form-label" >اسم المركز *</label>
-                        <input type="text" id="centerName" class="form-input" style="background: rgba(255,255,255,0.05); color: white; border-color: rgba(255,255,255,0.2);" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" >المدينة *</label>
+<form id="addCenterForm">
+    <input type="hidden" id="centerId"> 
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+            <label class="form-label">اسم المركز *</label>
+            <input type="text" id="centerName" class="form-input" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">تصنيف المركز *</label>
+            <select id="centerClassification" class="form-input" required>
+                <option value="مشترك">مشترك</option>
+                <option value="ذكور">ذكور</option>
+                <option value="إناث">إناث</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+            <label class="form-label">اسم مدير المركز</label>
+            <input type="text" id="centerManager" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">رقم الهاتف *</label>
+            <input type="tel" id="centerPhone" class="form-input" required>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <div class="form-group">
+            <label class="form-label">المدينة/المحافظة *</label>
             <select id="centerCity" class="form-input" required>
-    <option value="" style="color: black;">اختر مدينة...</option> 
-    <option value="اربد" style="color: black;">اربد</option>
-    </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" >العنوان *</label>
-                        <input type="text" id="centerAddress" class="form-input" style="background: rgba(255,255,255,0.05); color: white; border-color: rgba(255,255,255,0.2);" required>
-                    </div>
+                 <option value="" style="color: black;">اختر المحافظة...</option> 
+                 <option value="عمان" style="color: black;">عمان</option>
+                 <option value="اربد" style="color: black;">اربد</option>
+                 <option value="الزرقاء" style="color: black;">الزرقاء</option>
+                 <option value="المفرق" style="color: black;">المفرق</option>
+                 <option value="عجلون" style="color: black;">عجلون</option>
+                 <option value="جرش" style="color: black;">جرش</option>
+                 <option value="مادبا" style="color: black;">مادبا</option>
+                 <option value="البلقاء" style="color: black;">البلقاء</option>
+                 <option value="الكرك" style="color: black;">الكرك</option>
+                 <option value="الطفيلة" style="color: black;">الطفيلة</option>
+                 <option value="معان" style="color: black;">معان</option>
+                 <option value="العقبة" style="color: black;">العقبة</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">اللواء</label>
+            <input type="text" id="centerDistrict" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">المنطقة</label>
+            <input type="text" id="centerArea" class="form-input">
+        </div>
+    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" >الهاتف *</label>
-                        <input type="tel" id="centerPhone" class="form-input" style="background: rgba(255,255,255,0.05); color: white; border-color: rgba(255,255,255,0.2);" required>
-                    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+            <label class="form-label">الحي</label>
+            <input type="text" id="centerNeighborhood" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">اسم الشارع</label>
+            <input type="text" id="centerStreet" class="form-input">
+        </div>
+    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" >البريد الإلكتروني</label>
-                        <input type="email" id="centerEmail" class="form-input" style="background: rgba(255,255,255,0.05); color: white; border-color: rgba(255,255,255,0.2);" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-block" id="centerModalSubmitBtn">حفظ</button>
-                </form>
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
+        <div class="form-group">
+            <label class="form-label">أقرب معلم</label>
+            <input type="text" id="centerLandmark" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">رقم البناية</label>
+            <input type="text" id="centerBuildingNo" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">الطابق</label>
+            <input type="text" id="centerFloor" class="form-input">
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+            <label class="form-label">أوقات الدوام</label>
+            <input type="text" id="centerHours" class="form-input" placeholder="مثلاً: 4-8 مساءً">
+        </div>
+        <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input type="email" id="centerEmail" class="form-input">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">العنوان الكامل (للعرض)</label>
+        <input type="text" id="centerAddress" class="form-input" placeholder="سيظهر هذا العنوان في الكارت">
+    </div>
+    <div class="mb-3">
+    <label for="centerPassword" class="form-label">كلمة المرور للحساب *</label>
+    <input type="password" class="form-control" id="centerPassword" required minlength="6" placeholder="******">
+</div>
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;" id="centerModalSubmitBtn">حفظ البيانات</button>
+</form>
             </div>
         </div>
     </div>
 <script src="js/data/config.js"></script>
-<script src="dist/adminCenters.bundle.js"></script>
-
+<script src="js/admin-manage-centers.js"></script>
+<script>
+    // ==========================================
+// دالة تسجيل الخروج (عامة)
+// ==========================================
+window.logout = function() {
+    // 1. حذف التوكن والبيانات
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUserType');
+    localStorage.removeItem('isAdmin');
+    
+    // 2. التوجيه لصفحة الدخول
+    window.location.href = 'login.html';
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>المراسلات - بوابة ولي الأمر</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعدادات الصفحة الأساسية */
+        body { 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            height: 100vh; 
+            overflow: hidden; /* منع سكرول الصفحة الكاملة */
+        }
+        
+        .navbar-glass { 
+            background: rgba(0, 0, 0, 0.7) !important; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            height: 60px; /* تثبيت ارتفاع الناف بار */
+        }
+
+        /* تنسيقات القائمة الجانبية (الداشبورد) */
+        .sidebar-block { background: rgba(20, 20, 20, 0.6) !important; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; margin-bottom: 20px; }
+        .list-group-item { background: transparent !important; color: #ccc; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
+        .list-group-item:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff; }
+        .list-group-item.active { background: rgba(13, 110, 253, 0.4) !important; color: #fff; border: none; border-right: 4px solid #0d6efd !important; }
+        .glass-card { background: rgba(30, 30, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; padding: 20px; }
+
+        /* --- تنسيقات الشات المدمج --- */
+        .chat-wrapper {
+            background: rgba(30, 30, 40, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            height: calc(100vh - 100px); /* ارتفاع الشات = ارتفاع الشاشة - الناف بار والهوامش */
+            display: flex;
+        }
+
+        /* قائمة جهات الاتصال داخل الشات */
+        .internal-chat-sidebar {
+            width: 300px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* منطقة الرسائل */
+        .internal-chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .contact-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .contact-item:hover, .contact-item.active { background: rgba(255,255,255,0.1); border-right: 3px solid #0d6efd; }
+        
+        .message-bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; font-size: 0.95rem; margin-bottom: 10px; position: relative; }
+        .msg-me { align-self: flex-end; background: #0d6efd; color: white; border-bottom-left-radius: 0; }
+        .msg-other { align-self: flex-start; background: rgba(255,255,255,0.1); color: white; border-bottom-right-radius: 0; }
+        
+        .input-area { padding: 15px; background: rgba(30, 30, 40, 0.8); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
+        .glass-input { flex-grow: 1; background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 15px; border-radius: 20px; outline: none; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container-fluid justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <i class="fa-solid fa-graduation-cap fa-lg"></i> <span>بوابة ولي الأمر</span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white small">مرحباً، أبو أحمد</span>
+            <img src="https://ui-avatars.com/api/?name=Abu+Ahmed&background=random" class="rounded-circle border" width="40">
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row h-100">
+        
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar-block">
+                <div class="p-3 fw-bold border-bottom border-secondary text-white">القائمة الرئيسية</div>
+                <div class="list-group list-group-flush">
+                    <a href="parent-dashboard.html" class="list-group-item list-group-item-action"><i class="fa-solid fa-house-chimney ms-2"></i> ملخص الأبناء</a>
+                    <a href="parent-finance.html" class="list-group-item list-group-item-action"><i class="fa-solid fa-credit-card ms-2"></i> المالية والدفع</a>
+                    <a href="#" class="list-group-item list-group-item-action active"><i class="fa-solid fa-envelope ms-2"></i> مراسلة المعلمين</a>
+                </div>
+            </div>
+            
+            <div class="glass-card bg-primary bg-opacity-10 border-primary text-center">
+                <h6 class="text-white mb-2">تنبيه</h6>
+                <p class="text-white-50 small">سيتم الرد على الرسائل خلال ساعات الدوام الرسمي.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-12">
+            <div class="chat-wrapper">
+                
+                <div class="internal-chat-sidebar d-none d-md-flex">
+                    <div class="p-3 border-bottom border-secondary text-center">
+                        <input type="text" class="glass-input form-control-sm" placeholder="بحث عن معلم...">
+                    </div>
+                    
+                    <div class="overflow-auto custom-scroll">
+                        <div class="contact-item active">
+                            <img src="https://ui-avatars.com/api/?name=Ali&background=random" class="rounded-circle" width="40">
+                            <div>
+                                <h6 class="text-white m-0 small">الشيخ علي حسن</h6>
+                                <small class="text-info x-small">معلم (أحمد)</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <img src="https://ui-avatars.com/api/?name=Noor&background=random" class="rounded-circle" width="40">
+                            <div>
+                                <h6 class="text-white m-0 small">المعلمة نور</h6>
+                                <small class="text-white-50 x-small">معلمة (سارة)</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">AD</div>
+                            <div>
+                                <h6 class="text-white m-0 small">الإدارة المالية</h6>
+                                <small class="text-white-50 x-small">الدعم الفني</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="internal-chat-main">
+                    <div class="p-3 border-bottom border-secondary d-flex align-items-center gap-3 bg-dark bg-opacity-25">
+                        <img src="https://ui-avatars.com/api/?name=Ali&background=random" class="rounded-circle" width="35">
+                        <div>
+                            <h6 class="m-0 text-white">الشيخ علي حسن</h6>
+                            <small class="text-success"><i class="fa-solid fa-circle x-small"></i> متصل الآن</small>
+                        </div>
+                    </div>
+
+                    <div class="flex-grow-1 p-3 overflow-auto d-flex flex-column">
+                        <div class="text-center text-white-50 x-small mb-3">اليوم</div>
+                        
+                        <div class="message-bubble msg-me">
+                            السلام عليكم يا شيخ، هل أحمد بحاجة لمراجعة سورة النساء في البيت؟
+                            <div class="text-white-50 x-small text-end mt-1">10:30 ص</div>
+                        </div>
+                        
+                        <div class="message-bubble msg-other">
+                            وعليكم السلام ورحمة الله، نعم يا أبا أحمد. الجزء الأول يحتاج لتثبيت، يفضل أن يقرأه عليك اليوم.
+                            <div class="text-white-50 x-small text-end mt-1">10:35 ص</div>
+                        </div>
+                        
+                        <div class="message-bubble msg-me">
+                            تمام بإذن الله، سأتابع معه الليلة. شكراً لك.
+                            <div class="text-white-50 x-small text-end mt-1">10:36 ص</div>
+                        </div>
+                    </div>
+
+                    <div class="input-area">
+                        <button class="btn btn-outline-light rounded-circle"><i class="fa-solid fa-paperclip"></i></button>
+                        <input type="text" class="glass-input" placeholder="اكتب رسالتك هنا...">
+                        <button class="btn btn-primary rounded-circle"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

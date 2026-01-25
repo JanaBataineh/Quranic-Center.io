@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المالية - بوابة ولي الأمر</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعدادات الثيم (Dark Glass) */
+        body { 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            min-height: 100vh; 
+        }
+        
+        /* الناف بار */
+        .navbar-glass { 
+            background: rgba(0, 0, 0, 0.7) !important; 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+
+        /* القائمة الجانبية */
+        .sidebar-block { 
+            background: rgba(20, 20, 20, 0.6) !important; 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+        }
+        .list-group-item { 
+            background: transparent !important; 
+            color: #ccc; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; 
+        }
+        .list-group-item:hover { 
+            background: rgba(255, 255, 255, 0.1) !important; 
+            color: #fff; 
+        }
+        .list-group-item.active { 
+            background: rgba(13, 110, 253, 0.4) !important; 
+            color: #fff; 
+            border: none; 
+            border-right: 4px solid #0d6efd !important; 
+        }
+
+        /* البطاقات الزجاجية */
+        .glass-card { 
+            background: rgba(30, 30, 40, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 15px; 
+            padding: 20px; 
+            height: 100%; /* لضمان تساوي الارتفاع */
+        }
+
+        /* زر الدفع المخصص */
+        .btn-pay { 
+            background: linear-gradient(45deg, #198754, #20c997); 
+            border: none; 
+            color: white; 
+            padding: 6px 25px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            font-size: 0.9rem;
+        }
+        .btn-pay:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3); 
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container-fluid justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="parent-dashboard.html">
+            <i class="fa-solid fa-graduation-cap fa-lg"></i> <span>بوابة ولي الأمر</span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white small d-none d-md-block">مرحباً، أبو أحمد</span>
+            <img src="https://ui-avatars.com/api/?name=Abu+Ahmed&background=random" class="rounded-circle border" width="40">
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-block">
+                <div class="p-3 fw-bold border-bottom border-secondary text-white">القائمة الرئيسية</div>
+                <div class="list-group list-group-flush">
+                    <a href="parent-dashboard.html" class="list-group-item list-group-item-action"><i class="fa-solid fa-house-chimney ms-2"></i> ملخص الأبناء</a>
+                    <a href="#" class="list-group-item list-group-item-action active"><i class="fa-solid fa-credit-card ms-2"></i> المالية والدفع</a>
+                    <a href="parent-messages.html" class="list-group-item list-group-item-action"><i class="fa-solid fa-envelope ms-2"></i> المراسلات</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="glass-card bg-danger bg-opacity-10 border-danger text-center d-flex flex-column justify-content-center align-items-center py-4">
+                        <h6 class="text-white-50 mb-2">إجمالي المستحق (جميع الأبناء)</h6>
+                        <h2 class="text-white fw-bold m-0">45.00 د.أ</h2>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card text-center d-flex flex-column justify-content-center align-items-center py-4">
+                        <h6 class="text-white-50 mb-2">آخر عملية دفع</h6>
+                        <h4 class="text-white m-0">20.00 د.أ</h4>
+                        <small class="text-white-50 mt-1">بتاريخ 01/12/2025</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-4">
+                <h5 class="text-white mb-4"><i class="fa-solid fa-file-invoice-dollar ms-2 text-warning"></i> الفواتير المستحقة (للسداد)</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-transparent align-middle mb-0 text-center">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>البند / التفاصيل</th>
+                                <th>تاريخ الاستحقاق</th>
+                                <th>المبلغ</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <img src="https://ui-avatars.com/api/?name=Sara&background=random" class="rounded-circle" width="30">
+                                        <span>سارة</span>
+                                    </div>
+                                </td>
+                                <td>رسوم شهر ديسمبر</td>
+                                <td class="text-danger fw-bold">05/12/2025</td>
+                                <td class="fw-bold fs-5">15.00 د.أ</td>
+                                <td><button class="btn-pay">دفع الآن</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <img src="https://ui-avatars.com/api/?name=Ahmed&background=random" class="rounded-circle" width="30">
+                                        <span>أحمد</span>
+                                    </div>
+                                </td>
+                                <td>رسوم رحلة المخيم</td>
+                                <td class="text-white-50">10/01/2026</td>
+                                <td class="fw-bold fs-5">30.00 د.أ</td>
+                                <td><button class="btn-pay">دفع الآن</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-card" style="opacity: 0.9;">
+                <h5 class="text-white mb-3">سجل المدفوعات السابقة</h5>
+                
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-2">
+                    <div>
+                        <div class="text-white fw-bold">رسوم شهر نوفمبر (أحمد + سارة)</div>
+                        <small class="text-white-50 font-monospace">Ref: #INV-2023001</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-success fw-bold">45.00 د.أ</div>
+                        <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3">تم الدفع بنجاح</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">عرض السجل الكامل</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

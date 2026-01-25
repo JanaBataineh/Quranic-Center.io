@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الطالب - بوابة ولي الأمر</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* نفس الثيم */
+        body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar-glass { background: rgba(0, 0, 0, 0.7) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-block { background: rgba(20, 20, 20, 0.6) !important; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; margin-bottom: 20px; }
+        .list-group-item { background: transparent !important; color: #ccc; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
+        .list-group-item:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff; }
+        .list-group-item.active { background: rgba(13, 110, 253, 0.4) !important; color: #fff; border: none; }
+
+        .glass-card { background: rgba(30, 30, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        
+        .nav-pills .nav-link { color: #ccc; background: rgba(255,255,255,0.05); margin-left: 10px; border-radius: 10px; }
+        .nav-pills .nav-link.active { background-color: #0d6efd; color: #fff; }
+        
+        .timeline-item { border-right: 2px solid #0d6efd; padding-right: 15px; margin-bottom: 15px; position: relative; }
+        .timeline-item::before { content: ""; position: absolute; right: -6px; top: 0; width: 10px; height: 10px; background: #0d6efd; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="parent-dashboard.html"><i class="fa-solid fa-arrow-right ms-2"></i> تفاصيل الطالب</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-block">
+                <div class="p-3 fw-bold border-bottom border-secondary text-white">اختر الابن</div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active">
+                        <img src="https://ui-avatars.com/api/?name=Ahmed&background=random" class="rounded-circle ms-2" width="30"> أحمد
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <img src="https://ui-avatars.com/api/?name=Sara&background=random" class="rounded-circle ms-2" width="30"> سارة
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            <div class="glass-card d-flex align-items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Ahmed&background=random" class="rounded-circle border border-2 border-primary" width="80">
+                <div>
+                    <h3 class="text-white m-0">أحمد محمد</h3>
+                    <p class="text-white-50 m-0">حلقة التجويد - الشعبة (أ)</p>
+                </div>
+                <div class="ms-auto text-center">
+                    <h4 class="text-success m-0">95%</h4>
+                    <small class="text-white-50">المعدل العام</small>
+                </div>
+            </div>
+
+            <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-quran">سجل الحفظ</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-grades">العلامات</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-notes">السلوك والملاحظات</button></li>
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+                
+                <div class="tab-pane fade show active" id="tab-quran">
+                    <div class="glass-card">
+                        <h5 class="text-white mb-4">آخر التسميعات</h5>
+                        <div class="timeline-item">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="text-white">سورة النساء (1-10)</h6>
+                                <span class="text-white-50 small">اليوم</span>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">ممتاز (لا أخطاء)</span>
+                        </div>
+                        <div class="timeline-item" style="border-color: #ffc107;">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="text-white">سورة آل عمران (مراجعة)</h6>
+                                <span class="text-white-50 small">أمس</span>
+                            </div>
+                            <span class="badge bg-warning bg-opacity-25 text-warning">جيد (3 تنبيهات)</span>
+                            <p class="text-white-50 small mt-1">ملاحظة المعلم: يحتاج لتثبيت الأوجه الأخيرة.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-grades">
+                    <div class="glass-card">
+                        <table class="table table-dark table-transparent align-middle">
+                            <thead><tr><th>الامتحان</th><th>التاريخ</th><th>الدرجة</th><th>التقدير</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>الشهر الأول</td>
+                                    <td>15/10/2025</td>
+                                    <td class="text-success fw-bold">19/20</td>
+                                    <td><span class="badge bg-success">ممتاز</span></td>
+                                </tr>
+                                <tr>
+                                    <td>الشفوي</td>
+                                    <td>20/11/2025</td>
+                                    <td class="text-warning fw-bold">16/20</td>
+                                    <td><span class="badge bg-warning text-dark">جيد جداً</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-notes">
+                    <div class="glass-card">
+                        <div class="alert alert-info bg-opacity-10 border-info text-info">
+                            <i class="fa-solid fa-thumbs-up me-2"></i> <strong>سلوك إيجابي:</strong> الطالب يبادر بمساعدة زملائه في الحلقة. (بتاريخ: 10/12)
+                        </div>
+                        <div class="alert alert-warning bg-opacity-10 border-warning text-warning">
+                            <i class="fa-solid fa-clock me-2"></i> <strong>تأخير:</strong> وصل متأخراً عن الحصة 15 دقيقة. (بتاريخ: 01/12)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

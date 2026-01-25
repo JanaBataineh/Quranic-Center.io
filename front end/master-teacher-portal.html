@@ -1,0 +1,3043 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة المعلم - منصة الوحي</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="master-teacher-portal.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container-fluid justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="showSection('home')">
+            <i class="fa-solid fa-chalkboard-user fa-lg text-warning"></i> 
+            <span class="fw-bold">بوابة المعلم</span>
+        </a>
+
+<a href="#" class="text-white position-relative me-2" onclick="showSection('notifications')" title="الرسائل">
+<i class="fa-solid fa-bell fa-lg"></i>
+    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+        <span class="visually-hidden">رسائل جديدة</span>
+    </span>
+</a>
+
+
+<a href="#" class="text-white position-relative me-2" onclick="showSection('messages-section')" title="الرسائل">
+    <i class="fa-regular fa-envelope fa-lg"></i>
+    
+    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+        <span class="visually-hidden">رسائل جديدة</span>
+    </span>
+</a>
+    <div class="text-white small d-none d-md-block text-end">
+        <h6 class="text-white mb-0" id="nav-user-name">زائر</h6>
+    </div>
+    <img src="https://ui-avatars.com/api/?name=Malek+Nawashi&background=random" class="rounded-circle border border-secondary" width="45" id="teacher-img">
+    
+    <button onclick="logout()" class="btn btn-danger btn-sm rounded-circle ms-2" style="width: 35px; height: 35px;" title="تسجيل الخروج">
+        <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+</div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-block sticky-top" style="top: 90px;">
+                <div class="p-3 fw-bold border-bottom border-secondary text-white">
+                    <i class="fa-solid fa-bars me-2"></i> القائمة الرئيسية
+                </div>
+<div class="list-group list-group-flush" id="teacher-sidebar">
+    <a class="list-group-item active" onclick="showSection('home', this)">
+        <i class="fa-solid fa-house ms-2 text-warning"></i> لوحة المعلومات
+    </a>
+
+        <a href="#" class="list-group-item list-group-item-action" onclick="showSection('create-exam', this)">
+            <i class="fa-solid fa-file-pen me-2"></i> إدارة الاختبارات
+        </a>
+
+    <a class="list-group-item" onclick="showSection('courses', this)">
+        <i class="fa-solid fa-layer-group ms-2 text-info"></i> مقرراتي الدراسية
+    </a>
+
+
+    <a class="list-group-item" onclick="showSection('students', this); loadGradesSection();">
+        <i class="fa-solid fa-users-viewfinder ms-2 text-light"></i> الطلاب والدرجات
+    </a>
+    <a class="list-group-item" onclick="showSection('attendance', this); loadAttendanceSection();">
+        <i class="fa-solid fa-clipboard-user ms-2 text-danger"></i> الحضور والغياب
+    </a>
+    <a class="list-group-item" onclick="showSection('behavior', this)">
+        <i class="fa-solid fa-user-tag ms-2 text-warning"></i> السلوك والمواظبة
+    </a>
+ 
+
+    <a class="list-group-item" onclick="showSection('grading-section', this)">
+        <i class="fa-solid fa-file-pen ms-2 text-success"></i> الواجبات والتصحيح
+    </a>
+
+
+
+
+    <a class="list-group-item" onclick="showSection('events', this)">
+        <i class="fa-regular fa-newspaper ms-2 text-info"></i> الأخبار والفعاليات
+    </a>
+
+
+    <a class="list-group-item" onclick="showSection('profile', this)">
+        <i class="fa-solid fa-user-gear ms-2 text-light"></i> الملف الشخصي
+    </a>
+
+</div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            
+            <section id="home" class="active-section">
+                
+                <h4 class="text-white fw-bold mb-4">أهلاً بك ، يوم موفق! 👋</h4>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div>
+                <h3 id="stat-lectures" class="text-white fw-bold m-0">0</h3>
+                <span class="text-white-50 small">محاضرات اليوم</span>
+            </div>
+            <div class="stat-icon bg-primary bg-opacity-25 text-primary"><i class="fa-solid fa-chalkboard-user"></i></div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div>
+                <h3 id="stat-assignments" class="text-white fw-bold m-0">0</h3>
+                <span class="text-white-50 small">واجبات للتصحيح</span>
+            </div>
+            <div class="stat-icon bg-warning bg-opacity-25 text-warning"><i class="fa-solid fa-file-pen"></i></div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div>
+                <h3 id="stat-attendance" class="text-white fw-bold m-0">0%</h3>
+                <span class="text-white-50 small">متوسط الحضور</span>
+            </div>
+            <div class="stat-icon bg-success bg-opacity-25 text-success"><i class="fa-solid fa-users"></i></div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div>
+                <h3 id="stat-messages" class="text-white fw-bold m-0">0</h3>
+                <span class="text-white-50 small">رسائل جديدة</span>
+            </div>
+            <div class="stat-icon bg-danger bg-opacity-25 text-danger"><i class="fa-solid fa-envelope"></i></div>
+        </div>
+    </div>
+</div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="glass-card">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="text-white m-0">جدول محاضرات اليوم</h5>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="glass-card">
+                            <h5 class="text-white mb-4">إجراءات سريعة</h5>
+                            <div class="d-grid gap-3">
+                                <button class="btn-quick-action" onclick="showSection('create-assignment')">
+                                    <i class="fa-solid fa-plus-circle fa-2x mb-2 d-block text-primary"></i>
+                                    إنشاء واجب جديد
+                                </button>
+                                <button class="btn-quick-action" onclick="showSection('attendance')">
+                                    <i class="fa-solid fa-clipboard-check fa-2x mb-2 d-block text-success"></i>
+                                    رصد الغياب السريع
+                                </button>
+                                <button class="btn-quick-action" onclick="showSection('channel')">
+                                    <i class="fa-solid fa-bullhorn fa-2x mb-2 d-block text-warning"></i>
+                                    نشر إعلان
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="assignments" class="d-none">
+                <h3 class="text-white">جاري تحميل الواجبات...</h3>
+            </section>
+
+
+<section id="exam-results" class="d-none">
+    <button class="btn btn-sm btn-link text-white-50 mb-3 text-decoration-none p-0" onclick="showSection('exams')">
+        <i class="fa-solid fa-arrow-right me-1"></i> العودة للاختبارات
+    </button>
+    <div class="glass-card">
+        <h5 class="text-white mb-4">نتائج: الاختبار النصفي - هندسة البرمجيات</h5>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover bg-transparent align-middle">
+                <thead>
+                    <tr>
+                        <th>الترتيب</th>
+                        <th>الطالب</th>
+                        <th>الدرجة (من 30)</th>
+                        <th>الوقت المستغرق</th>
+                        <th>الحالة</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank-badge text-warning"><i class="fa-solid fa-crown"></i></span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="https://ui-avatars.com/api/?name=Ahmed+Ali&background=random" class="rounded-circle" width="30">
+                                <span class="text-white">أحمد علي</span>
+                            </div>
+                        </td>
+                        <td><span class="score-text score-high">29</span></td>
+                        <td class="text-secondary">45 دقيقة</td>
+                        <td><span class="badge bg-success bg-opacity-25 text-success">ناجح</span></td>
+                        <td><button class="btn btn-sm btn-outline-info" onclick="showSection('grading')"><i class="fa-solid fa-eye"></i> مراجعة</button></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-badge">2</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="https://ui-avatars.com/api/?name=Sami+Yusuf&background=random" class="rounded-circle" width="30">
+                                <span class="text-white">سامي يوسف</span>
+                            </div>
+                        </td>
+                        <td><span class="score-text text-white">24</span></td>
+                        <td class="text-secondary">50 دقيقة</td>
+                        <td><span class="badge bg-info bg-opacity-25 text-info">جيد جداً</span></td>
+                        <td><button class="btn btn-sm btn-outline-info"><i class="fa-solid fa-eye"></i> مراجعة</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="grading-section" class="d-none">
+    <div class="container-fluid mt-4">
+        <div class="row">
+<div class="col-md-3">
+    <div class="glass-card h-100">
+        
+        <h5 class="text-white mb-2"><i class="fa-solid fa-book-open text-info me-2"></i> 1. اختر المادة</h5>
+        <select id="grading-course-select" class="form-select bg-dark text-white mb-4" onchange="loadAssignmentsForSelectedCourse()">
+            <option value="">-- اختر المادة أولاً --</option>
+            </select>
+
+        <h5 class="text-white mb-2"><i class="fa-solid fa-file-pen text-warning me-2"></i> 2. اختر الواجب</h5>
+        <select id="grading-assignment-select" class="form-select bg-dark text-white mb-4" onchange="loadSubmissionsForAssignment()" disabled>
+            <option value="">-- يرجى اختيار مادة --</option>
+        </select>
+
+        <h5 class="text-white mb-2 border-top pt-3 border-secondary"><i class="fa-solid fa-users text-success me-2"></i> 3. اختر الطالب</h5>
+        <div id="students-submissions-list" class="list-group list-group-flush custom-scroll" style="max-height: 400px; overflow-y: auto;">
+            <div class="text-white-50 small text-center py-4">
+                <i class="fa-solid fa-arrow-up mb-2"></i><br>
+                أكمل الاختيارات بالأعلى
+            </div>
+        </div>
+
+    </div>
+</div>
+
+            <div class="col-md-9">
+                <div id="grading-workspace" class="d-none row">
+                    <div class="col-md-4">
+                        <div class="glass-card">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div>
+                                    <h5 class="text-white fw-bold m-0" id="grading-student-name">اسم الطالب</h5>
+                                    <small class="text-white-50" id="grading-date">تاريخ التسليم</small>
+                                </div>
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold;">
+                                    A
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-white-50 small mb-1">الدرجة المستحقة</label>
+                                <div class="input-group">
+                                    <input type="number" id="grading-score" class="form-control bg-dark text-white text-center fw-bold" placeholder="0">
+                                    <span class="input-group-text bg-secondary text-white border-secondary">/ 100</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-white-50 small mb-1">الملاحظات التفصيلية</label>
+                                <textarea id="grading-feedback" class="form-control bg-dark text-white" rows="6" placeholder="اكتب ملاحظاتك للطالب هنا..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3 d-flex flex-wrap gap-2">
+                                <button onclick="addQuickComment('أحسنت، عمل ممتاز!')" class="btn btn-sm btn-outline-info rounded-pill">ممتاز</button>
+                                <button onclick="addQuickComment('يرجى مراجعة المصادر')" class="btn btn-sm btn-outline-warning rounded-pill">ناقص توثيق</button>
+                            </div>
+
+                            <input type="hidden" id="current-submission-id">
+                            <button onclick="submitGradeToStudent()" class="btn btn-success w-100 fw-bold">
+                                حفظ ونشر الدرجة <i class="fa-solid fa-check ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="glass-card d-flex align-items-center justify-content-center bg-dark" style="height: 600px; position: relative;">
+                            
+                            <div id="file-preview-area" class="text-center w-100 h-100">
+                                <i class="fa-solid fa-file-pdf fa-4x text-danger mb-3 mt-5"></i>
+                                <h5 class="text-white">معاينة الملف</h5>
+                                <a id="btn-download-submission" href="#" class="btn btn-outline-light mt-3">تحميل الملف</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="grading-empty-state" class="text-center mt-5">
+                    <i class="fa-solid fa-clipboard-check fa-5x text-white-50 mb-3"></i>
+                    <h3 class="text-white">منطقة التصحيح</h3>
+                    <p class="text-white-50">اختر طالباً من القائمة الجانبية للبدء في التصحيح.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="notifications" class="d-none">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-bell text-warning me-2"></i> مركز الإشعارات</h4>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-light rounded-pill" onclick="markAllRead()">
+                <i class="fa-solid fa-check-double me-1"></i> تحديد الكل كمقروء
+            </button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill">
+                <i class="fa-solid fa-gear me-1"></i> الإعدادات
+            </button>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="d-flex gap-2 mb-3 overflow-auto pb-2">
+                <button class="btn btn-sm btn-light rounded-pill px-3 fw-bold">الكل</button>
+                <button class="btn btn-sm btn-dark border border-secondary rounded-pill px-3 text-white-50">الواجبات</button>
+                <button class="btn btn-sm btn-dark border border-secondary rounded-pill px-3 text-white-50">الامتحانات</button>
+                <button class="btn btn-sm btn-dark border border-secondary rounded-pill px-3 text-white-50">إداري</button>
+            </div>
+
+<div class="notification-list" id="notification-list-container">
+    <div class="text-center text-white-50 py-5">
+        <i class="fa-solid fa-spinner fa-spin mb-2"></i> جارٍ التحميل...
+    </div>
+</div>
+            
+            <div class="text-center mt-3">
+                <button class="btn btn-link text-white-50 text-decoration-none small">عرض الإشعارات القديمة <i class="fa-solid fa-chevron-down ms-1"></i></button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section id="messages-section" class="d-none">
+     <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold mb-0">
+            <i class="fa-regular fa-comments text-warning me-2"></i> المحادثات
+        </h4>
+    </div>
+
+    <div class="row g-3" style="height: 75vh;"> 
+        
+        <div class="col-md-4 col-lg-3 h-100">
+            <div class="glass-card h-100 d-flex flex-column p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-secondary">
+                    <h5 class="text-white mb-2">المحادثات</h5>
+                    <input type="text" id="contactSearch" class="form-input py-2 text-sm" placeholder="بحث عن طالب...">
+                </div>
+                
+                <div id="contactsList" class="flex-grow-1 overflow-auto p-2 custom-scrollbar">
+                    <p class="text-white-50 text-center mt-4 text-sm">جاري التحميل...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-lg-9 h-100">
+            <div class="glass-card h-100 d-flex flex-column p-0 overflow-hidden position-relative">
+                
+                <div class="p-3 border-bottom border-secondary d-flex align-items-center bg-dark bg-opacity-25">
+                    <div id="chatHeader" class="d-flex align-items-center gap-3">
+                        <div class="avatar-placeholder rounded-circle bg-warning d-flex align-items-center justify-content-center fw-bold text-dark" style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-comments"></i>
+                        </div>
+                        <div>
+                            <h6 id="chatUserName" class="mb-0 text-white">اختر شخصاً للمراسلة </h6>
+                            <small id="chatUserStatus" class="text-white-50">--</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="messagesContainer" class="flex-grow-1 overflow-auto p-4 d-flex flex-column gap-3 custom-scrollbar" style="scroll-behavior: smooth;">
+                    <div class="text-center mt-5 text-white-50">
+                        <i class="fa-brands fa-rocketchat fa-3x mb-3 opacity-50"></i>
+                        <p>ابدأ المحادثة مع أولياء الأمور والطلاب فوراً</p>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top border-secondary bg-dark bg-opacity-25">
+                    <form id="chatForm" class="d-flex gap-2">
+                        <input type="text" id="messageInput" class="form-input" placeholder="اكتب رسالتك هنا..." disabled autocomplete="off">
+                        <button type="submit" id="sendBtn" class="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" disabled>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section id="profile" class="d-none">
+    
+    <h4 class="text-white fw-bold mb-4"><i class="fa-solid fa-user-gear text-primary me-2"></i> إعدادات الحساب</h4>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="profile-header-card mb-4">
+                <div class="avatar-wrapper">
+                    <img src="https://ui-avatars.com/api/?name=Malek+Nawashi&background=random" id="profile-avatar-main" class="profile-avatar-lg">
+                    <label for="avatarUpload" class="btn-upload-avatar" title="تغيير الصورة">
+                        <i class="fa-solid fa-camera"></i>
+                    </label>
+                    <input type="file" id="avatarUpload" hidden accept="image/*">
+                </div>
+                
+                <h4 class="text-white fw-bold mb-1">نور ربابعة </h4>
+                <p class="text-white-50 mb-0"> ربابعة <p>
+            </div>
+
+            <div class="glass-card p-4">
+                <form onsubmit="event.preventDefault(); saveProfileChanges();">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-6">
+                            <label class="profile-label">الاسم الكامل</label>
+                            <input type="text" class="profile-input" value="نور ربابعة " id="inputName">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="profile-label">البريد الإلكتروني الجامعي</label>
+                            <input type="email" class="profile-input" value="No@th.com" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="profile-label">رقم الهاتف</label>
+                            <input type="text" class="profile-input" value="0791234567" id="inputPhone">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="profile-label">المسمى الوظيفي</label>
+                            <input type="text" class="profile-input" value="شيخ" disabled>
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="border-secondary opacity-25 my-3">
+                            <h6 class="text-white mb-3"><i class="fa-solid fa-lock text-warning me-2"></i> الأمان وكلمة المرور</h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="profile-label">كلمة المرور الحالية</label>
+                            <input type="password" class="profile-input" placeholder="********">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="profile-label">كلمة المرور الجديدة</label>
+                            <input type="password" class="profile-input" placeholder="اتركها فارغة إذا لم ترد التغيير">
+                        </div>
+
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-success px-4 fw-bold">
+                            <i class="fa-solid fa-floppy-disk ms-2"></i> حفظ التغييرات
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="students" class="d-none">
+    
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <h4 class="text-white fw-bold mb-0">
+            <i class="fa-solid fa-users-viewfinder text-info me-2"></i> سجل العلامات والطلاب
+        </h4>
+        
+        <div class="d-flex gap-2">
+<select id="gradesCourseSelect" class="form-select form-select-sm bg-dark text-white border-secondary" onchange="loadGradesTable(this.value)">
+        <option value="">اختر المقرر...</option>
+    </select>
+    
+    <button class="btn btn-sm btn-outline-light">
+        <i class="fa-solid fa-file-excel me-1"></i> تصدير
+    </button>
+        </div>
+    </div>
+
+    <div class="student-table-container">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0 align-middle text-center" id="gradesTable">
+                <thead>
+                    <tr style="background: rgba(255,255,255,0.05);">
+                        <th class="text-start ps-4 py-3">الطالب</th>
+                        <th>الرقم الجامعي</th>
+                        <th>مشاركة (10)</th>
+                        <th>واجبات (20)</th>
+                        <th>نصفي (30)</th>
+                        <th>نهائي (40)</th>
+                        <th>المجموع</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="gradesTableBody">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button class="fab-save" onclick="saveGrades()" title="حفظ التعديلات">
+        <i class="fa-solid fa-floppy-disk"></i>
+    </button>
+</section>
+
+<section id="attendance" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-clipboard-user text-danger me-2"></i> سجل الحضور والغياب</h4>
+        <div class="text-white-50">
+            <span class="me-2"><i class="fa-solid fa-calendar me-1"></i> اليوم:</span>
+            <span class="text-white fw-bold" id="attendance-date-display">...</span>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="attendance-stats-card">
+                <div class="text-success h4 fw-bold mb-1" id="count-present">0</div>
+                <div class="text-white-50 small">حضور</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="attendance-stats-card">
+                <div class="text-danger h4 fw-bold mb-1" id="count-absent">0</div>
+                <div class="text-white-50 small">غياب</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="attendance-stats-card">
+                <div class="text-warning h4 fw-bold mb-1" id="count-late">0</div>
+                <div class="text-white-50 small">تأخر</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-secondary">
+            <div>
+                <select id="attendanceCourseSelect" class="form-select form-select-sm bg-dark text-white border-secondary d-inline-block w-auto" onchange="loadAttendanceList(this.value)">
+                    <option value="">اختر المقرر...</option>
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-success" onclick="markAll('Present')">الكل حضور</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="resetAll()">إعادة تعيين</button>
+            </div>
+        </div>
+
+        <div class="attendance-list" id="attendanceListContainer">
+            <div class="text-center text-white-50 py-5">يرجى اختيار مقرر لعرض الطلاب</div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <button class="btn btn-primary px-4 fw-bold" onclick="submitAttendance()">
+                <i class="fa-regular fa-floppy-disk ms-2"></i> حفظ السجل
+            </button>
+        </div>
+    </div>
+</section>
+
+
+
+  <section id="behavior" class="d-none">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-user-tag text-warning me-2"></i> تقارير السلوك والمواظبة</h4>
+        <div class="badge bg-dark border border-secondary p-2">
+            <i class="fa-solid fa-graduation-cap me-1"></i> الصف العاشر - أ
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card p-4">
+                
+                <div class="row mb-5 justify-content-center">
+                    <div class="col-md-8">
+                        <label class="text-white-50 small mb-2 ps-1">حدد الطالب المعني</label>
+                        <div class="student-select-box">
+                            <div class="bg-primary bg-opacity-25 p-2 rounded text-primary">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <select class="form-select bg-transparent text-white border-0 shadow-none">
+                                <option class="text-dark">اختر الطالب...</option>
+                                <option class="text-dark">أحمد محمد علي</option>
+                                <option class="text-dark">سارة يوسف</option>
+                                <option class="text-dark">خالد عمر</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-3">
+                                <i class="fa-solid fa-qrcode me-1"></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 text-center mb-2">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill mb-3">نقاط إيجابية (+1)</span>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-positive" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-star"></i></div>
+                            <div class="b-title">متميز دراسياً</div>
+                            <div class="b-desc">أداء استثنائي في الحصة</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-positive" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                            <div class="b-title">متعاون</div>
+                            <div class="b-desc">يساعد زملاءه</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-positive" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
+                            <div class="b-title">مشاركة فعالة</div>
+                            <div class="b-desc">إجابات ذكية</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-positive" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-check-double"></i></div>
+                            <div class="b-title">التزام بالواجبات</div>
+                            <div class="b-desc">تسليم في الموعد</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center mt-4 mb-2">
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill mb-3">ملاحظات سلبية (-1)</span>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-negative" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-comments"></i></div>
+                            <div class="b-title">كثير الحديث</div>
+                            <div class="b-desc">إزعاج أثناء الحصة</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-negative" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <div class="b-title">استخدام الهاتف</div>
+                            <div class="b-desc">مخالفة التعليمات</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-negative" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
+                            <div class="b-title">تأخر متكرر</div>
+                            <div class="b-desc">دخول بعد المعلم</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="behavior-card-btn b-negative" onclick="toggleBehavior(this)">
+                            <div class="b-icon-wrapper"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="b-title">نسيان الأدوات</div>
+                            <div class="b-desc">كتاب أو دفتر</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark bg-opacity-25 p-3 rounded-3 mt-4 border border-white border-opacity-10">
+                    <label class="text-white-50 small mb-2"><i class="fa-solid fa-pen-to-square me-1"></i> ملاحظة إضافية (اختياري)</label>
+                    <textarea class="form-control bg-transparent text-white border-secondary mb-3" rows="2" placeholder="أضف تفاصيل أكثر هنا..."></textarea>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-outline-light px-4 rounded-pill">إلغاء</button>
+                        <button class="btn btn-primary px-4 rounded-pill fw-bold" onclick="alert('تم إرسال التقرير بنجاح!')">
+                            <i class="fa-solid fa-paper-plane ms-2"></i> إرسال التقرير
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section> 
+
+
+<section id="create-exam" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-file-pen text-primary me-2"></i> إنشاء اختبار جديد</h4>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4 order-lg-last">
+            <div class="glass-card mb-3">
+                <h6 class="text-white mb-3">إعدادات عامة</h6>
+                
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-1">المادة</label>
+                    <select id="examCourseSelect" class="form-select bg-dark text-white border-secondary">
+                        <option selected>جاري التحميل...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-1">عنوان الاختبار</label>
+                    <input type="text" id="examTitle" class="form-control bg-dark text-white border-secondary" placeholder="مثال: امتحان الشهر الأول">
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-1">المدة (دقيقة)</label>
+                    <input type="number" id="examDuration" class="form-control bg-dark text-white border-secondary" value="30">
+                </div>
+
+                <button class="btn btn-success w-100 mt-3" onclick="publishExam()">
+                    <i class="fa-solid fa-paper-plane me-2"></i> نشر الاختبار
+                </button>
+            </div>
+            
+<div class="glass-card p-3">
+    <h6 class="text-white-50 mb-3 text-center">أدوات الأسئلة</h6>
+    <div class="d-grid gap-2">
+        <button class="btn btn-outline-primary" onclick="addQuestion('MCQ')">
+            <i class="fa-solid fa-list-ul me-2"></i> اختيار من متعدد
+        </button>
+        
+        <button class="btn btn-outline-info" onclick="addQuestion('Text')">
+            <i class="fa-solid fa-align-right me-2"></i> سؤال مقالي
+        </button>
+    </div>
+</div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <h5 class="text-white mb-4">أسئلة الاختبار</h5>
+                
+                <div id="questions-container">
+                    <div class="text-center text-white-50 py-5">
+                        <i class="fa-solid fa-arrow-left me-2"></i> أضف أسئلة من القائمة الجانبية
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="events" class="d-none">
+    <div class="row">
+        <div class="col-lg-8">
+            <h4 class="text-white fw-bold mb-4"><i class="fa-regular fa-newspaper text-info me-2"></i> الأخبار والفعاليات</h4>
+            
+            <div class="event-card">
+                <div class="event-date-box border-danger">
+                    <span class="h4 fw-bold text-white m-0">20</span>
+                    <span class="small text-white-50">ديسمبر</span>
+                </div>
+                <div class="flex-grow-1">
+                    <span class="news-tag">هام جداً</span>
+                    <h5 class="text-white fw-bold mb-2">اجتماع أعضاء الهيئة التدريسية</h5>
+                    <p class="text-white-50 small mb-2">
+                        سيتم عقد اجتماع لمناقشة الترتيبات النهائية للامتحانات، وتوزيع جداول المراقبة. الحضور إلزامي للجميع في قاعة الاجتماعات الرئيسية.
+                    </p>
+                    <div class="text-secondary x-small">
+                        <i class="fa-regular fa-clock me-1"></i> 10:00 صباحاً • مبنى الإدارة
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="event-card">
+                <div class="event-date-box border-primary">
+                    <span class="h4 fw-bold text-white m-0">05</span>
+                    <span class="small text-white-50">يناير</span>
+                </div>
+                <div class="flex-grow-1">
+                    <span class="news-tag bg-primary">أكاديمي</span>
+                    <h5 class="text-white fw-bold mb-2">بداية الامتحانات النهائية</h5>
+                    <p class="text-white-50 small mb-2">
+                        تذكير بموعد بدء الامتحانات النهائية للفصل الدراسي الأول. يرجى تجهيز الأسئلة وتسليمها للقسم.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-card text-center">
+                <h6 class="text-white mb-3">التقويم الأكاديمي</h6>
+                <div class="bg-dark bg-opacity-50 p-3 rounded">
+                    <div class="d-flex justify-content-between text-white fw-bold mb-3">
+                        <span><</span> <span>ديسمبر 2025</span> <span>></span>
+                    </div>
+                    <table class="table table-dark table-sm table-borderless text-center small mb-0">
+                        <thead class="text-white-50">
+                            <tr><th>س</th><th>ح</th><th>ن</th><th>ث</th><th>ر</th><th>خ</th><th>ج</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                            <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td class="bg-primary rounded-circle">12</td><td>13</td></tr>
+                            <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td class="bg-danger rounded-circle">20</td></tr>
+                            <tr><td>21</td><td>22</td><td>23</td><td>24</td><td class="bg-success rounded-circle">25</td><td>26</td><td>27</td></tr>
+                            <tr><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 text-start small">
+                    <div class="mb-1"><span class="badge bg-primary me-2">●</span> تسليم العلامات</div>
+                    <div class="mb-1"><span class="badge bg-danger me-2">●</span> اجتماع القسم</div>
+                    <div><span class="badge bg-success me-2">●</span> نشاط طلابي</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="courses" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-layer-group text-info me-2"></i> مقرراتي الدراسية</h4>
+        <button class="btn btn-outline-light btn-sm"><i class="fa-solid fa-filter me-1"></i> تصفية</button>
+    </div>
+
+    <div class="row g-4">
+
+    </div>
+</section>
+<section id="manage-course-section" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <button class="btn btn-sm btn-outline-light mb-2" onclick="showSection('courses')">
+                <i class="fa-solid fa-arrow-right me-1"></i> العودة للمقررات
+            </button>
+            <h4 class="text-white fw-bold" id="active-course-title">إدارة المقرر: ...</h4>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <button class="btn btn-success btn-sm" onclick="quickAddExam()">
+                <i class="fa-solid fa-plus me-1"></i> إضافة امتحان
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="openAddAssignment()">
+                <i class="fa-solid fa-file-arrow-up me-1"></i> رفع واجب
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card bg-primary bg-opacity-10 border-primary border-opacity-25">
+                <div>
+                    <h3 class="text-white fw-bold m-0" id="course-student-count">0</h3>
+                    <span class="text-white-50 small">الطلاب المسجلين</span>
+                </div>
+                <div class="stat-icon bg-primary text-white"><i class="fa-solid fa-users"></i></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-warning bg-opacity-10 border-warning border-opacity-25">
+                <div>
+                    <h3 class="text-white fw-bold m-0" id="course-exam-count">0</h3>
+                    <span class="text-white-50 small">الاختبارات المنشورة</span>
+                </div>
+                <div class="stat-icon bg-warning text-dark"><i class="fa-solid fa-file-pen"></i></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-success bg-opacity-10 border-success border-opacity-25">
+                <div>
+                    <h3 class="text-white fw-bold m-0" id="course-assignment-count">0</h3>
+                    <span class="text-white-50 small">الواجبات</span>
+                </div>
+                <div class="stat-icon bg-success text-white"><i class="fa-solid fa-book"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <h5 class="text-white mb-3"><i class="fa-solid fa-users-viewfinder me-2"></i> قائمة الطلاب</h5>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover bg-transparent align-middle">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="course-students-table">
+                    <tr><td colspan="4" class="text-center text-white-50">جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="create-assignment" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+<h4 class="text-white fw-bold"><i class="fa-solid fa-plus-circle text-primary me-2"></i> إضافة واجب جديد</h4>
+        <button class="btn btn-sm btn-outline-light" onclick="showSection('main-dashboard')">إلغاء</button>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <form id="createAssignmentForm" onsubmit="event.preventDefault(); submitNewAssignment();">
+                    
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">عنوان الواجب</label>
+                        <input type="text" id="assignTitle" class="form-control bg-dark text-white border-secondary" placeholder="مثال: تقرير حول خوارزميات البحث" required>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">المادة</label>
+                            <select id="unique_assignment_course_select" class="form-select bg-dark text-white border-secondary" required>
+                                <option value="">جاري التحميل...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">تاريخ التسليم</label>
+                            <input type="datetime-local" id="assignDueDate" class="form-control bg-dark text-white border-secondary" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">وصف الواجب</label>
+                        <textarea id="assignDesc" class="form-control bg-dark text-white border-secondary" rows="4" placeholder="اكتب تفاصيل الواجب هنا..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="text-white-50 small mb-1">مرفقات (اختياري)</label>
+                        
+                        <div class="upload-drop-zone border border-secondary border-dashed rounded p-4 text-center" 
+                             style="border-style: dashed; background: rgba(255,255,255,0.02); cursor: pointer;"
+                             onclick="document.getElementById('assignFile').click()">
+                            
+                            <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary mb-2"></i>
+                            <div class="text-white small">اضغط هنا لاختيار ملف (PDF, Images, etc)</div>
+                            
+                            <p id="fileNameDisplay" class="text-info small mt-2 m-0"></p>
+                            
+                            <input type="file" id="assignFile" hidden>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary fw-bold py-2">
+                            <i class="fa-solid fa-paper-plane ms-2"></i> نشر الواجب للطلاب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="channel" class="d-none">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-white fw-bold"><i class="fa-solid fa-bullhorn text-warning me-2"></i> قناة المقرر: الذكاء الاصطناعي</h4>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-dark border-secondary dropdown-toggle" data-bs-toggle="dropdown">تبديل المقرر</button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="#">هندسة البرمجيات</a></li>
+                        <li><a class="dropdown-item" href="#">مشروع التخرج</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="channel-post-input">
+                <div class="d-flex mb-3">
+                    <img src="https://ui-avatars.com/api/?name=Malek+Nawashi&background=random" class="rounded-circle border border-secondary" width="45" height="45">
+                    <textarea class="form-control bg-transparent border-0 text-white shadow-none ms-2" rows="2" placeholder="اكتب إعلاناً أو ملاحظة للطلاب..." id="postText"></textarea>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-10">
+                    <div class="d-flex gap-3 text-secondary">
+                        <i class="fa-solid fa-paperclip cursor-pointer hover-text-white"></i>
+                        <i class="fa-solid fa-image cursor-pointer hover-text-white"></i>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="pinPostCheck">
+                            <label class="form-check-label small" for="pinPostCheck">تثبيت</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm px-4 rounded-pill" onclick="publishPost()">نشر</button>
+                </div>
+            </div>
+
+            <div id="channelFeed">
+                <div class="post-card border-warning border-start border-3">
+                    <i class="fa-solid fa-thumbtack pinned-icon"></i>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://ui-avatars.com/api/?name=Malek+Nawashi&background=random" class="rounded-circle me-3" width="45">
+                        <div>
+                            <div class="text-white fw-bold">نور ربابعة  <span class="badge bg-primary ms-1">مدرس</span></div>
+                            <div class="text-white-50 x-small">منذ يومين</div>
+                        </div>
+                    </div>
+                    <div class="text-white-50 mb-3">
+                        أعزائي الطلبة، تم رفع الملف الخاصة بالحصة القادمة. يرجى الاطلاع عليها والتحضير للمناقشة.
+                    </div>
+                    <div class="d-flex gap-3 pt-2 border-top border-white border-opacity-10">
+                        <button class="btn btn-sm text-secondary"><i class="fa-regular fa-thumbs-up me-1"></i> 15</button>
+                        <button class="btn btn-sm text-secondary"><i class="fa-regular fa-comment me-1"></i> 3 تعليقات</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+</div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ==========================================
+    // 1. الإعدادات العامة (Configuration)
+    // ==========================================
+const API_BASE_URL = "http://localhost:5220/api";
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTeacherStats();
+        // أولاً: التحقق من تسجيل الدخول
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            window.location.href = 'login.html'; // طرد المستخدم إذا لم يكن مسجلاً
+            return; // توقف عن تنفيذ باقي الكود
+        }
+
+        // ثانياً: عرض اسم المستخدم
+        const userName = localStorage.getItem('currentUserName');
+        if (userName) {
+            const nameElement = document.getElementById('nav-user-name');
+            if (nameElement) {
+                nameElement.innerText = userName;
+            }
+        }
+
+        // ثالثاً: تحميل البيانات الخاصة بالصفحة
+        // (نتأكد أن الدوال موجودة قبل استدعائها لتجنب الأخطاء)
+        if (typeof loadStudentsDropdown === 'function') loadStudentsDropdown(); 
+        if (typeof loadCoursesDropdown === 'function') loadCoursesDropdown();
+    });
+      
+    
+    
+    async function loadTeacherStats() {
+    const token = localStorage.getItem('authToken');
+    
+    // التحقق من تسجيل الدخول
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        // استدعاء دالة السيرفر التي أنشأناها قبل قليل
+        const res = await fetch(`${API_BASE_URL}/Teacher/dashboard-stats`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (res.status === 401) {
+
+            alert("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجدداً");
+            localStorage.removeItem('authToken');
+            // window.location.href = 'login.html';
+            return;
+        }
+
+        if (res.ok) {
+            const data = await res.json();
+            
+            // توزيع البيانات على الكروت بناءً على الـ IDs
+            document.getElementById('stat-lectures').innerText = data.todayLectures || 0;
+            document.getElementById('stat-assignments').innerText = data.pendingAssignments || 0;
+            document.getElementById('stat-attendance').innerText = (data.attendanceRate || 0) + '%';
+            document.getElementById('stat-messages').innerText = data.newMessages || 0;
+        } else {
+            console.error("فشل في جلب الإحصائيات");
+        }
+    } catch (error) {
+        console.error("حدث خطأ في الاتصال:", error);
+    }
+}
+
+
+        
+
+
+
+    // دالة تسجيل الخروج (مهمة جداً لزر الخروج)
+    function logout() {
+        localStorage.clear(); // مسح البيانات
+        window.location.href = 'login.html'; // العودة لصفحة الدخول
+    }
+
+// ==========================================
+    // دالة التنقل بين الأقسام (محدثة للإصلاح)
+    // ==========================================
+    function showSection(sectionId, element = null) {
+        // 1. إخفاء جميع السكاشن
+        document.querySelectorAll('section').forEach(sec => {
+            sec.classList.add('d-none'); // نستخدم كلاس البوتستراب للإخفاء
+            sec.classList.remove('active-section');
+        });
+
+        // 2. إظهار السكشن المطلوب
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.classList.remove('d-none'); // نزيل كلاس الإخفاء ليظهر
+            target.classList.add('active-section');
+            window.scrollTo(0, 0); // نصعد لأعلى الصفحة
+        } else {
+            console.error(`القسم غير موجود: ${sectionId}`); // للتأكد في حال كان هناك خطأ في الاسم
+        }
+
+        // 3. تحديث القائمة الجانبية (تلوين الزر النشط)
+        if (element) {
+            document.querySelectorAll('#teacher-sidebar .list-group-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+                if (sectionId === 'courses') {
+        loadTeacherCourses();
+    } 
+if (sectionId === 'courses') {
+        loadTeacherCourses();
+    }
+    if (sectionId === 'grading-section') {
+    initGradingSection(); // الدالة الجديدة المتسلسلة
+} 
+
+    // إذا فتحنا قسم إنشاء واجب، نستدعي دالة جلب المواد فوراً
+    if (sectionId === 'create-assignment') {
+        // نتأكد أن الدالة موجودة قبل استدعائها لتجنب الأخطاء
+        if (typeof openAddAssignment === 'function') {
+            openAddAssignment();
+        } else {
+            console.error("دالة openAddAssignment غير موجودة أو فيها خطأ!");
+        }
+    }
+
+    }
+
+    
+
+
+
+    // تبديل حالة العين (إظهار/إخفاء)
+    function toggleVisibility(btn) {
+        const icon = btn.querySelector('i');
+        if (icon.classList.contains('fa-eye')) {
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+            icon.classList.add('visibility-off');
+            btn.title = "إظهار للطلاب";
+        } else {
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+            icon.classList.remove('visibility-off');
+            btn.title = "إخفاء عن الطلاب";
+        }
+    }
+
+    // معاينة الصورة الشخصية
+    const avatarInput = document.getElementById('avatarUpload');
+    if(avatarInput){
+        avatarInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if(file){
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-avatar-main').src = e.target.result;
+                    const navImg = document.getElementById('nav-avatar'); // تأكد من وجود هذا الآيدي في الناف بار
+                    if(navImg) navImg.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // ==========================================
+    // 3. الاتصال بالسيرفر (API Integration)
+    // ==========================================
+
+    async function loadStudentsDropdown() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/Teacher/students`);
+            if(!response.ok) return;
+            const students = await response.json();
+            
+            const optionsHtml = students.map(s => `<option value="${s.id}">${s.fullName}</option>`).join('');
+            
+            // تعبئة قائمة التحفيظ
+            const hifzSelect = document.getElementById('hifzStudentSelect');
+            if(hifzSelect) hifzSelect.innerHTML = '<option value="">اختر الطالب...</option>' + optionsHtml;
+
+        } catch (error) { console.error("Error loading students:", error); }
+    }
+
+    async function loadCoursesDropdown() {
+        try {
+            // نستخدم Public controller مؤقتاً لجلب الدورات
+            const response = await fetch(`${API_BASE_URL}/Public/courses`); 
+            if(!response.ok) return;
+            const courses = await response.json();
+            
+            const optionsHtml = courses.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            // تعبئة قائمة الامتحانات
+            const examSelect = document.getElementById('examCourseSelect');
+            if(examSelect) examSelect.innerHTML = '<option value="">اختر المادة...</option>' + optionsHtml;
+
+            // تعبئة قائمة الواجبات (إن وجدت)
+            const assignSelect = document.getElementById('assignmentCourseSelect');
+            if(assignSelect) assignSelect.innerHTML = '<option value="">اختر المادة...</option>' + optionsHtml;
+
+        } catch (error) { console.error("Error loading courses:", error); }
+    }
+
+
+    function addQuestion(type) {
+        // حماية: إذا لم يتم تمرير النوع، نعتبره اختيار من متعدد
+        if (!type) type = 'MCQ';
+
+        const container = document.getElementById('questions-container');
+        const qId = Date.now(); // رقم فريد للسؤال
+        
+        // بناء محتوى السؤال بناءً على النوع
+        let optionsHTML = '';
+        let headerText = '';
+
+        if (type === 'MCQ') {
+            headerText = 'سؤال اختيار من متعدد';
+            // إنشاء 4 خيارات
+            for (let i = 1; i <= 4; i++) {
+                optionsHTML += `
+                    <div class="input-group mb-2">
+                        <div class="input-group-text bg-dark border-secondary">
+                            <input class="form-check-input mt-0 correct-radio" type="radio" name="correct_${qId}" title="حدد الإجابة الصحيحة">
+                        </div>
+                        <input type="text" class="form-control bg-dark text-white border-secondary q-opt" placeholder="الخيار ${i}">
+                    </div>
+                `;
+            }
+        } else {
+            headerText = 'سؤال مقالي';
+            optionsHTML = `
+                <textarea class="form-control bg-dark text-white border-secondary q-correct" rows="2" placeholder="اكتب الإجابة النموذجية هنا (للمرجع فقط)..."></textarea>
+            `;
+        }
+
+        // إنشاء الكرت الخاص بالسؤال
+        const card = document.createElement('div');
+        card.className = 'glass-card p-4 mb-3 question-card fade-in';
+        card.setAttribute('data-id', qId);
+        card.setAttribute('data-type', type); // تخزين النوع لاستخدامه عند النشر
+        
+        card.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-white m-0">
+                    <span class="badge ${type === 'MCQ' ? 'bg-primary' : 'bg-info'} me-2">${headerText}</span>
+                </h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="this.closest('.question-card').remove()">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            
+            <div class="mb-3">
+                <label class="text-white-50 small mb-1">نص السؤال</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary q-text" placeholder="اكتب السؤال هنا...">
+            </div>
+
+            <div class="options-section">
+                <label class="text-white-50 small mb-1 text-info">
+                    <i class="fa-solid fa-circle-check me-1"></i> 
+                    ${type === 'MCQ' ? 'الخيارات (اختر الدائرة للإجابة الصحيحة)' : 'الإجابة النموذجية'}
+                </label>
+                ${optionsHTML}
+            </div>
+        `;
+
+        container.appendChild(card);
+        
+        // تمرير الشاشة للأسفل لرؤية السؤال الجديد
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+   
+async function publishExam() {
+        const title = document.getElementById('examTitle').value;
+        const courseSelect = document.getElementById('examCourseSelect');
+        const courseId = courseSelect.value;
+        const duration = document.getElementById('examDuration')?.value || 60;
+
+        if(!courseId || courseId === "") {
+            alert("الرجاء اختيار المادة أولاً");
+            return;
+        }
+        if(!title) {
+            alert("الرجاء كتابة عنوان الامتحان");
+            return;
+        }
+
+        const questions = [];
+        let hasError = false;
+
+        document.querySelectorAll('.question-card').forEach(card => {
+            const text = card.querySelector('.q-text').value;
+            const type = card.getAttribute('data-type');
+            
+            let options = "";
+            let correct = "";
+
+            if(type === 'MCQ') {
+                // تجميع الخيارات
+                const optsInputs = card.querySelectorAll('.q-opt');
+                const opts = Array.from(optsInputs).map(i => i.value).filter(v => v.trim() !== "");
+                options = opts.join(',');
+
+                // 🔥 البحث عن الدائرة المختارة (السر هنا)
+                const checkedRadio = card.querySelector('input[type="radio"]:checked');
+                if (checkedRadio) {
+                    // نأخذ النص من الحقل المجاور للدائرة
+                    const inputGroup = checkedRadio.closest('.input-group');
+                    const textInput = inputGroup.querySelector('.q-opt');
+                    correct = textInput.value;
+                }
+            } else {
+                correct = card.querySelector('.q-correct')?.value || "";
+            }
+
+            // التحقق من أن المعلم اختار إجابة صحيحة
+            if (!correct || correct.trim() === "") {
+                hasError = true;
+                card.style.border = "2px solid red"; // تمييز السؤال الناقص
+            } else {
+                card.style.border = "1px solid rgba(255,255,255,0.1)";
+            }
+
+            questions.push({
+                text: text,
+                type: type,
+                options: options,
+                correctAnswer: correct, // الآن سيتم إرسال الإجابة الصحيحة للسيرفر!
+                points: 5
+            });
+        });
+
+        if (hasError) {
+            alert("تنبيه: يوجد سؤال لم تحدد له إجابة صحيحة! (تم تلوينه بالأحمر)");
+            return;
+        }
+
+        if(questions.length === 0) {
+            alert("يجب إضافة سؤال واحد على الأقل");
+            return;
+        }
+
+        const payload = {
+            title: title,
+            durationMinutes: parseInt(duration),
+            status: "Published",
+            courseId: courseId,
+            questions: questions
+        };
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/Teacher/exams`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) {
+                alert("تم نشر الامتحان بنجاح! ✅");
+                document.getElementById('questions-container').innerHTML = '';
+                document.getElementById('examTitle').value = '';
+            } else {
+                const err = await res.json();
+                alert("فشل الحفظ: " + JSON.stringify(err));
+            }
+        } catch(e) { console.error(e); alert("فشل الاتصال"); }
+    }
+    
+
+    function updateHifz(btn, val) {
+        const span = btn.parentElement.querySelector('.val');
+        let current = parseInt(span.innerText);
+        if(current + val >= 0) span.innerText = current + val;
+    }
+
+    async function saveHifzRecord() {
+        const studentId = document.getElementById('hifzStudentSelect').value;
+        const surah = document.getElementById('hifzSurah').value;
+        
+        // نحتاج لتمييز العدادات (حفظ vs تجويد)
+        // افترضنا أن العداد الأول للحفظ والثاني للتجويد بناءً على ترتيب الـ HTML
+        const counters = document.querySelectorAll('.hifz-counter-box .val');
+        const memMistakes = parseInt(counters[0]?.innerText || 0);
+        const tajMistakes = parseInt(counters[1]?.innerText || 0);
+
+        if(!studentId || !surah) {
+            alert("يرجى اختيار الطالب والسورة");
+            return;
+        }
+
+        // معادلة الدرجة
+        let grade = 100 - (memMistakes * 3) - (tajMistakes * 1);
+        if(grade < 0) grade = 0;
+
+        const payload = {
+            studentId: studentId,
+            surah: surah,
+            fromAyah: 1, // قيم افتراضية
+            toAyah: 10,
+            memorizationMistakes: memMistakes, // ملاحظة: يجب تحديث المودل في C# لدعم هذا الحقل إذا أردت التفصيل، أو وضعها في الملاحظات
+            notes: `أخطاء حفظ: ${memMistakes}، تجويد: ${tajMistakes}`,
+            grade: grade
+        };
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/Teacher/hifz`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) {
+                alert(`تم الرصد: ${grade}/100 ✅`);
+                // تصفير العدادات
+                counters.forEach(c => c.innerText = '0');
+                document.getElementById('hifzSurah').value = '';
+            } else {
+                alert("خطأ في الحفظ");
+            }
+        } catch(e) { console.error(e); }
+    }
+// دالة الاحتفال (Confetti Effect)
+    function launchConfetti() {
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        function randomInOut(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInOut(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInOut(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+    }
+
+// ============================================
+//  نظام استقبال دعوات المراكز (جديد)
+// ============================================
+
+// 1. دالة جلب الدعوات وعرضها في الإشعارات
+async function loadJoinRequests() {
+    const container = document.getElementById('notification-list-container');
+    const teacherId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    if (!container || !teacherId) return;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/teacher-requests/${teacherId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const requests = await res.json();
+            container.innerHTML = ''; 
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-white-50 py-5">
+                        <i class="fa-regular fa-bell-slash fa-2x mb-3"></i>
+                        <p>لا توجد دعوات انضمام جديدة</p>
+                    </div>`;
+                return;
+            }
+
+            // إذا وجدت طلبات، قم بإضافتها
+            requests.forEach(req => {
+                const date = new Date(req.date).toLocaleDateString('ar-EG');
+                
+                const requestHtml = `
+                <div class="notif-item unread border-end border-4 border-warning bg-warning bg-opacity-10" id="req-${req.requestId}">
+                    <div class="notif-icon bg-warning text-dark">
+                        <i class="fa-solid fa-building-user"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <div class="notif-title text-warning">دعوة انضمام جديدة</div>
+                            <small class="text-info fw-bold">جديد</small>
+                        </div>
+                        <div class="notif-desc text-white mt-2">
+                            يرغب <strong>${req.centerName}</strong> بضمك إلى كادره التعليمي.
+                        </div>
+                        <div class="notif-time text-white-50 mt-1 small">
+                            <i class="fa-regular fa-calendar me-1"></i> ${date}
+                        </div>
+                        <div class="notif-actions mt-3 gap-2 d-flex">
+                            <button class="btn btn-sm btn-success fw-bold px-3" onclick="respondToCenterRequest(${req.requestId}, 'Accepted')">
+                                <i class="fa-solid fa-check me-1"></i> قبول
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger px-3" onclick="respondToCenterRequest(${req.requestId}, 'Rejected')">
+                                <i class="fa-solid fa-xmark me-1"></i> رفض
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                container.insertAdjacentHTML('afterbegin', requestHtml);
+            });
+            
+            // تحديث رقم الجرس الأحمر
+            const badge = document.querySelector('.fa-bell + span');
+            if(badge) {
+                badge.classList.remove('visually-hidden');
+                badge.innerText = requests.length;
+            }
+        }
+    } catch (e) {
+        console.error("خطأ في جلب الدعوات:", e);
+        container.innerHTML = '<div class="text-danger text-center p-3">فشل تحميل الإشعارات</div>';
+    }
+}
+
+
+
+// 2. دالة الرد على الدعوة (قبول / رفض)
+async function respondToCenterRequest(requestId, status) {
+    const actionText = status === 'Accepted' ? "قبول" : "رفض";
+    if (!confirm(`هل أنت متأكد من ${actionText} هذه الدعوة؟`)) return;
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/CenterStaff/respond-request`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                requestId: requestId, 
+                status: status 
+            })
+        });
+
+        if (res.ok) {
+            alert(`تم ${actionText} الدعوة بنجاح!`);
+            
+            // إخفاء الإشعار من القائمة بحركة لطيفة
+            const item = document.getElementById(`req-${requestId}`);
+            if(item) {
+                item.style.transition = "0.5s";
+                item.style.opacity = "0";
+                setTimeout(() => item.remove(), 500);
+            }
+            
+            // يمكنك هنا إعادة تحميل بيانات "مقرراتي الدراسية" إذا أردت
+        } else {
+            const data = await res.json();
+            alert("خطأ: " + (data.message || "فشلت العملية"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("فشل الاتصال بالسيرفر");
+    }
+}
+
+// 3. تشغيل الدالة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    // استدعاء الدوال الموجودة سابقاً
+    if(typeof loadTeacherStats === 'function') loadTeacherStats();
+    
+    // استدعاء دالة الدعوات الجديدة
+    loadJoinRequests(); 
+});
+// دالة جلب وعرض دورات المعلم
+async function loadTeacherCourses() {
+        // نبحث عن div داخلي بداخل سكشن courses ليحوي البطاقات
+        // تأكد في HTML أن لديك <div class="row" id="teacher-courses-row"> داخل سكشن courses
+        let container = document.querySelector('#courses .row'); 
+        
+        // حل احتياطي إذا لم يجد الـ row
+        if (!container) {
+            console.warn("جاري البحث عن حاوية الكروت...");
+            const section = document.getElementById('courses');
+            if(section) {
+                // إنشاء حاوية إذا لم توجد
+                container = document.createElement('div');
+                container.className = 'row g-4';
+                section.appendChild(container);
+            } else {
+                return;
+            }
+        }
+
+        const token = localStorage.getItem('authToken');
+        container.innerHTML = '<div class="col-12 text-center text-white-50 mt-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p>جاري تحميل المقررات...</p></div>';
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/Teacher/my-courses`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const courses = await res.json();
+                container.innerHTML = ''; 
+
+                if (courses.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center text-white-50 mt-5">
+                            <i class="fa-solid fa-box-open fa-3x mb-3 opacity-50"></i>
+                            <p>لم يتم إسناد أي دورات إليك حتى الآن.</p>
+                        </div>`;
+                    return;
+                }
+
+                courses.forEach((course, index) => {
+                    const colors = ['blue', 'orange', 'purple', 'success'];
+                    const color = colors[index % colors.length];
+                    const icon = course.level === 'مبتدئ' ? 'fa-seedling' : 'fa-book-open';
+
+                    const card = `
+                    <div class="col-md-6 col-xl-4 fade-in">
+                        <div class="t-course-card">
+                            <div class="d-flex justify-content-between">
+                                <div class="course-icon-bg c-${color}"><i class="fa-solid ${icon}"></i></div>
+                                <span class="badge bg-dark border border-secondary">${course.level}</span>
+                            </div>
+                            
+                            <div class="t-course-title mt-3">${course.name}</div>
+                            <div class="text-white-50 small mb-3">
+                                <i class="fa-solid fa-school me-1 text-warning"></i> ${course.centerName}
+                            </div>
+                            
+                            <div class="course-stats-row">
+                                <div class="c-stat"><i class="fa-solid fa-users"></i> ${course.studentsCount} طالب</div>
+                                <div class="c-stat"><i class="fa-solid fa-circle-check text-success"></i> نشطة</div>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-top border-white border-opacity-10 d-flex gap-2">
+                                <button class="btn btn-sm btn-primary flex-grow-1" onclick="enterCourse('${course.id}', '${course.name}')">
+                                    إدارة المقرر
+                                </button>
+                                <button class="btn btn-sm btn-outline-light" onclick="showSection('students')">
+                                    <i class="fa-solid fa-users-gear"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            } else {
+                container.innerHTML = '<p class="text-danger text-center">فشل تحميل الدورات</p>';
+            }
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = '<p class="text-danger text-center">خطأ في الاتصال</p>';
+        }
+    }
+
+
+// دالة وهمية لدخول المقرر (يمكن تطويرها لاحقاً)
+function enterCourse(id, name) {
+alert(`تم اختيار المقرر: ${name}\nID: ${id}`);
+}
+// متغير عام لتخزين معرف الدورة الحالية
+let currentActiveCourseId = null;
+
+async function enterCourse(courseId, courseName) {
+    // 1. حفظ المعرف والاسم
+    currentActiveCourseId = courseId;
+    
+    // 2. تحديث واجهة المستخدم
+    document.getElementById('active-course-title').innerText = `إدارة المقرر: ${courseName}`;
+    
+    // 3. الانتقال للسكشن الجديد
+    showSection('manage-course-section');
+    
+    // 4. جلب بيانات الطلاب لهذه الدورة
+    loadCourseStudents(courseId);
+    // 5. ✅ (جديد) جلب الإحصائيات (الواجبات والامتحانات)
+    loadCourseStats(courseId);
+    // 5. يمكن هنا إضافة دوال لجلب الامتحانات الخاصة بهذه الدورة أيضاً
+    // loadCourseExams(courseId);
+}
+
+
+// دالة لجلب إحصائيات الدورة وتحديث العدادات
+async function loadCourseStats(courseId) {
+    const token = localStorage.getItem('authToken');
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/stats`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            
+            // تحديث الأرقام في الشاشة
+            document.getElementById('course-student-count').innerText = data.students;
+            document.getElementById('course-exam-count').innerText = data.exams;
+            document.getElementById('course-assignment-count').innerText = data.assignments; // هنا سيظهر رقم الواجبات
+        }
+    } catch (e) {
+        console.error("فشل تحميل الإحصائيات:", e);
+    }
+}
+
+async function loadCourseStudents(courseId) {
+    const tableBody = document.getElementById('course-students-table');
+    const token = localStorage.getItem('authToken');
+    
+    tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-white-50"><i class="fa-solid fa-spinner fa-spin"></i> جاري جلب الطلاب...</td></tr>';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/students`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const students = await res.json();
+            
+            // تحديث عداد الطلاب
+            document.getElementById('course-student-count').innerText = students.length;
+
+            if (students.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-white-50">لا يوجد طلاب مسجلين في هذه الدورة بعد.</td></tr>';
+                return;
+            }
+
+            let rows = '';
+            students.forEach(student => {
+                rows += `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-placeholder rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width:30px;height:30px;font-size:12px">
+                                ${student.fullName.charAt(0)}
+                            </div>
+                            <span class="text-white">${student.fullName}</span>
+                        </div>
+                    </td>
+                    <td class="text-white-50 small">${student.email}</td>
+                    <td class="text-white-50 small">${new Date(student.enrollmentDate).toLocaleDateString('ar-EG')}</td>
+                    <td>
+                   <button class="btn btn-sm btn-outline-info" title="سجل الطالب الشامل" 
+    onclick="openStudentRecord('${student.studentId}', '${courseId}')">
+    <i class="fa-solid fa-address-card"></i>
+</button>
+  <button class="btn btn-sm btn-outline-danger" title="حذف من الدورة" 
+    onclick="removeStudentFromCourse('${student.studentId}', '${courseId}')">
+    <i class="fa-solid fa-user-minus"></i>
+</button>
+                    </td>
+                </tr>
+                `;
+            });
+            tableBody.innerHTML = rows;
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">فشل تحميل البيانات.</td></tr>';
+        }
+    } catch (e) {
+        console.error(e);
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">خطأ في الاتصال.</td></tr>';
+    }
+}
+
+
+
+
+// دالة مساعدة لزر "إضافة امتحان" السريع
+function quickAddExam() {
+    if (!currentActiveCourseId) return;
+    
+    // الانتقال لصفحة إنشاء الامتحان
+    showSection('create-exam');
+    
+    // محاولة تحديد الدورة تلقائياً في القائمة المنسدلة (تحتاج تأخير بسيط لضمان تحميل القائمة)
+    setTimeout(() => {
+        const select = document.getElementById('examCourseSelect');
+        if (select) {
+            select.value = currentActiveCourseId;
+        }
+    }, 500);
+}
+
+// دالة مساعدة لزر "رفع واجب" السريع
+function quickAddAssignment() {
+    if (!currentActiveCourseId) return;
+    showSection('create-assignment');
+}
+
+// ==========================================
+// منطق إدارة الدرجات (Grades Logic)
+// ==========================================
+// متغيرات مساعدة للألوان
+const gradeStatusColors = {
+    'Undefined': '#6c757d', // رمادي
+    'Pass': '#198754',      // أخضر
+    'Fail': '#dc3545'       // أحمر
+};
+// 1. دالة تعمل عند فتح قسم "الطلاب والدرجات" لتعبئة القائمة المنسدلة
+async function loadGradesSection() {
+    const select = document.getElementById('gradesCourseSelect');
+    const token = localStorage.getItem('authToken');
+    
+    // تفريغ القائمة أولاً
+    select.innerHTML = '<option value="">جاري تحميل المقررات...</option>';
+
+    try {
+        // جلب الدورات الخاصة بالمعلم
+        const res = await fetch(`${API_BASE_URL}/Teacher/my-courses`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const courses = await res.json();
+            select.innerHTML = '<option value="">اختر المقرر...</option>';
+            
+            if (courses.length === 0) {
+                select.innerHTML += '<option disabled>لا توجد دورات مسندة إليك</option>';
+                return;
+            }
+
+            // تعبئة الخيارات
+            courses.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.name} - ${c.centerName}</option>`;
+            });
+        } else {
+            select.innerHTML = '<option value="">فشل تحميل المقررات</option>';
+        }
+    } catch (e) {
+        console.error(e);
+        select.innerHTML = '<option value="">خطأ في الاتصال</option>';
+    }
+}
+
+
+
+// 2. دالة جلب الطلاب وعلاماتهم عند اختيار دورة من القائمة
+async function loadGradesTable(courseId) {
+    // إذا اختار "اختر المقرر..." (قيمة فارغة) لا تفعل شيئاً
+    if (!courseId) return;
+
+    const tbody = document.getElementById('gradesTableBody');
+    const token = localStorage.getItem('authToken');
+
+    // إظهار علامة التحميل داخل الجدول
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center py-5">
+                <div class="spinner-border text-info" role="status"></div>
+                <div class="mt-2 text-white-50">جاري جلب سجل الدرجات...</div>
+            </td>
+        </tr>`;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/grades-sheet`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const students = await res.json();
+            tbody.innerHTML = '';
+            // إذا لم يكن هناك طلاب
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-white-50">
+                            <i class="fa-solid fa-users-slash fa-2x mb-3 opacity-50"></i>
+                            <p>لا يوجد طلاب مسجلين في هذه الدورة حتى الآن.</p>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            // بناء الجدول
+            students.forEach(s => {
+                // حساب المجموع والحالة
+                let total = s.participation + s.homework + s.midterm + s.final;
+                let status = s.gradeStatus || 'Undefined';
+                // let statusBadge = getStatusBadge(total);
+                let totalDisplay = (status === 'Undefined' && total === 0) ? '--' : total;
+                let totalClass = (status === 'Pass') ? 'text-success' : (status === 'Fail' ? 'text-danger' : 'text-white');
+                let selectColor = gradeStatusColors[status] || gradeStatusColors['Undefined'];
+                const row = `
+                <tr class="student-row" data-enrollment-id="${s.enrollmentId}">
+                    <td class="text-start ps-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-placeholder rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width:35px;height:35px;">
+                                ${s.studentName.charAt(0)}
+                            </div>
+                            <div>
+                                <div class="text-white fw-bold">${s.studentName}</div>
+                                <div class="text-white-50 x-small">${s.studentId}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-white-50 small">${s.studentId}</td>
+
+                    <td><input type="number" class="grade-input part" value="${s.participation}" min="0" max="10" oninput="calculateRowTotal(this)"></td>
+                    <td><input type="number" class="grade-input hw" value="${s.homework}" min="0" max="20" oninput="calculateRowTotal(this)"></td>
+                    <td><input type="number" class="grade-input mid" value="${s.midterm}" min="0" max="30" oninput="calculateRowTotal(this)"></td>
+                    <td><input type="number" class="grade-input final" value="${s.final}" min="0" max="40" oninput="calculateRowTotal(this)"></td>
+                    
+                    <td><span class="fw-bold fs-5 total-score ${totalClass}">${totalDisplay}</span></td>
+                    
+                    <td>
+                        <select class="form-select form-select-sm status-select" 
+                                style="width: 100px; background-color: ${selectColor}; color: white; border: none; font-weight:bold;"
+                                onchange="updateRowColor(this)">
+                            <option value="Undefined" ${status === 'Undefined' ? 'selected' : ''}>غير محدد</option>
+                            <option value="Pass" ${status === 'Pass' ? 'selected' : ''}>ناجح</option>
+                            <option value="Fail" ${status === 'Fail' ? 'selected' : ''}>راسب</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <button class="btn btn-sm btn-link text-secondary"><i class="fa-solid fa-envelope"></i></button>
+                    </td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+        } else {
+            tbody.innerHTML = '<tr><td colspan="9" class="text-danger text-center py-3">فشل جلب البيانات</td></tr>';
+        }
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="9" class="text-danger text-center py-3">خطأ في الاتصال بالسيرفر</td></tr>';
+    }
+}
+
+
+
+function calculateRowTotal(input) {
+    const row = input.closest('tr');
+    const p = parseFloat(row.querySelector('.part').value) || 0;
+    const h = parseFloat(row.querySelector('.hw').value) || 0;
+    const m = parseFloat(row.querySelector('.mid').value) || 0;
+    const f = parseFloat(row.querySelector('.final').value) || 0;
+    
+    const total = p + h + m + f;
+    const totalSpan = row.querySelector('.total-score');
+    const statusSelect = row.querySelector('.status-select');
+
+    // تحديث رقم المجموع
+    totalSpan.innerText = total;
+   
+    if (total >= 50) {
+        statusSelect.value = 'Pass';
+        totalSpan.className = 'fw-bold fs-5 total-score text-success';
+    } else if (total > 0) {
+        statusSelect.value = 'Fail';
+        totalSpan.className = 'fw-bold fs-5 total-score text-danger';
+    }
+    //  else {
+    //      إذا رجعنا للصفر
+    //      statusSelect.value = 'Undefined'; // (اختياري: هل تريد إرجاعها لغير محدد؟)
+    //     totalSpan.className = 'fw-bold fs-5 total-score text-white';
+    // }
+    
+    // تحديث لون القائمة
+    updateStatusColor(statusSelect);
+}
+// 4. تحديث الألوان (للخلفية وللنص)
+function updateRowColor(select) {
+    const row = select.closest('tr');
+    const totalSpan = row.querySelector('.total-score');
+    const status = select.value;
+
+    // تلوين خلفية القائمة
+    select.style.backgroundColor = gradeStatusColors[status];
+
+    // تلوين رقم المجموع ليتناسب مع الحالة
+    totalSpan.classList.remove('text-success', 'text-danger', 'text-white');
+    if (status === 'Pass') totalSpan.classList.add('text-success');
+    else if (status === 'Fail') totalSpan.classList.add('text-danger');
+    else totalSpan.classList.add('text-white');
+}
+// تلوين القائمة المنسدلة
+function updateStatusColor(select) {
+    select.style.backgroundColor = getStatusColor(select.value);
+}
+
+function getStatusColor(status) {
+    if (status === 'Pass') return '#198754'; // أخضر
+    if (status === 'Fail') return '#dc3545'; // أحمر
+    return '#6c757d'; // رمادي (غير محدد)
+}
+
+// دالة الحفظ المحدثة
+async function saveGrades() {
+    const rows = document.querySelectorAll('.student-row');
+    if (rows.length === 0) { alert("لا توجد بيانات!"); return; }
+    const updates = [];
+
+    rows.forEach(row => {
+        updates.push({
+            enrollmentId: row.getAttribute('data-enrollment-id'),
+            participation: parseFloat(row.querySelector('.part').value) || 0,
+            homework: parseFloat(row.querySelector('.hw').value) || 0,
+            midterm: parseFloat(row.querySelector('.mid').value) || 0,
+            final: parseFloat(row.querySelector('.final').value) || 0,
+            gradeStatus: row.querySelector('.status-select').value // نرسل الحالة المختارة
+        });
+    });
+
+    const token = localStorage.getItem('authToken');
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/grades/save`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updates)
+        });
+
+        if(res.ok) {
+            alert('تم حفظ الدرجات والحالات بنجاح! ✅');
+        } else {
+            alert('حدث خطأ أثناء الحفظ');
+        }
+    } catch(e) { console.error(e); }
+}
+
+// 3. دالة الحساب الفوري للمجموع (تستدعى عند الكتابة في أي حقل)
+function calculateTotal(inputElement) {
+    // العثور على الصف الأب للحقل الذي يتم الكتابة فيه
+    const row = inputElement.closest('tr');
+
+    // جلب القيم وتحويلها لأرقام (مع التعامل مع القيم الفارغة كصفر)
+    const part = parseFloat(row.querySelector('.part').value) || 0;
+    const hw = parseFloat(row.querySelector('.hw').value) || 0;
+    const mid = parseFloat(row.querySelector('.mid').value) || 0;
+    const final = parseFloat(row.querySelector('.final').value) || 0;
+
+    // الحساب
+    const total = part + hw + mid + final;
+
+    // تحديث خانة المجموع
+    const totalSpan = row.querySelector('.total-score');
+    totalSpan.innerText = total;
+
+    // تغيير اللون حسب النجاح والرسوب
+    if (total >= 50) {
+        totalSpan.classList.remove('text-danger');
+        totalSpan.classList.add('text-success');
+    } else {
+        totalSpan.classList.remove('text-success');
+        totalSpan.classList.add('text-danger');
+    }
+
+    // تحديث حالة الطالب (ناجح/راسب)
+    row.querySelector('.status-cell').innerHTML = getStatusBadge(total);
+}
+
+// دالة مساعدة لتوليد شكل الحالة
+function getStatusBadge(total) {
+    if (total >= 90) return '<span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">ممتاز</span>';
+    if (total >= 80) return '<span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25">جيد جداً</span>';
+    if (total >= 50) return '<span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">ناجح</span>';
+    return '<span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">راسب</span>';
+}
+
+// 4. دالة الحفظ (إرسال البيانات للسيرفر)
+async function saveGrades() {
+    const rows = document.querySelectorAll('.student-row');
+    
+    // التحقق هل هناك بيانات أصلاً
+    if (rows.length === 0) {
+        alert("لا توجد بيانات لحفظها!");
+        return;
+    }
+
+    const updates = [];
+
+    // تجميع البيانات من الجدول
+    rows.forEach(row => {
+        const statusSelect = row.querySelector('.status-select');
+        updates.push({
+            enrollmentId: row.getAttribute('data-enrollment-id'),
+            participation: parseFloat(row.querySelector('.part').value) || 0,
+            homework: parseFloat(row.querySelector('.hw').value) || 0,
+            midterm: parseFloat(row.querySelector('.mid').value) || 0,
+            final: parseFloat(row.querySelector('.final').value) || 0,
+            gradeStatus: statusSelect ? statusSelect.value : "Undefined"
+        });
+    });
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/grades/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updates)
+        });
+
+        if (res.ok) {
+            alert('تم حفظ جميع الدرجات بنجاح! ✅');
+            // تشغيل تأثير الاحتفال (اختياري)
+            if (typeof launchConfetti === 'function') launchConfetti();
+        } else {
+            alert('حدث خطأ أثناء محاولة الحفظ.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('فشل الاتصال بالسيرفر.');
+    }
+}
+
+// ==========================================
+// منطق الحضور والغياب (Attendance Logic)
+// ==========================================
+
+// 1. تهيئة القسم (تعبئة القائمة + التاريخ)
+async function loadAttendanceSection() {
+    // وضع تاريخ اليوم
+    const today = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('attendance-date-display').innerText = today;
+
+    // تعبئة القائمة المنسدلة
+    const select = document.getElementById('attendanceCourseSelect');
+    const token = localStorage.getItem('authToken');
+    
+    select.innerHTML = '<option value="">جاري التحميل...</option>';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/my-courses`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const courses = await res.json();
+        
+        select.innerHTML = '<option value="">اختر المقرر...</option>';
+        courses.forEach(c => {
+            select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+        });
+    } catch(e) { console.error(e); }
+}
+
+// 2. تحميل قائمة الطلاب عند اختيار مادة
+async function loadAttendanceList(courseId, isUpdate = false) {
+        if(!courseId) return;
+    const container = document.getElementById('attendanceListContainer');
+    const token = localStorage.getItem('authToken');
+    
+    container.innerHTML = '<div class="text-center py-5"><i class="fa-solid fa-spinner fa-spin"></i> جاري جلب الطلاب...</div>';
+if (!isUpdate) {
+        container.innerHTML = '<div class="text-center py-5"><i class="fa-solid fa-spinner fa-spin"></i> جاري جلب الطلاب...</div>';
+    }
+    try {
+        // نستخدم نفس دالة جلب الطلاب التي استخدمناها سابقاً
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/attendance-stats`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if(res.ok) {
+            const students = await res.json();
+            const currentSelections = {};
+            document.querySelectorAll('.att-radio:checked').forEach(r => {
+                currentSelections[r.name] = r.value;
+            });
+            container.innerHTML = '';
+
+            if (students.length === 0) {
+                container.innerHTML = '<div class="text-center text-white-50 py-5">لا يوجد طلاب في هذه الدورة.</div>';
+                updateCounts(); // تصفير العدادات
+                return;
+            }
+students.forEach(s => {
+                const selectedValue = currentSelections[`att-${s.studentId}`];
+
+                const row = `
+                <div class="attendance-row p-3 mb-2 border border-secondary rounded-3" style="background: rgba(255,255,255,0.02);" data-student-id="${s.studentId}">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-placeholder rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style="width:45px;height:45px;">
+                                ${s.fullName.charAt(0)}
+                            </div>
+                            <div>
+                                <div class="text-white fw-bold mb-1">${s.fullName}</div>
+                                <div class="text-white-50 x-small mb-2">${s.universityId || s.studentId}</div>
+                                
+                                <div class="d-flex gap-2 x-small">
+                                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">
+                                        <i class="fa-solid fa-check me-1"></i> ${s.presentCount || 0}
+                                    </span>
+                                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">
+                                        <i class="fa-solid fa-xmark me-1"></i> ${s.absentCount || 0}
+                                    </span>
+                                    <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">
+                                        <i class="fa-regular fa-clock me-1"></i> ${s.lateCount || 0}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 bg-dark bg-opacity-50 px-3 py-2 rounded-pill border border-secondary">
+                            <div class="form-check">
+                                <input class="form-check-input att-radio" type="radio" name="att-${s.studentId}" value="Present" 
+                                       ${selectedValue === 'Present' ? 'checked' : ''} 
+                                       onchange="markStudent(this, '${s.studentId}', '${courseId}')">
+                                <label class="text-white small ms-1">حضور</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input att-radio" type="radio" name="att-${s.studentId}" value="Absent" 
+                                       ${selectedValue === 'Absent' ? 'checked' : ''} 
+                                       onchange="markStudent(this, '${s.studentId}', '${courseId}')">
+                                <label class="text-white small ms-1">غياب</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input att-radio" type="radio" name="att-${s.studentId}" value="Late" 
+                                       ${selectedValue === 'Late' ? 'checked' : ''} 
+                                       onchange="markStudent(this, '${s.studentId}', '${courseId}')">
+                                <label class="text-white small ms-1">تأخر</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                `;
+                container.innerHTML += row;
+            });
+            updateCounts(); // تحديث العدادات الأولية (أصفار)
+        }
+    } catch(e) { console.error(e); }
+}
+
+
+
+
+// 3. تحديث العدادات العلوية
+function updateCounts() {
+    const radios = document.querySelectorAll('.att-radio:checked');
+    let present = 0, absent = 0, late = 0;
+
+    radios.forEach(r => {
+        if(r.value === 'Present') present++;
+        else if(r.value === 'Absent') absent++;
+        else if(r.value === 'Late') late++;
+    });
+
+    document.getElementById('count-present').innerText = present;
+    document.getElementById('count-absent').innerText = absent;
+    document.getElementById('count-late').innerText = late;
+}
+
+// 4. تحديد الكل حضور
+function markAll(status) {
+    const rows = document.querySelectorAll('.attendance-row');
+    rows.forEach(row => {
+        // البحث عن الراديو الذي يحمل القيمة المطلوبة داخل هذا الصف وتفعيله
+        const radio = row.querySelector(`input[value="${status}"]`);
+        if(radio) radio.checked = true;
+    });
+    updateCounts();
+}
+
+// 5. إعادة التعيين (إلغاء التحديد)
+function resetAll() {
+    const radios = document.querySelectorAll('.att-radio');
+    radios.forEach(r => r.checked = false);
+    updateCounts();
+}
+
+// 6. حفظ السجل في قاعدة البيانات
+async function submitAttendance() {
+    const courseId = document.getElementById('attendanceCourseSelect').value;
+    if(!courseId) { alert("اختر المقرر أولاً"); return; }
+
+    const records = [];
+    const rows = document.querySelectorAll('.attendance-row');
+    
+    // التحقق من أن جميع الطلاب تم رصد حالتهم
+    let allMarked = true;
+
+    rows.forEach(row => {
+        const studentId = row.getAttribute('data-student-id');
+        const checked = row.querySelector('input:checked');
+        
+        if(checked) {
+            records.push({
+                studentId: studentId,
+                courseId: courseId,
+                status: checked.value
+            });
+        } else {
+            allMarked = false;
+        }
+    });
+
+    if(!allMarked && !confirm("بعض الطلاب لم يتم رصد حالتهم. هل تريد المتابعة وحفظ المرصود فقط؟")) return;
+    if(records.length === 0) { alert("لا يوجد بيانات للحفظ"); return; }
+
+    const token = localStorage.getItem('authToken');
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/attendance/save`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(records)
+        });
+
+        if(res.ok) {
+            alert("تم حفظ سجل الحضور بنجاح! ✅");
+            // يمكنك تصفير القائمة أو تركها كما هي
+        } else {
+            alert("حدث خطأ أثناء الحفظ");
+        }
+    } catch(e) { console.error(e); }
+}
+
+// دالة لحفظ حالة طالب واحد فورياً عند التغيير
+async function markStudent(radioElement, studentId, courseId) {
+    const status = radioElement.value;
+
+    // 1. تحديث العدادات العلوية فورياً (شكل جمالي)
+    updateCounts();
+
+    // 2. تجهيز البيانات للإرسال
+    // نرسلها كقائمة تحتوي عنصراً واحداً لأن الباك إند يتوقع قائمة
+    const record = [{
+        studentId: studentId,
+        courseId: courseId,
+        status: status
+    }];
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        // إظهار مؤشر حفظ صغير بجانب الطالب (اختياري)
+        // const row = radioElement.closest('.attendance-row');
+        // row.style.opacity = "0.7"; 
+
+        const res = await fetch(`${API_BASE_URL}/Teacher/attendance/save`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(record)
+        });
+
+        if(res.ok) {
+await loadAttendanceList(courseId, true);
+            console.log(`Saved: ${studentId} -> ${status}`);
+        } else {
+            alert("فشل حفظ الحالة، تأكد من الاتصال.");
+        }
+    } catch(e) {
+        console.error(e);
+        alert("خطأ في الاتصال.");
+    }
+}
+
+
+// دالة فتح نافذة تفاصيل الطالب
+async function openStudentRecord(studentId, courseId) {
+    // 1. فتح المودال وعرض مؤشر التحميل
+    const modal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
+    const modalBody = document.getElementById('modalStudentBody');
+    const modalTitle = document.getElementById('modalStudentName');
+    
+    modalBody.innerHTML = '<div class="text-center py-5"><i class="fa-solid fa-spinner fa-spin text-info fa-2x"></i><p class="mt-2 text-white-50">جاري جلب السجل...</p></div>';
+    modal.show();
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        // 2. طلب البيانات من السيرفر
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/student/${studentId}/details`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            
+            // 3. تحديث واجهة المودال بالبيانات
+            modalTitle.innerText = `سجل الطالب: ${data.studentName}`;
+            
+            modalBody.innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="avatar-placeholder rounded-circle bg-primary d-inline-flex align-items-center justify-content-center text-white fw-bold mb-2" style="width:60px;height:60px;font-size:1.5rem">
+                        ${data.studentName.charAt(0)}
+                    </div>
+                    <h5 class="mb-0">${data.studentName}</h5>
+                    <small class="text-white-50">${data.studentId}</small>
+                </div>
+
+                <h6 class="text-info border-bottom border-secondary pb-2 mb-3"><i class="fa-solid fa-clipboard-user me-2"></i> الحضور والغياب</h6>
+                <div class="row text-center g-2 mb-4">
+                    <div class="col-4">
+                        <div class="p-2 rounded border border-success border-opacity-25 bg-success bg-opacity-10">
+                            <div class="h4 m-0 text-success fw-bold">${data.attendance.present}</div>
+                            <small class="text-white-50">حضور</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded border border-danger border-opacity-25 bg-danger bg-opacity-10">
+                            <div class="h4 m-0 text-danger fw-bold">${data.attendance.absent}</div>
+                            <small class="text-white-50">غياب</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded border border-warning border-opacity-25 bg-warning bg-opacity-10">
+                            <div class="h4 m-0 text-warning fw-bold">${data.attendance.late}</div>
+                            <small class="text-white-50">تأخر</small>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-warning border-bottom border-secondary pb-2 mb-3"><i class="fa-solid fa-star me-2"></i> التحصيل الدراسي</h6>
+                <table class="table table-dark table-sm table-bordered border-secondary text-center small">
+                    <thead>
+                        <tr>
+                            <th>مشاركة</th>
+                            <th>واجبات</th>
+                            <th>نصفي</th>
+                            <th>نهائي</th>
+                            <th>المجموع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${data.grades.participation}</td>
+                            <td>${data.grades.homework}</td>
+                            <td>${data.grades.midterm}</td>
+                            <td>${data.grades.final}</td>
+                            <td class="fw-bold ${data.grades.total >= 50 ? 'text-success' : 'text-danger'}">${data.grades.total}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-center mt-3">
+                    <span class="badge ${data.grades.status === 'Pass' ? 'bg-success' : (data.grades.status === 'Fail' ? 'bg-danger' : 'bg-secondary')} px-3 py-2">
+                        النتيجة النهائية: ${data.grades.status === 'Pass' ? 'ناجح' : (data.grades.status === 'Fail' ? 'راسب' : 'غير محدد')}
+                    </span>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = '<div class="text-center text-danger py-4">فشل تحميل بيانات الطالب</div>';
+        }
+    } catch (e) {
+        console.error(e);
+        modalBody.innerHTML = '<div class="text-center text-danger py-4">خطأ في الاتصال</div>';
+    }
+}
+// دالة حذف طالب من الدورة
+async function removeStudentFromCourse(studentId, courseId) {
+    if (!confirm("هل أنت متأكد من حذف هذا الطالب من الدورة؟\n(سيتم إلغاء تسجيله ولن يظهر في الكشوفات)")) {
+        return;
+    }
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/student/${studentId}`, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${token}` 
+            }
+        });
+
+        if (res.ok) {
+            alert("تم حذف الطالب بنجاح ✅");
+            // إعادة تحميل القائمة لتحديث البيانات
+            loadCourseStudents(courseId);
+        } else {
+            const data = await res.json();
+            alert("فشل الحذف: " + (data.message || "حدث خطأ غير معروف"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال بالسيرفر");
+    }
+}
+
+
+// ==========================================
+// منطق تصحيح الواجبات
+// ==========================================
+
+// 1. دالة لفتح واجهة التصحيح (يتم استدعاؤها عند الضغط على اسم طالب في قائمة التسليمات)
+async function loadGradingInterface(submissionId) {
+    // إخفاء الأقسام الأخرى وإظهار قسم التصحيح
+    document.querySelectorAll('section').forEach(s => s.classList.add('d-none'));
+    document.getElementById('grading').classList.remove('d-none');
+
+    const token = localStorage.getItem('authToken');
+
+    // تعبئة بيانات وهمية للتحميل
+    document.getElementById('gradingStudentName').innerText = "جاري التحميل...";
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/submission/${submissionId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+
+            // تعبئة البيانات في العناصر
+            document.getElementById('gradingSubmissionId').value = data.id;
+            document.getElementById('gradingStudentName').innerText = data.studentName;
+            document.getElementById('gradingSubmissionDate').innerText = "تاريخ التسليم: " + new Date(data.submissionDate).toLocaleString('ar-EG');
+            document.getElementById('gradingStudentAvatar').innerText = data.studentName.charAt(0);
+            
+            // الملف
+            document.getElementById('gradingFileName').innerText = data.fileName;
+            document.getElementById('gradingDownloadBtn').href = API_BASE_URL + data.filePath; // رابط التحميل
+
+            // محاولة عرض الملف داخل iframe إذا كان PDF (اختياري)
+            const iframe = document.getElementById('pdfPreviewFrame');
+            if (data.fileName.toLowerCase().endsWith('.pdf')) {
+                iframe.src = API_BASE_URL + data.filePath; // أو رابط تجريبي
+                iframe.classList.remove('d-none');
+            } else {
+                iframe.classList.add('d-none');
+            }
+
+            // الدرجات
+            document.getElementById('gradingMaxScore').innerText = data.maxGrade;
+            document.getElementById('gradingScoreInput').value = data.currentGrade > 0 ? data.currentGrade : '';
+            document.getElementById('gradingScoreInput').max = data.maxGrade;
+            
+            // الملاحظات
+            document.getElementById('feedbackArea').value = data.feedback || '';
+
+        } else {
+            alert("فشل تحميل بيانات الواجب");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال");
+    }
+}
+
+// 2. دالة إضافة التعليقات السريعة
+function addFeedback(text) {
+    const area = document.getElementById('feedbackArea');
+    area.value += text + "\n";
+    area.focus();
+}
+
+// 3. دالة حفظ الدرجة
+async function submitGrade() {
+    const submissionId = document.getElementById('gradingSubmissionId').value;
+    const grade = parseFloat(document.getElementById('gradingScoreInput').value);
+    const maxGrade = parseFloat(document.getElementById('gradingMaxScore').innerText);
+    const feedback = document.getElementById('feedbackArea').value;
+
+    // التحقق من صحة المدخلات
+    if (isNaN(grade)) {
+        alert("يرجى إدخال درجة صحيحة.");
+        return;
+    }
+    if (grade < 0 || grade > maxGrade) {
+        alert(`الدرجة يجب أن تكون بين 0 و ${maxGrade}`);
+        return;
+    }
+
+    const payload = {
+        submissionId: parseInt(submissionId),
+        grade: grade,
+        feedback: feedback
+    };
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/submission/grade`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("تم حفظ الدرجة وإرسال الملاحظات للطالب بنجاح! ✅");
+                    } else {
+            alert("حدث خطأ أثناء الحفظ");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال بالسيرفر");
+    }
+}
+
+
+
+
+async function openAddAssignment() {
+
+    document.querySelectorAll('section').forEach(s => s.classList.add('d-none'));
+    document.getElementById('create-assignment').classList.remove('d-none');
+    
+    const select = document.getElementById('unique_assignment_course_select');
+    
+
+    if (!select) {
+        console.error("خطأ: لم يتم العثور على القائمة المنسدلة (تأكد من الـ ID في HTML)");
+        return;
+    }
+    const token = localStorage.getItem('authToken');
+    select.innerHTML = '<option value="">جاري تحميل المواد...</option>';
+
+    try {
+        // جلب المواد الخاصة بالمعلم
+        const res = await fetch(`${API_BASE_URL}/Teacher/my-courses`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const courses = await res.json();
+            select.innerHTML = '<option value="">اختر المادة...</option>';
+            
+            if(courses.length === 0) {
+                select.innerHTML = '<option value="">لا توجد مواد مسجلة</option>';
+            }else {
+
+            courses.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+            });
+        }
+} else {
+            select.innerHTML = '<option>خطأ في التحميل</option>';
+            console.error("خطأ سيرفر:", res.status);
+        }
+    } catch (e) {
+        console.error(e);
+        select.innerHTML = '<option>فشل الاتصال</option>';
+    }
+}
+
+
+
+// كود بسيط لعرض اسم الملف عند اختياره (تحسين جمالي)
+document.getElementById('assignFile')?.addEventListener('change', function() {
+    const fileName = this.files[0] ? this.files[0].name : '';
+    document.getElementById('fileNameDisplay').innerText = fileName ? `تم اختيار: ${fileName}` : '';
+});
+
+// 2. إرسال الواجب للسيرفر
+async function submitNewAssignment() {
+    const title = document.getElementById('assignTitle').value;
+    const courseId = document.getElementById('unique_assignment_course_select').value;
+    const dueDate = document.getElementById('assignDueDate').value;
+    const description = document.getElementById('assignDesc').value;
+    const fileInput = document.getElementById('assignFile');
+
+    if (!courseId || !title || !dueDate) {
+        alert("يرجى تعبئة الحقول الأساسية (العنوان، المادة، التاريخ)");
+        return;
+    }
+
+    // تجهيز البيانات كـ FormData (ضروري لرفع الملفات)
+    const formData = new FormData();
+    formData.append('Title', title);
+    formData.append('CourseId', courseId);
+    formData.append('DueDate', dueDate);
+    formData.append('Description', description);
+    
+    // إرفاق الملف إذا وجد
+    if (fileInput.files.length > 0) {
+        formData.append('File', fileInput.files[0]);
+    }
+
+    const token = localStorage.getItem('authToken');
+    
+    // تغيير نص الزر لإظهار أن العملية جارية
+    const btn = document.querySelector('#createAssignmentForm button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/assignment/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+                // لا نضع Content-Type يدوياً مع FormData
+            },
+            body: formData
+        });
+
+        if (res.ok) {
+            alert("تم نشر الواجب بنجاح! ✅");
+            document.getElementById('createAssignmentForm').reset();
+            document.getElementById('fileNameDisplay').innerText = '';
+        } else {
+            const err = await res.json();
+            alert("فشل الحفظ: " + (err.message || "تأكد من البيانات"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال");
+    } finally {
+        // إعادة الزر لوضعه الطبيعي
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+// 1. تعبئة قائمة الواجبات عند فتح صفحة التصحيح
+async function loadAssignmentsForGrading() {
+    const select = document.getElementById('grading-assignment-select');
+        const token = localStorage.getItem('authToken');
+    select.innerHTML = '<option value="">⏳ جاري تحميل الواجبات...</option>';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/assignments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const assignments = await res.json();
+            
+            // تفريغ القائمة وإضافة الخيار الافتراضي
+            select.innerHTML = '<option value="">-- اختر الواجب لتصحيحه --</option>';
+
+            if (assignments.length === 0) {
+                select.innerHTML += '<option disabled>لا توجد واجبات منشورة حتى الآن</option>';
+            } else {
+                assignments.forEach(a => {
+                    // عرض: اسم الواجب (اسم المادة)
+                    // مثلاً: أحكام النون الساكنة (تجويد مستوى 1)
+                    select.innerHTML += `<option value="${a.id}">${a.title} - (${a.courseName})</option>`;
+                });
+            }
+        } else {
+            console.error("Server Error:", res.status);
+            select.innerHTML = '<option disabled>فشل تحميل البيانات</option>';
+        }
+    } catch (e) {
+        console.error(e);
+        select.innerHTML = '<option disabled>خطأ في الاتصال</option>';
+    }
+}
+// 🔥 الدالة الرئيسية 1: جلب الطلاب الذين سلموا الواجب
+async function loadSubmissionsForAssignment() {
+    const assignmentId = document.getElementById('grading-assignment-select').value;
+    const listContainer = document.getElementById('students-submissions-list');
+    
+    if (!assignmentId) return;
+
+    listContainer.innerHTML = '<div class="text-center text-white-50 mt-3"><i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...</div>';
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/assignment/${assignmentId}/submissions`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+        });
+        const submissions = await res.json();
+        
+        listContainer.innerHTML = '';
+        if (submissions.length === 0) {
+            listContainer.innerHTML = '<div class="text-center text-white-50 p-3">لا توجد تسليمات لهذا الواجب بعد.</div>';
+            return;
+        }
+
+        submissions.forEach(sub => {
+            const date = new Date(sub.submissionDate).toLocaleDateString('ar-EG');
+            const statusBadge = sub.isGraded 
+                ? '<span class="badge bg-success float-end">تم التصحيح</span>' 
+                : '<span class="badge bg-warning text-dark float-end">بانتظار التصحيح</span>';
+
+            // نقوم بتخزين البيانات كاملة في العنصر
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary';
+            item.style.cursor = 'pointer';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-1 fw-bold">${sub.studentName}</h6>
+                    ${statusBadge}
+                </div>
+                <small class="text-white-50"><i class="fa-regular fa-clock me-1"></i> ${date}</small>
+            `;
+            
+            // عند الضغط على الطالب
+            item.onclick = () => openGradingPanel(sub);
+            listContainer.appendChild(item);
+        });
+
+    } catch(e) { console.error(e); }
+}
+
+// 🔥 الدالة الرئيسية 2: عرض بيانات الطالب في لوحة التصحيح
+function openGradingPanel(submission) {
+    // إظهار منطقة العمل
+    document.getElementById('grading-workspace').classList.remove('d-none');
+    document.getElementById('grading-empty-state').classList.add('d-none');
+
+    // تعبئة البيانات
+    document.getElementById('grading-student-name').innerText = submission.studentName;
+    document.getElementById('grading-date').innerText = new Date(submission.submissionDate).toLocaleDateString('ar-EG');
+    document.getElementById('current-submission-id').value = submission.id;
+    
+    document.getElementById('grading-score').value = submission.grade || '';
+    document.getElementById('grading-feedback').value = submission.teacherFeedback || '';
+    
+    // معاينة الملف
+    const previewArea = document.getElementById('file-preview-area');
+    const SERVER_URL = "http://localhost:5220";
+    
+    if (submission.filePath) {
+        const fullPath = `${SERVER_URL}/${submission.filePath}`;
+        
+        // التحقق من نوع الملف
+        if (submission.filePath.endsWith('.pdf')) {
+            previewArea.innerHTML = `<iframe src="${fullPath}" width="100%" height="100%" style="border:none; border-radius: 10px;"></iframe>`;
+        } else if (submission.filePath.match(/\.(jpeg|jpg|png)$/)) {
+            previewArea.innerHTML = `<img src="${fullPath}" style="max-width:100%; max-height:100%; border-radius: 10px;">`;
+        } else {
+            // ملفات أخرى (Word, Zip)
+            previewArea.innerHTML = `
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    <i class="fa-solid fa-file-lines fa-5x text-info mb-3"></i>
+                    <h5 class="text-white">نوع الملف غير قابل للمعاينة المباشرة</h5>
+                    <a href="${fullPath}" target="_blank" class="btn btn-primary mt-3 px-4">
+                        <i class="fa-solid fa-download me-2"></i> تحميل الملف
+                    </a>
+                </div>
+            `;
+        }
+    } else {
+        previewArea.innerHTML = '<div class="text-white-50 pt-5">لا يوجد ملف مرفق (فقط ملاحظات نصية)</div>';
+    }
+    
+    // إذا كان هناك ملاحظات من الطالب
+    if(submission.notes) {
+        // يمكنك إضافة مكان لعرض ملاحظات الطالب أيضاً
+        addQuickComment(`[ملاحظة الطالب]: ${submission.notes}`); 
+    }
+}
+
+// إضافة تعليق سريع
+function addQuickComment(text) {
+    const box = document.getElementById('grading-feedback');
+    box.value += (box.value ? '\n' : '') + text;
+}
+
+// 🔥 الدالة الرئيسية 3: حفظ الدرجة وإرسالها للسيرفر
+async function submitGradeToStudent() {
+    const submissionId = document.getElementById('current-submission-id').value;
+    const grade = document.getElementById('grading-score').value;
+    const feedback = document.getElementById('grading-feedback').value;
+
+    if (!grade) { alert("يرجى إدخال الدرجة"); return; }
+
+    const btn = document.querySelector('button[onclick="submitGradeToStudent()"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/submission/grade`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify({ 
+                submissionId: parseInt(submissionId), // تأكد أن المودل يستقبل int
+                grade: parseInt(grade), 
+                feedback: feedback 
+            })
+        });
+
+        if (res.ok) {
+            alert("تم حفظ الدرجة بنجاح ✅");
+            // تحديث القائمة لإظهار الحالة الجديدة
+            loadSubmissionsForAssignment();
+        } else {
+            alert("حدث خطأ أثناء الحفظ");
+        }
+    } catch(e) {
+        console.error(e);
+        alert("فشل الاتصال");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+// 1. تشغيل عند فتح قسم التصحيح: جلب الدورات فقط
+function initGradingSection() {
+    loadGradingCourses();
+    // تصفير الباقي
+    document.getElementById('grading-assignment-select').innerHTML = '<option value="">-- يرجى اختيار مادة --</option>';
+    document.getElementById('grading-assignment-select').disabled = true;
+    document.getElementById('students-submissions-list').innerHTML = '<div class="text-white-50 small text-center py-4">أكمل الاختيارات بالأعلى</div>';
+    document.getElementById('grading-workspace').classList.add('d-none');
+    document.getElementById('grading-empty-state').classList.remove('d-none');
+}
+
+// 2. جلب دورات المعلم لتعبئة القائمة الأولى
+async function loadGradingCourses() {
+    const select = document.getElementById('grading-course-select');
+    const token = localStorage.getItem('authToken');
+    
+    select.innerHTML = '<option>⏳ جاري التحميل...</option>';
+
+    try {
+        // نستخدم نفس الدالة الموجودة سابقاً لجلب دورات المعلم
+        const res = await fetch(`${API_BASE_URL}/Teacher/my-courses`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            const courses = await res.json();
+            select.innerHTML = '<option value="">-- اختر المادة --</option>';
+            courses.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+            });
+        }
+    } catch (e) { console.error(e); }
+}
+
+// 3. عند اختيار مادة -> جلب واجباتها
+async function loadAssignmentsForSelectedCourse() {
+    const courseId = document.getElementById('grading-course-select').value;
+    const assignSelect = document.getElementById('grading-assignment-select');
+    const token = localStorage.getItem('authToken');
+
+    // إعادة تعيين القوائم التالية
+    assignSelect.innerHTML = '<option value="">⏳ جاري جلب الواجبات...</option>';
+    assignSelect.disabled = true;
+    document.getElementById('students-submissions-list').innerHTML = '';
+
+    if (!courseId) {
+        assignSelect.innerHTML = '<option value="">-- يرجى اختيار مادة --</option>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Teacher/course/${courseId}/assignments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const assignments = await res.json();
+            assignSelect.innerHTML = '<option value="">-- اختر الواجب لتصحيحه --</option>';
+            
+            if (assignments.length === 0) {
+                assignSelect.innerHTML += '<option disabled>لا توجد واجبات في هذه المادة</option>';
+            } else {
+                assignments.forEach(a => {
+                    assignSelect.innerHTML += `<option value="${a.id}">${a.title}</option>`;
+                });
+                assignSelect.disabled = false; // تفعيل القائمة الآن
+            }
+        }
+    } catch (e) { console.error(e); }
+}
+
+</script>
+
+
+<div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: rgba(30, 30, 45, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="modalStudentName">تفاصيل الطالب</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalStudentBody">
+                <div class="text-center py-3">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

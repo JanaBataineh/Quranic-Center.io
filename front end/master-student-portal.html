@@ -1,0 +1,2403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الوحي - بوابة الطالب الموحدة</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+    /* الثيم العام الموحد (Dark Glass) */
+    body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; overflow-x: hidden; }
+    .navbar-glass { background: rgba(0, 0, 0, 0.7) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .sidebar-block { background: rgba(20, 20, 20, 0.6) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; }
+    .list-group-item { background: transparent !important; color: #ccc; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; cursor: pointer; transition: 0.3s; }
+    .list-group-item:hover, .list-group-item.active { background: rgba(13, 110, 253, 0.4) !important; color: #fff; border: none; }
+    
+    /* التحكم في عرض السكاشن */
+    section { display: none; padding: 20px 0; animation: fadeIn 0.5s ease; }
+    section.active-section { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* تنسيقات البطاقات الزجاجية العامة */
+    .glass-card { 
+        background: rgba(30, 30, 40, 0.6); 
+        border: 1px solid rgba(255, 255, 255, 0.08); 
+        border-radius: 15px; 
+        padding: 20px; 
+        height: 100%; 
+        transition: 0.3s;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .input-glass { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 10px; padding: 10px; width: 100%; outline: none; }
+
+    /* --- تنسيقات خاصة بسكشن الرئيسية (Dashboard) --- */
+    .next-class-card { 
+        background: linear-gradient(45deg, #0d6efd, #0a58ca); 
+        color: white; 
+        border-radius: 15px; 
+        padding: 25px; 
+        position: relative; 
+        overflow: hidden; 
+        margin-bottom: 25px; 
+    }
+    .next-class-card::after { 
+        content: "\f518"; 
+        font-family: "Font Awesome 6 Free"; 
+        position: absolute; 
+        top: -20px; left: -20px; 
+        font-size: 8rem; opacity: 0.1; font-weight: 900; 
+    }
+
+    .progress-ring { 
+        width: 80px; height: 80px; 
+        border-radius: 50%; 
+        border: 8px solid rgba(255,255,255,0.1); 
+        border-top-color: #198754; 
+        display: flex; align-items: center; justify-content: center; 
+        font-weight: bold; font-size: 1.2rem; margin: 0 auto 15px; 
+    }
+
+    /* --- تنسيقات خاصة بسكشن القرآن (سجل الحفظ) --- */
+    .juz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 10px; }
+    .juz-box { 
+        aspect-ratio: 1; background: rgba(255,255,255,0.05); 
+        border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; 
+        display: flex; align-items: center; justify-content: center; 
+        font-weight: bold; cursor: default; transition: 0.3s;
+    }
+    .juz-box:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
+    .juz-done { background: rgba(25, 135, 84, 0.3); border-color: #198754; color: #fff; box-shadow: 0 0 10px rgba(25, 135, 84, 0.2); }
+    .juz-current { background: rgba(255, 193, 7, 0.3); border-color: #ffc107; color: #fff; animation: pulse 2s infinite; }
+
+    @keyframes pulse { 
+        0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); } 
+        70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); } 
+        100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); } 
+    }
+
+    .timeline-item { border-right: 2px solid #0d6efd; padding-right: 20px; position: relative; margin-bottom: 25px; }
+    .timeline-item::before { 
+        content: ""; position: absolute; right: -6px; top: 0; 
+        width: 10px; height: 10px; background: #0d6efd; 
+        border-radius: 50%; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2); 
+    }
+    .timeline-item.border-warning-subtle { border-right-color: #ffc107 !important; }
+    .timeline-item.border-warning-subtle::before { background: #ffc107; box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2); }
+
+    /* --- تنسيقات خاصة بقسم المالية --- */
+    .table-transparent {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e0e0e0;
+        --bs-table-border-color: rgba(255, 255, 255, 0.1);
+    }
+    .table-transparent th {
+        font-weight: 600; border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        white-space: nowrap; padding: 12px;
+    }
+    .table-transparent td { padding: 12px; vertical-align: middle; }
+
+    .btn-outline-dashed {
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        background: transparent; color: rgba(255, 255, 255, 0.6);
+        transition: 0.3s; padding: 10px;
+    }
+    .btn-outline-dashed:hover {
+        border-color: #0d6efd; color: #0d6efd; background: rgba(13, 110, 253, 0.1);
+    }
+
+    .payment-card-item {
+        background: linear-gradient(45deg, #2c3e50, #000000);
+        border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+        padding: 15px; margin-bottom: 10px;
+        display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden;
+    }
+    .payment-card-item::before {
+        content: ''; position: absolute; top: -50px; right: -50px;
+        width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+
+    /* --- تنسيقات خاصة بسكشن الأنشطة --- */
+    .activity-card { 
+        background: rgba(30, 30, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); 
+        border-radius: 15px; overflow: hidden; transition: 0.3s; position: relative; 
+        height: 100%; display: flex; flex-direction: column;
+    }
+    .activity-card:hover { transform: translateY(-5px); border-color: #0d6efd; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+    .activity-img { height: 180px; background-size: cover; background-position: center; position: relative; }
+    .date-badge { 
+        position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); 
+        color: #fff; padding: 8px 12px; border-radius: 10px; text-align: center; 
+        border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);
+    }
+    .activity-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+    /* --- تنسيقات خاصة بالمقصف --- */
+    .food-item {
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px; padding: 20px; text-align: center; transition: 0.3s;
+        cursor: pointer; position: relative; overflow: hidden;
+    }
+    .food-item:hover {
+        background: rgba(255, 255, 255, 0.1); transform: translateY(-5px);
+        border-color: #0d6efd; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .food-icon { font-size: 3.5rem; margin-bottom: 15px; transition: 0.3s; }
+    .food-item:hover .food-icon { transform: scale(1.1) rotate(5deg); }
+
+    .cart-summary {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: rgba(13, 110, 253, 0.9); backdrop-filter: blur(10px);
+        color: white; padding: 15px 30px; border-radius: 50px;
+        display: flex; justify-content: space-between; align-items: center;
+        width: 90%; max-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.2); z-index: 1000; animation: slideUp 0.5s ease;
+    }
+    @keyframes slideUp { from { transform: translate(-50%, 100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+    /* --- تنسيقات خاصة بالمكتبة الرقمية --- */
+
+
+    .btn-download {
+        width: 100%; background: linear-gradient(45deg, #0d6efd, #0099ff);
+        border: none; padding: 8px; border-radius: 8px; color: white;
+        font-weight: bold; font-size: 0.9rem; transition: 0.3s; margin-top: 10px;
+    }
+    .btn-download:hover { opacity: 0.9; box-shadow: 0 5px 10px rgba(13, 110, 253, 0.3); }
+
+    /* --- تنسيقات خاصة بقسم المفكرة --- */
+    .note-item {
+        padding: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer; transition: 0.2s; border-left: 3px solid transparent;
+    }
+    .note-item:hover { background: rgba(255, 255, 255, 0.03); }
+    .note-item.active { background: rgba(255, 255, 255, 0.05); border-left-color: #0d6efd; }
+    .note-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); display: block; margin-top: 5px; }
+    .editor-area { height: 100%; display: flex; flex-direction: column; }
+    .editor-textarea {
+        flex-grow: 1; background: transparent; border: none; color: #e0e0e0;
+        resize: none; outline: none; line-height: 1.6;
+    }
+
+    /* --- تنسيقات خاصة بالملف الشخصي --- */
+    .profile-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .profile-img-container { position: relative; display: inline-block; margin-bottom: 15px; }
+    .profile-img { 
+        width: 120px; height: 120px; border-radius: 50%; 
+        border: 4px solid rgba(255, 255, 255, 0.1); object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .edit-badge { 
+        position: absolute; bottom: 5px; right: 5px; background: #0d6efd; color: white;
+        width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; cursor: pointer; border: 3px solid #2a2a2a; transition: 0.3s;
+    }
+    .edit-badge:hover { transform: scale(1.1); background: #0b5ed7; }
+    .badge-item { 
+        text-align: center; transition: 0.3s; background: rgba(255, 255, 255, 0.03);
+        padding: 15px; border-radius: 12px; height: 100%; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .badge-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.08); border-color: rgba(255,255,255,0.1); }
+    .badge-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+
+    /* --- تنسيقات المراجع الذكي --- */
+    .quran-box {
+        background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    }
+        .quran-text {
+        font-family: 'Traditional Arabic', 'Amiri', serif; font-size: 2rem;
+        line-height: 2.2; text-align: center; color: #fff;
+    }
+    
+    
+    
+    .revealed-text { color: #4ade80 !important; transition: color 0.3s ease; }
+    .quran-word { display: inline-block; margin: 0 2px; }
+    .blurred-text {
+        color: transparent !important; text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        filter: blur(4px); cursor: pointer; transition: 0.4s ease; user-select: none;
+        background: rgba(255, 255, 255, 0.1); border-radius: 5px; padding: 0 5px;
+    }
+    .blurred-text:hover, .blurred-text:active { filter: blur(0); background: transparent; color: #4dd0e1; }
+    
+    
+    
+    
+    
+    .ayah-symbol { color: #ffc107; font-size: 1.5rem; margin: 0 5px; font-family: sans-serif; }
+
+    /* --- تنسيقات الدعم الفني --- */
+    .ticket-item {
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 15px; border-radius: 12px; margin-bottom: 12px;
+        display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
+    }
+    .ticket-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(-5px); }
+    .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    .status-open { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); }
+    .status-closed { background: rgba(25, 135, 84, 0.2); color: #198754; border: 1px solid rgba(25, 135, 84, 0.3); }
+    .status-pending { background: rgba(13, 110, 253, 0.2); color: #0d6efd; border: 1px solid rgba(13, 110, 253, 0.3); }
+
+    /* --- تنسيقات خاصة بقسم الرسائل --- */
+    .chat-wrapper {
+        display: flex; height: 75vh; background: rgba(30, 30, 40, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; overflow: hidden;
+    }
+    .chat-contacts-sidebar {
+        width: 300px; background: rgba(0, 0, 0, 0.2);
+        border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
+    }
+    .contact-item {
+        padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+        transition: 0.2s; display: flex; align-items: center; gap: 10px;
+    }
+    .contact-item:hover, .contact-item.active { background: rgba(255,255,255,0.1); border-right: 3px solid #0d6efd; }
+    .contact-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+    .chat-main-area { flex-grow: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.1); position: relative; }
+    .messages-scroll { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+    .message-bubble {
+        max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; position: relative; line-height: 1.5;
+    }
+    .msg-sent { align-self: flex-end; background: #0d6efd; color: white; border-bottom-left-radius: 0; }
+    .msg-received { align-self: flex-start; background: rgba(255,255,255,0.1); color: white; border-bottom-right-radius: 0; }
+    .chat-input-area {
+        padding: 15px; background: rgba(30, 30, 40, 0.8);
+        border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px;
+    }
+    @media (max-width: 768px) { .chat-contacts-sidebar { display: none; } }
+
+
+    .grid-header, .time-slot, .day-cell {
+        background: rgba(20, 20, 30, 0.95); display: flex; align-items: center;
+        justify-content: center; color: #ccc; font-size: 0.9rem;
+    }
+    .grid-header { background: rgba(13, 110, 253, 0.2); color: #fff; font-weight: bold; }
+    .time-slot { font-weight: bold; border-left: 1px solid rgba(255,255,255,0.05); }
+    .event-card {
+        margin: 4px; padding: 5px 8px; border-radius: 6px; font-size: 0.8rem;
+        color: white; display: flex; flex-direction: column; justify-content: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 10; transition: 0.2s;
+        overflow: hidden; position: relative;
+    }
+    .event-card:hover { transform: scale(1.05); z-index: 20; }
+    .event-orange { background: linear-gradient(135deg, #fd7e14, #e65100); border-right: 3px solid #ffcc80; }
+    .event-green { background: linear-gradient(135deg, #198754, #0f5132); border-right: 3px solid #81c784; }
+    .event-blue { background: linear-gradient(135deg, #0d6efd, #004085); border-right: 3px solid #90caf9; }
+    .event-purple { background: linear-gradient(135deg, #6f42c1, #4a148c); border-right: 3px solid #d1c4e9; }
+
+    /* --- تنسيقات تسجيل المواد --- */
+    .registration-header {
+        background: rgba(13, 110, 253, 0.2); border: 1px solid rgba(13, 110, 253, 0.3);
+        border-radius: 12px; padding: 15px; margin-bottom: 20px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .reg-table th { background: rgba(0,0,0,0.3) !important; color: #fff; }
+    .reg-table td { vertical-align: middle; }
+    .btn-add-course { transition: 0.3s; }
+    .btn-add-course:hover { transform: scale(1.1); }
+
+    /* --- تنسيقات جدول العلامات --- */
+    .marks-container {
+        background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; overflow-x: auto;
+    }
+    .table-custom { width: 100%; border-collapse: separate; border-spacing: 0; color: #e0e0e0; }
+    .table-custom th {
+        background-color: rgba(255, 255, 255, 0.08); color: #fff; padding: 15px;
+        font-weight: bold; border-bottom: 2px solid rgba(13, 110, 253, 0.5); white-space: nowrap; text-align: center;
+    }
+    .table-custom td { padding: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); text-align: center; vertical-align: middle; }
+    .table-custom tbody tr:hover td { background-color: rgba(255, 255, 255, 0.05); }
+    .course-id { font-family: 'Courier New', monospace; color: #0d6efd; font-weight: bold; }
+    .grade-box {
+        display: inline-block; background: rgba(0, 0, 0, 0.3); padding: 5px 10px;
+        border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); font-weight: bold; min-width: 60px;
+    }
+
+    /* --- تنسيقات لوحة المهام (Kanban Board) --- */
+    .task-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .task-column {
+        background: rgba(18, 18, 25, 0.5); border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px; padding: 15px; height: 100%; min-height: 500px; display: flex; flex-direction: column;
+    }
+    .column-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px; color: #fff; font-weight: bold; font-size: 1rem;
+    }
+    .status-icon {
+        width: 28px; height: 28px; border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .icon-todo { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .icon-progress { background: rgba(13, 110, 253, 0.2); color: #0d6efd; }
+    .icon-review { background: rgba(253, 126, 20, 0.2); color: #fd7e14; }
+    .icon-done { background: rgba(25, 135, 84, 0.2); color: #198754; }
+    .task-card {
+        background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px;
+        margin-bottom: 15px; transition: all 0.2s ease; border: 1px solid transparent; cursor: grab;
+    }
+    .task-card:hover {
+        background: rgba(255, 255, 255, 0.1); transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-color: rgba(255, 255, 255, 0.1);
+    }
+    .task-tag {
+        display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;
+        color: #ccc; background: rgba(255, 255, 255, 0.08); margin-bottom: 10px;
+    }
+    .task-title { color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+    .task-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.75rem; color: #888; }
+    .btn-dots { color: #888; background: transparent; border: none; padding: 0; }
+    .btn-dots:hover { color: #fff; }
+
+    /* --- تنسيقات كتالوج الدورات (Catalog) --- */
+    /* تم دمج الكود المكرر هنا */
+    .available-course-card {
+        background: rgba(30, 30, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 15px; overflow: hidden; transition: 0.3s; height: 100%; display: flex; flex-direction: column;
+    }
+    .available-course-card:hover {
+        transform: translateY(-5px); border-color: #0d6efd;
+        background: rgba(40, 40, 50, 0.8); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .course-img { height: 180px; object-fit: cover; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .course-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    .btn-enroll {
+        background: linear-gradient(45deg, #0d6efd, #0099ff); border: none; padding: 10px;
+        border-radius: 8px; color: white; font-weight: bold; width: 100%; margin-top: auto; transition: 0.3s;
+    }
+    .btn-enroll:hover { opacity: 0.9; box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3); }
+    .btn-enrolled {
+        background: rgba(25, 135, 84, 0.2); color: #198754; border: 1px solid #198754;
+        width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: default; margin-top: auto;
+    }
+
+    /* --- تنسيقات قناة المادة (Channel Section) --- */
+    .channel-header {
+        background: linear-gradient(90deg, rgba(111, 66, 193, 0.8), rgba(60, 20, 120, 0.8));
+        padding: 30px; border-radius: 15px; margin-bottom: 20px; color: white;
+        border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;
+        justify-content: space-between; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .create-post-card {
+        background: rgba(30, 30, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px; padding: 20px; margin-bottom: 20px;
+    }
+    .post-input {
+        background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff; border-radius: 10px; resize: none;
+    }
+    .post-input:focus { background: rgba(0, 0, 0, 0.5); color: #fff; border-color: #a072fc; box-shadow: none; }
+    .post-card {
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 15px; padding: 20px; margin-bottom: 15px; transition: 0.2s;
+    }
+    .post-card:hover { background: rgba(255, 255, 255, 0.08); }
+    .user-avatar-post { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
+    .post-author { font-weight: bold; color: #fff; margin-right: 12px; }
+    .post-time { font-size: 0.8rem; color: #aaa; display: block; margin-right: 12px; }
+    .post-content { color: #ddd; font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; white-space: pre-line; }
+    .post-actions { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; gap: 15px; }
+    .action-btn {
+        background: transparent; border: none; color: #aaa; font-size: 0.9rem;
+        transition: 0.2s; padding: 5px 10px; border-radius: 5px;
+    }
+    .action-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .action-btn.liked { color: #e91e63; }
+    .course-tab .glass-form {
+    border-right: 4px solid #0d6efd; /* تمييز جانبي أزرق */
+}
+
+/* حالة النشط في القائمة الجانبية للمحتوى */
+.list-group-item.active {
+    background: linear-gradient(90deg, #0d6efd, transparent) !important;
+    border-right: 4px solid #fff !important;
+}
+/* تنسيق الجداول داخل محتوى الدورة */
+.table-glass td {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03); /* شفافية خفيفة جداً */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.course-tab .glass-form {
+    border-right: 4px solid #0d6efd; /* تمييز جانبي أزرق */
+}
+
+/* حالة النشط في القائمة الجانبية للمحتوى */
+.list-group-item.active {
+    background: linear-gradient(90deg, #0d6efd, transparent) !important;
+    border-right: 4px solid #fff !important;
+}
+/* تنسيق الجداول الزجاجية */
+.table-dark {
+    background: transparent !important;
+    --bs-table-bg: transparent !important;
+}
+
+.table-dark tr:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* القائمة الجانبية الداخلية */
+.list-group-item {
+    transition: all 0.3s ease;
+}
+
+.list-group-item:not(.active):hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #0dcaf0 !important;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container-fluid justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="showSection('home')">
+            <i class="fa-solid fa-graduation-cap fa-lg text-primary"></i> <span>منصة الوحي</span>
+        </a>
+<a href="#" class="text-white position-relative me-2" onclick="showSection('messages')" title="الرسائل">
+    <i class="fa-regular fa-envelope fa-lg"></i>
+    
+    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+        <span class="visually-hidden">رسائل جديدة</span>
+    </span>
+</a>
+<div class="sidebar-footer dropdown p-3" style="background-color: #000; border-top: 1px solid #333;">
+    
+    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUserSidebar" data-bs-toggle="dropdown" aria-expanded="false" style="outline: none;">
+        
+        <img src="https://ui-avatars.com/api/?name=Center+Manager&background=random" alt="mdo" width="40" height="40" class="rounded-circle me-2">
+        
+        <div class="d-flex flex-column" style="line-height: 1.2;">
+            <strong style="font-size: 1rem;">center info</strong>
+            <span class="text-white-50 small">Manager</span>
+        </div>
+    </a>
+
+    <ul class="dropdown-menu shadow" aria-labelledby="dropdownUserSidebar" style="min-width: 200px; margin-bottom: 10px;">
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" href="profile.html">
+                <i class="fa-regular fa-user"></i>
+                My Profile
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" href="settings.html">
+                 <i class="fa-solid fa-gear"></i>
+                Settings
+            </a>
+        </li>
+        
+        <li><hr class="dropdown-divider"></li>
+        
+        <li>
+     <a class="dropdown-item text-danger" href="#" onclick="logoutUser()">
+    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+</a>
+        </li>
+    </ul>
+</div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-block sticky-top" style="top: 80px;">
+                <div class="p-3 fw-bold border-bottom border-secondary text-white">لوحة الطالب</div>
+<div class="list-group list-group-flush" id="main-sidebar">
+    <a class="list-group-item active" onclick="showSection('home', this)">
+        <i class="fa-solid fa-house ms-2"></i> الرئيسية
+    </a>
+    
+    <a class="list-group-item" onclick="showSection('learning', this)">
+        <i class="fa-solid fa-book-open ms-2"></i> مقرراتي الدراسية
+    </a>
+
+<a class="list-group-item" onclick="showSection('catalog', this); loadAvailableCourses()">
+    <i class="fa-solid fa-cart-plus ms-2"></i> تصفح الدورات
+</a>
+
+    <a class="list-group-item" onclick="showSection('quran', this)">
+        <i class="fa-solid fa-quran ms-2"></i> سجل الحفظ
+    </a>
+
+    <a class="list-group-item" onclick="showSection('homework', this);loadStudentAssignments();">
+        <i class="fa-solid fa-file-pen ms-2"></i> الواجبات والمهام
+    </a>
+
+
+
+    <a class="list-group-item" onclick="showSection('marks', this); loadStudentGrades();">
+        <i class="fa-solid fa-star ms-2"></i> كشف العلامات
+    </a>
+
+
+    <a class="list-group-item" onclick="showSection('activities', this)">
+        <i class="fa-solid fa-tent ms-2"></i> الأنشطة والمسابقات
+    </a>
+
+
+
+    <a class="list-group-item" onclick="showSection('notes', this)">
+        <i class="fa-solid fa-note-sticky ms-2"></i> مفكرتي
+    </a>
+
+    <a class="list-group-item" onclick="showSection('revision', this);loadSurahList();">
+        <i class="fa-solid fa-brain ms-2"></i> المراجع الذكي
+    </a>
+
+    <a class="list-group-item" onclick="showSection('profile', this)">
+        <i class="fa-solid fa-user ms-2"></i> الملف الشخصي
+    </a>
+
+    
+    </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            
+<section id="home" class="active-section">
+
+
+<div class="container mt-4">
+        <h4 class="text-white mb-3">الاختبارات المتاحة</h4>
+        <div id="available-exams" class="row">
+            <div class="text-center text-white-50">جاري البحث عن اختبارات...</div>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between mb-3">
+                    <h6 class="text-white m-0">المهام المطلوبة</h6>
+                    <span class="badge bg-danger rounded-pill">2</span>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 mb-3 p-2 rounded bg-dark bg-opacity-50">
+                    <div class="bg-danger bg-opacity-25 p-2 rounded text-danger"><i class="fa-solid fa-file-pen"></i></div>
+                    <div>
+                        <div class="text-white small fw-bold">حل أسئلة المدود</div>
+                        <div class="text-danger x-small">ينتهي اليوم</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 mb-3 p-2 rounded bg-dark bg-opacity-50">
+                    <div class="bg-warning bg-opacity-25 p-2 rounded text-warning"><i class="fa-solid fa-microphone"></i></div>
+                    <div>
+                        <div class="text-white small fw-bold">تسجيل سورة الملك</div>
+                        <div class="text-warning x-small">غداً</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass-card text-center">
+                <h6 class="text-white-50 mb-3">إتمام المصحف</h6>
+                <div class="progress-ring">15%</div>
+                <h5 class="text-white m-0">5 أجزاء</h5>
+                <small class="text-success">متقنة تماماً</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass-card">
+                <h6 class="text-white-50 mb-3">إعلانات الإدارة</h6>
+                <div class="border-start border-primary border-3 ps-2 mb-3">
+                    <div class="text-white small fw-bold">عطلة رسمية</div>
+                    <div class="text-white-50 x-small">يوم الأحد القادم عطلة بمناسبة...</div>
+                </div>
+                <div class="border-start border-success border-3 ps-2">
+                    <div class="text-white small fw-bold">رحلة ترفيهية</div>
+                    <div class="text-white-50 x-small">التسجيل مفتوح للرحلة القادمة.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="learning">
+    <div class="d-flex justify-content-between align-items-center mb-4 text-white">
+        <h4><i class="fa-solid fa-book-open text-info me-2"></i> مقرراتي الدراسية</h4>
+        <button class="btn btn-outline-light btn-sm" onclick="showSection('catalog')">
+            <i class="fa-solid fa-plus me-1"></i> تسجيل مواد جديدة
+        </button>
+    </div>
+
+    <div class="row g-4" id="my-courses-container">
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card h-100 p-0 overflow-hidden">
+                <div class="course-header" style="background: linear-gradient(45deg, #1d976c, #93f9b9); height: 120px; position: relative; padding: 20px;">
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.3);"></div>
+                    <div class="position-relative z-1">
+                        <span class="badge bg-white text-success mb-2">نشط الآن</span>
+                        <h5 class="m-0 fw-bold text-white text-shadow">التجويد المصور</h5>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <p class="text-white-50 small mb-3"><i class="fa-solid fa-chalkboard-user me-2"></i> د. أيمن سويد</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-white small">التقدم: 45%</span>
+                    </div>
+                    <div class="progress bg-dark mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 45%"></div>
+                    </div>
+
+   <button class="btn btn-outline-light w-100 btn-sm" onclick="showSection('course-content-section', this)">
+    متابعة التعلم 
+    <i class="fa-solid fa-arrow-left ms-2"></i>
+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card h-100 p-0 overflow-hidden">
+                <div class="course-header" style="background: linear-gradient(45deg, #4b6cb7, #182848); height: 120px; position: relative; padding: 20px;">
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.3);"></div>
+                    <div class="position-relative z-1">
+                        <span class="badge bg-secondary mb-2">لم يبدأ</span>
+                        <h5 class="m-0 fw-bold text-white text-shadow">الآداب الإسلامية</h5>
+                    </div>
+                </div>
+                <div class="p-3 text-center py-4">
+                    <i class="fa-solid fa-clock fa-2x text-white-50 mb-2"></i>
+                    <p class="text-white-50 small">يبدأ الفصل القادم</p>
+                    <button class="btn btn-outline-secondary w-100 btn-sm disabled">قريباً</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="catalog" class="d-none">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <button class="btn btn-sm btn-link text-white-50 p-0 text-decoration-none mb-1" onclick="showSection('learning')">
+                <i class="fa-solid fa-arrow-right me-1"></i> العودة لمقرراتي
+            </button>
+            <h4 class="text-white fw-bold"><i class="fa-solid fa-layer-group text-info me-2"></i> الدورات المتاحة للتسجيل</h4>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <input type="text" class="input-glass form-control-sm" placeholder="بحث عن دورة..." style="width: 250px;">
+        </div>
+    </div>
+
+    <div class="row g-4" id="catalog-container">
+        </div>
+
+</section>
+<section id="quran">
+    <div class="row g-4">
+        
+        <div class="col-lg-5">
+            <div class="glass-card text-center">
+                <h5 class="text-white mb-4">خريطة الإنجاز (30 جزء)</h5>
+                
+                <div class="juz-grid">
+                    <div class="juz-box juz-done">1</div>
+                    <div class="juz-box juz-done">2</div>
+                    <div class="juz-box juz-done">3</div>
+                    <div class="juz-box juz-done">29</div>
+                    <div class="juz-box juz-done">30</div>
+                    
+                    <div class="juz-box juz-current">4</div>
+                    
+                    <div class="juz-box">5</div>
+                    <div class="juz-box">6</div>
+                    <div class="juz-box">7</div>
+                    <div class="juz-box">8</div>
+                    <div class="juz-box">9</div>
+                    <div class="juz-box">10</div>
+                    <div class="juz-box">11</div>
+                    <div class="juz-box">12</div>
+                    <div class="juz-box" style="opacity: 0.3;">...</div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top border-secondary">
+                    <div class="d-flex justify-content-between text-white-50 small mb-1">
+                        <span>نسبة الختم</span>
+                        <span>16%</span>
+                    </div>
+                    <div class="progress bg-dark" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 16%"></div>
+                    </div>
+                    <div class="mt-3 small">
+                        <span class="badge bg-success me-1"> </span> محفوظ
+                        <span class="badge bg-warning text-dark me-1"> </span> جاري الحفظ
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="glass-card">
+                <h5 class="text-white mb-4">سجل التسميع (تغذية راجعة)</h5>
+                
+                <div class="timeline-item">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h6 class="text-white fw-bold m-0">سورة النساء (الآيات 1-15)</h6>
+                        <span class="badge bg-primary bg-opacity-25 text-white">اليوم</span>
+                    </div>
+                    <p class="text-white-50 small mb-2">الشيخ علي حسن • حلقة التجويد</p>
+                    
+                    <div class="bg-dark bg-opacity-50 p-3 rounded border border-secondary border-opacity-25">
+                        <div class="d-flex gap-3 text-white small mb-2">
+                            <span><i class="fa-solid fa-star text-warning"></i> التقييم: 98%</span>
+                            <span><i class="fa-solid fa-circle-check text-success"></i> الإتقان: ممتاز</span>
+                        </div>
+                        <div class="text-info x-small"><i class="fa-solid fa-comment-dots ms-1"></i> ملاحظة: ما شاء الله، أداء متقن. انتبه فقط لزمن الغنة في الآية 12.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item border-warning-subtle">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h6 class="text-white fw-bold m-0">سورة آل عمران (أواخر السورة)</h6>
+                        <span class="badge bg-secondary bg-opacity-25 text-white">منذ يومين</span>
+                    </div>
+                    <div class="bg-dark bg-opacity-50 p-3 rounded border border-secondary border-opacity-25">
+                        <div class="d-flex gap-3 text-white small mb-2">
+                            <span><i class="fa-solid fa-star-half-stroke text-warning"></i> التقييم: 85%</span>
+                        </div>
+                        <div class="text-warning x-small"><i class="fa-solid fa-triangle-exclamation ms-1"></i> مراجعة: الآيات تحتاج لتثبيت أكثر، يرجى إعادة التسميع.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="activities">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-tent text-success me-2"></i> الفعاليات القادمة</h4>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-outline-light active">الكل</button>
+            <button class="btn btn-sm btn-outline-light">المسابقات</button>
+            <button class="btn btn-sm btn-outline-light">الرحلات</button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-md-6">
+            <div class="activity-card">
+                <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?q=80&w=1000&auto=format&fit=crop');">
+                    <div class="date-badge">
+                        <div class="fw-bold h4 m-0">25</div>
+                        <div class="small text-uppercase">Dec</div>
+                    </div>
+                    <span class="badge bg-warning text-dark position-absolute bottom-0 start-0 m-3 shadow">مسابقة</span>
+                </div>
+                <div class="activity-body">
+                    <div>
+                        <h5 class="text-white fw-bold mb-2">مسابقة المزمار الذهبي</h5>
+                        <p class="text-white-50 small mb-3">مسابقة أجمل تلاوة لجميع المستويات. جوائز قيمة للفائزين بالمراكز الثلاثة الأولى.</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-2">
+                        <span class="text-info small"><i class="fa-solid fa-location-dot me-1"></i> القاعة الرئيسية</span>
+                        <button class="btn btn-primary btn-sm px-4">تسجيل الآن</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="activity-card">
+                <div class="activity-img" style="background-image: url('https://images.unsplash.com/photo-1533227297464-94291596b422?q=80&w=1000&auto=format&fit=crop');">
+                    <div class="date-badge bg-success border-success">
+                        <div class="fw-bold h4 m-0">05</div>
+                        <div class="small text-uppercase">Jan</div>
+                    </div>
+                    <span class="badge bg-success position-absolute bottom-0 start-0 m-3 shadow">رحلة</span>
+                </div>
+                <div class="activity-body">
+                    <div>
+                        <h5 class="text-white fw-bold mb-2">رحلة المخيم الشتوي</h5>
+                        <p class="text-white-50 small mb-3">يوم كامل من النشاط واللعب والمراجعة في مزرعة النخيل. المواصلات مؤمنة.</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-2">
+                        <span class="text-warning small"><i class="fa-solid fa-ticket me-1"></i> 5.00 د.أ</span>
+                        <button class="btn btn-outline-secondary btn-sm px-4" disabled>ممتلئ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<section id="notes" class="d-none container mt-4">
+    <div class="row g-4" style="height: 80vh;">
+        <div class="col-md-4 h-100">
+            <div class="glass-card p-0 h-100 overflow-hidden d-flex flex-column">
+                
+                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-25 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 text-white fw-bold">ملاحظاتي</h6>
+                    <button onclick="createNewNote()" class="btn btn-sm btn-primary rounded-circle">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <div id="notes-list" class="overflow-auto flex-grow-1 custom-scroll">
+                    <div class="text-center text-white-50 mt-5">جاري التحميل...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 h-100">
+            <div id="editor-area" class="glass-card h-100 editor-area d-none"> <input type="text" id="note-title" oninput="autoSave()" 
+                       class="input-glass border-0 fs-4 fw-bold mb-3 w-100 text-white" 
+                       style="background: transparent; outline: none;" placeholder="عنوان الملاحظة">
+                
+                <div class="mb-3 border-bottom border-secondary pb-2">
+                    <span class="badge bg-info bg-opacity-25 text-info me-2">عام</span>
+                    
+                    <span id="save-status" class="float-end text-success small opacity-0 transition-opacity">
+                        <i class="fa-solid fa-check"></i> تم الحفظ
+                    </span>
+                    
+                    <button onclick="deleteCurrentNote()" class="btn btn-sm btn-danger float-end me-3 py-0">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+                <textarea id="note-content" oninput="autoSave()" 
+                          class="editor-textarea w-100 h-100 bg-transparent text-white border-0" 
+                          style="outline: none; resize: none;" 
+                          placeholder="اكتب ملاحظاتك هنا..."></textarea>
+            </div>
+            
+            <div id="empty-state" class="glass-card h-100 d-flex flex-column justify-content-center align-items-center">
+                <i class="fa-solid fa-pen-to-square fa-4x text-white-50 mb-3"></i>
+                <h4 class="text-white">اختر ملاحظة لعرضها</h4>
+                <p class="text-white-50">أو اضغط على + لإنشاء ملاحظة جديدة</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="profile">
+    <div class="row g-4">
+        
+        <div class="col-md-7">
+            <div class="glass-card">
+                <div class="profile-header">
+                    <div class="profile-img-container">
+<img src="https://ui-avatars.com/api/?name=Ahmed+Ali&background=random&size=128" class="profile-img" alt="صورة الطالب">                    </div>
+                    <h4 class="text-white fw-bold m-0">أحمد محمد علي</h4>
+                    <p class="text-white-50 mt-1 mb-0">طالب | المستوى الثالث</p>
+                </div>
+
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">الاسم الأول</label>
+                            <input type="text" class="input-glass" value="أحمد">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">اسم العائلة</label>
+                            <input type="text" class="input-glass" value="علي">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">رقم الهاتف</label>
+                            <input type="text" class="input-glass" value="0791234567">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-white-50 small mb-1">كلمة المرور</label>
+                            <input type="password" class="input-glass" value="******">
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100 mt-4 fw-bold">حفظ التعديلات <i class="fa-solid fa-save ms-2"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="glass-card h-100">
+                <h5 class="text-white mb-4"><i class="fa-solid fa-medal text-warning me-2"></i> إنجازاتي وأوسمتي</h5>
+                
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="badge-item">
+                            <i class="fa-solid fa-crown badge-icon text-warning"></i>
+                            <h6 class="text-white small m-0 fw-bold">حافظ 5 أجزاء</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="badge-item">
+                            <i class="fa-solid fa-calendar-check badge-icon text-success"></i>
+                            <h6 class="text-white small m-0 fw-bold">التزام تام</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="badge-item">
+                            <i class="fa-solid fa-star badge-icon text-info"></i>
+                            <h6 class="text-white small m-0 fw-bold">الطالب المثالي</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="badge-item" style="opacity: 0.5;">
+                            <i class="fa-solid fa-book-quran badge-icon text-white"></i>
+                            <h6 class="text-white small m-0 fw-bold">الخاتم (قريباً)</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="revision" class="d-none container mt-4">
+    <div class="glass-card text-center">
+        <h4 class="text-white mb-4"><i class="fa-solid fa-brain text-info me-2"></i> المراجع الذكي - اختبر حفظك</h4>
+        
+        <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+            <select id="surah-select" class="input-glass w-auto bg-dark text-white p-2">
+                <option value="" disabled selected>اختر السورة للمراجعة...</option>
+                </select>
+            
+            <button onclick="startRevision()" class="btn btn-primary">
+                <i class="fa-solid fa-play me-2"></i> ابدأ الاختبار
+            </button>
+            
+            <button onclick="randomizeBlur()" class="btn btn-outline-light">
+                <i class="fa-solid fa-shuffle me-2"></i> إخفاء كلمات عشوائية
+            </button>
+        </div>
+
+        <div class="quran-box p-4 rounded-3 border border-secondary bg-dark bg-opacity-50" style="min-height: 200px;">
+            <div id="quran-text-display" class="quran-text fs-4 lh-lg text-white" dir="rtl" style="font-family: 'Amiri', serif;">
+                <p class="text-white-50 mt-5">اختر سورة واضغط "بدء الاختبار" لتظهر الآيات هنا...</p>
+            </div>
+        </div>
+
+        <div class="alert alert-info bg-opacity-10 border-info text-info small d-inline-block px-4 py-2 rounded-pill mt-3">
+            <i class="fa-solid fa-mouse-pointer me-2"></i> حرك الماوس فوق النص المضبب (أو اضغط عليه) لإظهاره.
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button onclick="hideAll()" class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-eye-slash me-2"></i> إخفاء الكل
+            </button>
+            <button onclick="showAll()" class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-eye me-2"></i> إظهار الكل
+            </button>
+        </div>
+
+        <div id="rating-buttons" class="mt-4 pt-3 border-top border-secondary d-flex justify-content-center gap-3 d-none">
+            <button onclick="saveResult('Excellent')" class="btn btn-success btn-sm">
+                <i class="fa-solid fa-check me-2"></i> أتقنت الحفظ
+            </button>
+            <button onclick="saveResult('NeedsReview')" class="btn btn-danger btn-sm">
+                <i class="fa-solid fa-rotate-right me-2"></i> أحتاج مراجعة
+            </button>
+        </div>
+    </div>
+</section>
+
+<section id="messages">
+    
+    <div class="chat-wrapper">
+        
+        <div class="chat-contacts-sidebar d-none d-md-flex">
+            <div class="p-3 border-bottom border-secondary">
+                <input type="text" class="input-glass form-control-sm" placeholder="بحث عن معلم أو طالب...">
+            </div>
+            
+            <div class="overflow-auto h-100 custom-scroll">
+                
+                <div class="contact-item active">
+                    <img src="https://ui-avatars.com/api/?name=Teacher+Ali&background=random" class="contact-avatar">
+                    <div>
+                        <div class="text-white small fw-bold">الشيخ علي حسن</div>
+                        <div class="text-white-50 x-small">معلم التجويد • <span class="text-success">متصل</span></div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="contact-avatar">
+                    <div>
+                        <div class="text-white small fw-bold">الإدارة المالية</div>
+                        <div class="text-white-50 x-small">الدعم الفني</div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <img src="https://ui-avatars.com/api/?name=Group+A&background=random" class="contact-avatar">
+                    <div>
+                        <div class="text-white small fw-bold">مجموعة التسميع (أ)</div>
+                        <div class="text-white-50 x-small">آخر رسالة: موعدنا غداً...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="chat-main-area">
+            
+            <div class="p-3 border-bottom border-secondary d-flex align-items-center gap-3 bg-dark bg-opacity-25">
+                <button class="btn btn-sm btn-link text-white d-md-none"><i class="fa-solid fa-arrow-right"></i></button>
+                
+                <img src="https://ui-avatars.com/api/?name=Teacher+Ali&background=random" class="contact-avatar" style="width: 40px; height: 40px;">
+                <div>
+                    <h6 class="m-0 text-white fw-bold">الشيخ علي حسن</h6>
+                    <small class="text-success"><i class="fa-solid fa-circle x-small"></i> متصل الآن</small>
+                </div>
+                <div class="ms-auto">
+                    <button class="btn btn-sm btn-outline-light rounded-circle"><i class="fa-solid fa-phone"></i></button>
+                    <button class="btn btn-sm btn-outline-light rounded-circle"><i class="fa-solid fa-video"></i></button>
+                </div>
+            </div>
+
+            <div class="messages-scroll custom-scroll">
+                <div class="text-center text-white-50 x-small mb-3">اليوم 10:30 ص</div>
+                
+                <div class="message-bubble msg-received">
+                    السلام عليكم يا أحمد، كيف حال الحفظ؟
+                </div>
+                <div class="message-bubble msg-sent">
+                    وعليكم السلام يا شيخ، الحمد لله أتممت المقرر.
+                </div>
+                <div class="message-bubble msg-received">
+                    ممتاز، موعدنا غداً للتسميع إن شاء الله.
+                </div>
+                <div class="message-bubble msg-sent">
+                     إن شاء الله، سأكون جاهزاً.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <button class="btn btn-sm btn-outline-light rounded-circle" style="width: 40px; height: 40px;"><i class="fa-solid fa-paperclip"></i></button>
+                <input type="text" class="input-glass border-0" placeholder="اكتب رسالتك..." style="background: rgba(255,255,255,0.05);">
+                <button class="btn btn-primary rounded-circle" style="width: 40px; height: 40px;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section id="marks">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white fw-bold"><i class="fa-solid fa-file-contract text-info me-2"></i> كشف العلامات الفصلي</h4>
+        <button class="btn btn-outline-light btn-sm" onclick="window.print()">
+            <i class="fa-solid fa-print ms-2"></i> طباعة الكشف
+        </button>
+    </div>
+
+    <div class="marks-container">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>رقم المادة</th>
+                    <th style="text-align: right;">اسم المادة</th>
+                    <th>المشاركة</th>
+                    <th>الامتحان النصفي</th>
+                    <th>أعمال الفصل</th>
+                    <th>الامتحان النهائي</th>
+                    <th>المجموع</th>
+                    <th>التقدير</th>
+                </tr>
+            </thead>
+            <tbody id="marksTableBody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3 text-white-50 small">
+        <i class="fa-solid fa-circle-info ms-1"></i>
+        العلامات الظاهرة هنا هي علامات أولية وقابلة للتعديل قبل الاعتماد النهائي من الإدارة.
+    </div>
+
+</section>
+
+<section id="submit-assignment-section" class="d-none">
+    <div class="container mt-4">
+        <button class="btn btn-sm btn-link text-white-50 mb-3 text-decoration-none p-0" onclick="showSection('homework')">
+            <i class="fa-solid fa-arrow-right me-1"></i> العودة للواجبات
+        </button>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-4 border-start border-4 border-info">
+                    
+                    <div class="mb-4 border-bottom border-secondary pb-4">
+                        <span class="badge bg-info bg-opacity-10 text-info mb-2">واجب دراسي</span>
+                        <h3 class="text-white fw-bold mb-2" id="submit-page-title">عنوان الواجب</h3>
+                        <p class="text-white-50" id="submit-page-desc">وصف الواجب...</p>
+                        
+
+    <div id="teacher-attachment-container" class="d-none mb-3">
+        <a id="teacher-file-link" href="#" target="_blank" class="btn btn-outline-warning btn-sm w-100">
+            <i class="fa-solid fa-download me-2"></i> تحميل المرفق (ملف المعلم)
+        </a>
+    </div>
+                        <div class="d-flex gap-3 text-small text-secondary">
+                            <span><i class="fa-regular fa-calendar me-1"></i> تاريخ التسليم: <span id="submit-page-date" class="text-white">--</span></span>
+                        </div>
+                    </div>
+
+                    <form id="submissionForm" onsubmit="event.preventDefault(); submitAssignmentResponse();">
+                        <input type="hidden" id="submit-assign-id">
+                        
+                        <div class="mb-4">
+                            <label class="text-white fw-bold mb-2">1. إرفاق ملف الحل</label>
+                            <div class="upload-drop-zone border border-secondary border-dashed rounded p-4 text-center" 
+                                 style="border-style: dashed; background: rgba(255,255,255,0.02); cursor: pointer;"
+                                 onclick="document.getElementById('submissionFile').click()">
+                                
+                                <i class="fa-solid fa-cloud-arrow-up fa-3x text-info mb-3"></i>
+                                <h6 class="text-white">اضغط لرفع ملف (PDF, Word, Image)</h6>
+                                <p class="text-white-50 small" id="submissionFileDisplay">لم يتم اختيار ملف</p>
+                                <input type="file" id="submissionFile" hidden>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-white fw-bold mb-2">2. ملاحظات إضافية (اختياري)</label>
+                            <textarea id="submissionNotes" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="اكتب أي ملاحظات للمعلم هنا..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold fs-5">
+                            <i class="fa-solid fa-paper-plane me-2"></i> تسليم الواجب
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="homework">
+    
+    <div class="task-section-header">
+        <div>
+            <h3 class="text-white fw-bold mb-1">الواجبات والمشاريع</h3>
+            <p class="text-white-50 m-0 small">متابعة حالة تسليم الواجبات الدراسية</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold" onclick="loadStudentAssignments()">
+                <i class="fa-solid fa-rotate ms-1"></i> تحديث
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-lg-4">
+            <div class="task-column border-top border-4 border-secondary">
+                <div class="column-header">
+                    <span>1. قيد الانتظار (مطلوب حله)</span>
+                    <div class="status-icon icon-todo"><i class="fa-solid fa-hourglass-start"></i></div>
+                </div>
+                <div id="col-todo" class="min-h-200">
+                    </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="task-column border-top border-4 border-warning">
+                <div class="column-header">
+                    <span>2. تم التسليم (بانتظار التصحيح)</span>
+                    <div class="status-icon icon-progress"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+                </div>
+                <div id="col-submitted" class="min-h-200"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="task-column border-top border-4 border-success">
+                <div class="column-header">
+                    <span>3. تم التقييم (مكتمل)</span>
+                    <div class="status-icon icon-done"><i class="fa-solid fa-check-double"></i></div>
+                </div>
+                <div id="col-graded" class="min-h-200"></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="channel" class="d-none">
+    
+    <button class="btn btn-sm btn-link text-white-50 mb-3 text-decoration-none p-0" onclick="showSection('coursework')">
+        <i class="fa-solid fa-arrow-right me-1"></i> العودة للمقررات
+    </button>
+>
+
+    <div class="create-post-card">
+        <div class="d-flex mb-3">
+<img src="https://ui-avatars.com/api/?name=Student&background=random" alt="Profile" width="40" height="40" class="rounded-circle">            <textarea class="form-control post-input" id="postContent" rows="3" placeholder="ابدأ مناقشة جديدة أو اطرح سؤالاً..."></textarea>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-secondary small">
+                <i class="fa-solid fa-image ms-2 cursor-pointer hover-white" title="إرفاق صورة"></i>
+                <i class="fa-solid fa-paperclip ms-2 cursor-pointer hover-white" title="إرفاق ملف"></i>
+            </div>
+            <button class="btn btn-primary px-4 fw-bold" onclick="publishPost()">
+                <i class="fa-solid fa-paper-plane ms-2"></i> نشر
+            </button>
+        </div>
+    </div>
+
+    <div id="postsFeed">
+        
+        <div class="post-card" style="border-right: 4px solid #a072fc;">
+            <div class="post-header">
+                <img src="https://ui-avatars.com/api/?name=Malek+Nawashi&background=random" class="user-avatar-post ms-3">
+                <div>
+                    <div class="post-author">نور ربابعة  <span class="badge bg-primary">مدرس</span></div>
+                    <span class="post-time">منذ ساعتين</span>
+                </div>
+                <div class="me-auto text-secondary"><i class="fa-solid fa-thumbtack" title="منشور مثبت"></i></div>
+            </div>
+            <div class="post-content">
+                أعزائي الطلبة،
+                تم رفع السلايدات الخاصة بالمحاضرة الأولى على مودل. يرجى الاطلاع عليها قبل موعد المحاضرة القادمة يوم الأحد.
+                سيتم مناقشة خوارزمية A* Search بالتفصيل.
+            </div>
+            <div class="post-actions">
+                <button class="action-btn" onclick="toggleLike(this)"><i class="fa-regular fa-thumbs-up ms-1"></i> إعجاب (15)</button>
+                <button class="action-btn"><i class="fa-regular fa-comment ms-1"></i> تعليق (3)</button>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-header">
+                <img src="https://ui-avatars.com/api/?name=Sami+Yousef&background=random" class="user-avatar-post ms-3">
+                <div>
+                    <div class="post-author">سامي يوسف</div>
+                    <span class="post-time">أمس 4:30 م</span>
+                </div>
+            </div>
+            <div class="post-content">
+                هل الكويز القادم داخل فيه شابتر 3؟ ولا بس أول شابترين؟
+            </div>
+            <div class="post-actions">
+                <button class="action-btn" onclick="toggleLike(this)"><i class="fa-regular fa-thumbs-up ms-1"></i> إعجاب (2)</button>
+                <button class="action-btn"><i class="fa-regular fa-comment ms-1"></i> تعليق (1)</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="take-exam-section" class="d-none">
+    <div class="container mt-4">
+        <div class="glass-card p-4 mb-4 border-primary border-start border-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="text-white fw-bold" id="activeExamTitle">عنوان الامتحان</h3>
+                    <span class="text-white-50"><i class="fa-solid fa-clock me-2"></i>المدة: <span id="activeExamDuration">0</span> دقيقة</span>
+                </div>
+                <div class="text-center">
+                    <h2 class="text-warning fw-bold" id="timer">00:00</h2>
+                </div>
+            </div>
+        </div>
+
+        <form id="examForm" onsubmit="event.preventDefault();">
+            <div id="exam-questions-container">
+                </div>
+
+            <div class="text-center mt-5 mb-5">
+                <button type="button" class="btn btn-success btn-lg px-5" onclick="submitAnswers()">
+                    <i class="fa-solid fa-paper-plane me-2"></i> تسليم الإجابات
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+<section id="course-content-section" class="d-none">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+<button onclick="showSection('learning')" class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-arrow-right ms-2"></i> العودة للمقررات
+        </button>
+        <h3 class="text-white m-0" id="current-course-title">تمهيدية في أحكام التجويد</h3>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="glass-form p-0 overflow-hidden shadow-lg">
+                <div class="list-group list-group-flush shadow-none">
+                    <button id="btn-assignments" class="list-group-item list-group-item-action active bg-primary border-0 py-3" onclick="switchCourseTab('assignments')">
+                        <i class="fa-solid fa-file-pen ms-2"></i> الواجبات الدراسية
+                    </button>
+                    <button id="btn-exams" class="list-group-item list-group-item-action bg-transparent text-white border-secondary py-3" onclick="switchCourseTab('exams')">
+                        <i class="fa-solid fa-file-invoice ms-2"></i> الامتحانات والاختبارات
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            
+            <div id="tab-assignments" class="course-tab">
+                <div class="glass-form mb-4 border-start border-4 border-info">
+                    <div class="d-flex justify-content-between align-items-start border-bottom border-secondary pb-3 mb-3">
+                        <div>
+                            <h4 class="text-white">الواجب رقم 3: أحكام الميم الساكنة</h4>
+                            <p class="text-white-50 small mb-0"><i class="fa-regular fa-calendar-check ms-1"></i> تاريخ التسليم: الخميس، 20 يناير 2026، 11:00 م</p>
+                        </div>
+                        <span class="badge bg-success px-3 py-2"><i class="fa-solid fa-check ms-1"></i> منجز</span>
+                    </div>
+
+                    <h5 class="text-white-50 mb-3 small fw-bold">حالة التسليم</h5>
+                    <div class="table-responsive rounded-3 overflow-hidden border border-secondary">
+                        <table class="table table-dark table-hover mb-0" style="--bs-table-bg: rgba(0,0,0,0.2);">
+                            <tbody>
+                                <tr>
+                                    <td class="text-white-50 border-secondary px-4 w-25">حالة التسليم</td>
+                                    <td class="text-white border-secondary">مسلمة للتقييم</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-white-50 border-secondary px-4">حالة التقييم</td>
+                                    <td class="text-success fw-bold border-secondary">مُقيّم (100 / 100)</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-white-50 border-secondary px-4">الزمن المتبقي</td>
+                                    <td class="text-white border-secondary">تم تسليم الواجب مبكراً بـ 26 دقيقة</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-4 d-flex gap-2">
+                        <button class="btn btn-primary flex-grow-1"><i class="fa-solid fa-edit ms-2"></i> تحرير التسليم</button>
+                        <button class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-exams" class="course-tab d-none">
+                <div class="glass-form border-start border-4 border-warning">
+                    <div class="text-center mb-5 mt-3">
+                        <div class="icon-box bg-warning bg-opacity-10 d-inline-block p-4 rounded-circle mb-3">
+                            <i class="fa-solid fa-stopwatch fa-3x text-warning"></i>
+                        </div>
+                        <h4 class="text-white">الاختبار الشهري الثاني</h4>
+                        <div class="d-flex justify-content-center gap-4 text-white-50 small mt-3">
+                            <span><i class="fa-solid fa-rotate-left ms-1 text-info"></i> المحاولات المسموحة: 1</span>
+                            <span><i class="fa-solid fa-clock ms-1 text-info"></i> الحد الزمني: 15 دقيقة</span>
+                        </div>
+                    </div>
+
+                    <h5 class="text-white-50 mb-3 small fw-bold">ملخص محاولاتك السابقة</h5>
+                    <div class="table-responsive rounded-3 border border-secondary">
+                        <table class="table table-dark text-center align-middle mb-0">
+                            <thead class="table-secondary bg-opacity-10">
+                                <tr>
+                                    <th class="border-secondary py-3">المحاولة</th>
+                                    <th class="border-secondary py-3">الحالة</th>
+                                    <th class="border-secondary py-3">الدرجة / 10</th>
+                                    <th class="border-secondary py-3">مراجعة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-white border-secondary">1</td>
+                                    <td class="text-white-50 border-secondary">منتهية (سلمت الخميس، 11 ديسمبر 2025)</td>
+                                    <td class="fw-bold text-info border-secondary">9.00</td>
+                                    <td class="border-secondary"><button class="btn btn-sm btn-link text-white-50 p-0 text-decoration-none">غير مسموح</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-warning w-100 mt-4 fw-bold py-3"><i class="fa-solid fa-play ms-2"></i> ابدأ المحاولة الآن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="exam-result-section" class="d-none">
+    <div class="container mt-5 text-center">
+        <div class="glass-card p-5 d-inline-block">
+            <div class="mb-4">
+                <i class="fa-solid fa-medal text-warning" style="font-size: 5rem;"></i>
+            </div>
+            <h2 class="text-white mb-3">تم تسليم الامتحان بنجاح!</h2>
+            <h1 class="display-1 fw-bold text-success mb-3" id="resultScore">0%</h1>
+            <p class="text-white-50" id="resultDetails">الدرجة: 0 / 0</p>
+            <button class="btn btn-outline-light mt-4" onclick="location.reload()">العودة للرئيسية</button>
+        </div>
+    </div>
+</section>
+            </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ============================================
+    // ⚙️ 1. إعدادات النظام والتوثيق (System Config)
+    // ============================================
+    const API_BASE_URL = "http://localhost:5220/api";
+    const API_URL = API_BASE_URL; 
+    const STUDENT_ID = localStorage.getItem('userId'); 
+    const TOKEN = localStorage.getItem('authToken');
+
+    // التحقق من تسجيل الدخول
+    if (!STUDENT_ID || !TOKEN) {
+        window.location.href = 'login.html';
+    }
+
+    // ============================================
+    // 2. إدارة التنقل والواجهة (UI & Navigation)
+    // ============================================
+    
+// 1. دالة التنقل الرئيسية بين الأقسام
+function showSection(sectionId, element = null) {
+    // إخفاء جميع الأقسام التي تحمل وسم <section>
+    document.querySelectorAll('section').forEach(sec => {
+        sec.classList.add('d-none');
+        sec.classList.remove('active-section');
+    });
+
+    // إظهار القسم المطلوب
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.remove('d-none');
+        targetSection.classList.add('active-section');
+    }
+
+    // تحديث اسم الدورة في العنوان العلوي إذا تم النقر من بطاقة دورة
+    if (element && sectionId === 'course-content-section') {
+        const courseCard = element.closest('.glass-card') || element.closest('.glass-form');
+        const courseTitle = courseCard.querySelector('h5, h4').innerText;
+        document.getElementById('current-course-title').innerText = courseTitle;
+    }
+if (sectionId === 'smart-review-section') { 
+    loadSurahList(); 
+}
+}
+
+
+
+// 4. تحديث حالة القائمة الجانبية (Sidebar) لتبدو متناسقة
+  
+  
+  
+    document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-target') === sectionId) {
+            btn.classList.add('active');
+        }
+    });
+
+    // تشغيل عند تحميل الصفحة (تجميع كل الاستدعاءات هنا)
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('home'); // الصفحة الافتراضية
+        loadStudentCourses(); // تحميل الامتحانات في الرئيسية
+        loadMyCourses();      // تحميل المواد المسجلة
+    });
+
+    // ============================================
+    // 3. نظام الامتحانات (Exams System)
+    // ============================================
+    
+    // جلب الامتحانات المتاحة
+    async function loadStudentCourses() {
+        const container = document.getElementById('available-exams');
+        if(container) container.innerHTML = '<div class="text-center text-white-50"><i class="fa-solid fa-spinner fa-spin me-2"></i> جاري جلب الاختبارات...</div>';
+
+        try {
+            const res = await fetch(`${API_URL}/Student/all-exams`);
+            if (!res.ok) throw new Error("Server Error");
+
+            const exams = await res.json();
+            container.innerHTML = '';
+
+            if(exams.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fa-solid fa-clipboard-check text-white-50 fa-3x mb-3"></i>
+                        <p class="text-white-50">لا توجد اختبارات منشورة حالياً.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = exams.map(exam => `
+                <div class="col-md-6 mb-3 fade-in">
+                    <div class="glass-card p-3 d-flex justify-content-between align-items-center border-start border-4 border-success">
+                        <div>
+                            <span class="badge bg-info bg-opacity-25 text-info mb-2">
+                                <i class="fa-solid fa-book me-1"></i> ${exam.courseName}
+                            </span>
+                            <h5 class="text-white fw-bold mb-1">${exam.title}</h5>
+                            <small class="text-white-50">
+                                <i class="fa-regular fa-clock me-1"></i> ${exam.durationMinutes} دقيقة • ${exam.questionCount} أسئلة
+                            </small>
+                        </div>
+                        <button class="btn btn-success btn-sm px-4 fw-bold" onclick="startExam('${exam.id}')">
+                            ابدأ <i class="fa-solid fa-play ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch(e) { 
+            console.error(e);
+            if(container) container.innerHTML = '<p class="text-white-50 text-center">لا توجد اختبارات متاحة حالياً.</p>';
+        }
+    }
+
+    let currentExamId = null;
+
+    // بدء الامتحان
+    async function startExam(examId) {
+        try {
+            document.body.style.cursor = 'wait';
+            const res = await fetch(`${API_URL}/Student/exam/${examId}/take`);
+            if(!res.ok) throw new Error("Error loading exam");
+            
+            const exam = await res.json();
+            currentExamId = examId;
+
+            // إخفاء الكل وإظهار الامتحان
+            document.querySelectorAll('section').forEach(s => {
+                s.classList.add('d-none');
+                s.classList.remove('active-section');
+            });
+
+            const examSection = document.getElementById('take-exam-section');
+            examSection.classList.remove('d-none');
+            examSection.classList.add('active-section');
+
+            document.getElementById('activeExamTitle').innerText = exam.title;
+            document.getElementById('activeExamDuration').innerText = exam.duration;
+
+            const qContainer = document.getElementById('exam-questions-container');
+            
+            if (!exam.questions || exam.questions.length === 0) {
+                qContainer.innerHTML = '<div class="alert alert-warning">لا توجد أسئلة.</div>';
+            } else {
+                qContainer.innerHTML = exam.questions.map((q, index) => {
+                    const optionsText = q.options || ""; 
+                    const optionsArray = optionsText.split(',').filter(o => o.trim() !== ""); 
+                    
+                    let optionsHTML = optionsArray.map(opt => `
+                        <div class="form-check mb-2">
+                            <input class="form-check-input custom-radio" type="radio" name="q_${q.id}" value="${opt}" id="opt_${q.id}_${opt}">
+                            <label class="form-check-label text-white" for="opt_${q.id}_${opt}">
+                                ${opt}
+                            </label>
+                        </div>
+                    `).join('');
+
+                    return `
+                    <div class="glass-card p-4 mb-3 question-block" data-id="${q.id}">
+                        <h5 class="text-white mb-3">
+                            <span class="badge bg-primary me-2">سؤال ${index + 1}</span> 
+                            ${q.text}
+                        </h5>
+                        <div class="options-container ms-4">${optionsHTML}</div>
+                    </div>`;
+                }).join('');
+            }
+            document.body.style.cursor = 'default';
+        } catch(e) { 
+            alert("حدث خطأ أثناء تحميل الامتحان"); 
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    // تسليم الإجابات
+    async function submitAnswers() {
+        if(!confirm("هل أنت متأكد من تسليم الإجابات؟")) return;
+
+        const answers = [];
+        document.querySelectorAll('.question-block').forEach(block => {
+            const qId = block.getAttribute('data-id');
+            const selectedOption = block.querySelector(`input[name="q_${qId}"]:checked`);
+            if(selectedOption) {
+                answers.push({ questionId: qId, selectedAnswer: selectedOption.value });
+            }
+        });
+
+        const payload = {
+            studentId: STUDENT_ID,
+            examId: currentExamId,
+            answers: answers
+        };
+
+        try {
+            document.body.style.cursor = 'wait';
+            const res = await fetch(`${API_URL}/Student/exam/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error("Submission failed");
+
+            const result = await res.json();
+
+            // عرض النتيجة
+            document.querySelectorAll('section').forEach(s => s.classList.add('d-none'));
+            const resultSec = document.getElementById('exam-result-section');
+            resultSec.classList.remove('d-none');
+            resultSec.classList.add('active-section');
+
+            document.getElementById('resultScore').innerText = Math.round(result.percentage) + "%";
+            document.getElementById('resultDetails').innerText = `الدرجة: ${result.score} من ${result.total}`;
+            document.body.style.cursor = 'default';
+
+        } catch(e) { 
+            alert("فشل تسليم الامتحان"); 
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    // ============================================
+    // 4. نظام التسجيل والمقررات (Enrollment & Courses)
+    // ============================================
+
+    // تحميل الدورات المتاحة (الكتالوج)
+    async function loadAvailableCourses() {
+        const container = document.getElementById('catalog-container');
+        if(!container) return;
+        container.innerHTML = '<div class="text-center text-white-50"><i class="fa-solid fa-spinner fa-spin me-2"></i> جاري التحميل...</div>';
+
+        try {
+            const res = await fetch(`${API_URL}/Enrollment/available/${STUDENT_ID}`);
+            const courses = await res.json();
+            container.innerHTML = '';
+
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center text-white-50">🎉 لقد سجلت في جميع الدورات!</div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="col-md-6 col-lg-4 fade-in">
+                    <div class="available-course-card">
+                        <div class="course-img" style="background-color: #2c3e50; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-graduation-cap fa-3x text-white-50"></i>
+                        </div>
+                        <div class="course-body">
+                            <span class="badge bg-info bg-opacity-25 text-info mb-2 w-auto align-self-start">${course.level || 'عام'}</span>
+                            <h5 class="text-white fw-bold mb-2">${course.name}</h5>
+                            <p class="text-white-50 small flex-grow-1">${course.description || 'لا يوجد وصف'}</p>
+                            <button class="btn-enroll" onclick="enrollInCourse('${course.id}')">
+                                <i class="fa-solid fa-plus-circle me-2"></i> تسجيل الآن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) { 
+            console.error(e);
+            container.innerHTML = '<p class="text-danger text-center">فشل تحميل البيانات</p>';
+        }
+    }
+
+    // تنفيذ التسجيل
+    async function enrollInCourse(courseId) {
+        if(!confirm("تأكيد التسجيل في هذه المادة؟")) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/Enrollment/enroll`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${TOKEN}`
+                },
+                body: JSON.stringify({ studentId: STUDENT_ID, courseId: courseId })
+            });
+
+            const responseText = await res.text();
+
+            if (res.ok) {
+                alert("✅ تم التسجيل بنجاح!");
+                loadAvailableCourses(); // تحديث الكتالوج
+                loadMyCourses();      // تحديث المقررات
+                showSection('learning'); // ذهاب للمقررات
+            } else {
+                alert("⚠️ فشل التسجيل: " + responseText);
+            }
+        } catch(e) { alert("فشل الاتصال بالسيرفر"); }
+    }
+
+    // تحميل مقرراتي المسجلة
+    async function loadMyCourses() {
+        const container = document.getElementById('my-courses-container');
+        if (!container) return;
+        container.innerHTML = '<div class="text-white text-center w-100 py-5">جاري التحميل...</div>';
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/Student/my-courses/${STUDENT_ID}`, {
+                headers: { 'Authorization': `Bearer ${TOKEN}` }
+            });
+            if (!res.ok) throw new Error("Failed");
+            
+            const courses = await res.json();
+            container.innerHTML = '';
+
+            if (courses.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fa-solid fa-graduation-cap fa-3x text-secondary mb-3"></i>
+                        <h5 class="text-white-50">لم تسجل في أي دورة بعد</h5>
+                        <button class="btn btn-outline-info mt-2" onclick="showSection('catalog')">تصفح الدورات</button>
+                    </div>`;
+                return;
+            }
+
+            courses.forEach(course => {
+                // ألوان عشوائية للخلفية
+                const gradients = ['linear-gradient(45deg, #1d976c, #93f9b9)', 'linear-gradient(45deg, #4b6cb7, #182848)', 'linear-gradient(45deg, #FF512F, #DD2476)'];
+                const randomBg = gradients[Math.floor(Math.random() * gradients.length)];
+                const progress = course.progress || 0;
+
+                container.innerHTML += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card h-100 p-0 overflow-hidden">
+                        <div class="course-header" style="background: ${randomBg}; height: 120px; position: relative; padding: 20px;">
+                            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.3);"></div>
+                            <div class="position-relative z-1">
+                                <span class="badge bg-white text-dark mb-2">${course.status === 'completed' ? 'مكتملة' : 'نشط الآن'}</span>
+                                <h5 class="m-0 fw-bold text-white text-shadow">${course.name}</h5>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-white-50 small mb-3"><i class="fa-solid fa-chalkboard-user me-2"></i> ${course.centerName}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-white small">التقدم: ${progress}%</span>
+                            </div>
+                            <div class="progress bg-dark mb-3" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                            </div>
+  <button class="btn btn-outline-light w-100 btn-sm" onclick="goToCourse('${course.id}', '${course.name}')">
+    متابعة التعلم <i class="fa-solid fa-arrow-left ms-2"></i>
+</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        } catch (error) {
+            container.innerHTML = '<div class="text-danger text-center">حدث خطأ في تحميل البيانات</div>';
+        }
+    }
+
+    function goToCourse(courseId) {
+        localStorage.setItem('currentCourseId', courseId);
+        showSection('coursework'); 
+        alert(`سيتم فتح محتوى الدورة رقم: ${courseId}`); 
+    }
+
+    // ============================================
+    // 5. نظام الملاحظات (Notes System)
+    // ============================================
+    let currentNoteId = null;
+    let saveTimeout = null;
+
+    async function loadNotes() {
+        const listContainer = document.getElementById('notes-list');
+        try {
+            const res = await fetch(`${API_BASE_URL}/Notes/${STUDENT_ID}`);
+            const notes = await res.json();
+            listContainer.innerHTML = '';
+            
+            if(notes.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-white-50 mt-5">ابدأ بكتابة أول ملاحظة لك 📝</div>';
+                return;
+            }
+
+            notes.forEach(note => {
+                const date = new Date(note.updatedAt).toLocaleDateString('ar-EG');
+                const safeTitle = encodeURIComponent(note.title);
+                const safeContent = encodeURIComponent(note.content || "");
+                const activeClass = (note.id === currentNoteId) ? 'bg-primary bg-opacity-25' : '';
+
+                listContainer.innerHTML += `
+                <div class="note-item p-3 border-bottom border-secondary cursor-pointer ${activeClass}" 
+                     onclick="openNote(${note.id}, '${safeTitle}', '${safeContent}', this)">
+                    <h6 class="text-white mb-1 fw-bold text-truncate">${note.title}</h6>
+                    <p class="text-white-50 small mb-0 text-truncate">${note.content || '...'}</p>
+                    <span class="text-info small opacity-50" style="font-size: 0.7rem;">${date}</span>
+                </div>`;
+            });
+        } catch(e) { console.error("Error loading notes"); }
+    }
+
+    async function createNewNote() {
+        try {
+            await fetch(`${API_BASE_URL}/Notes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ studentId: STUDENT_ID, title: "ملاحظة جديدة", content: "" })
+            });
+            await loadNotes();
+        } catch(e) { alert("فشل إنشاء الملاحظة"); }
+    }
+
+    function openNote(id, title, content, element) {
+        currentNoteId = id;
+        document.getElementById('note-title').value = decodeURIComponent(title);
+        document.getElementById('note-content').value = decodeURIComponent(content === 'null' ? '' : content);
+
+        document.querySelectorAll('.note-item').forEach(el => el.classList.remove('bg-primary', 'bg-opacity-25'));
+        if(element) element.classList.add('bg-primary', 'bg-opacity-25');
+
+        document.getElementById('editor-area').classList.remove('d-none');
+        document.getElementById('empty-state').classList.add('d-none');
+    }
+
+    function autoSave() {
+        const statusSpan = document.getElementById('save-status');
+        statusSpan.style.opacity = '1';
+        statusSpan.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
+        
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(async () => {
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            try {
+                await fetch(`${API_BASE_URL}/Notes/${currentNoteId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                statusSpan.innerHTML = '<i class="fa-solid fa-cloud"></i> تم الحفظ';
+                loadNotes(); 
+                setTimeout(() => { statusSpan.style.opacity = '0'; }, 2000);
+            } catch(e) { statusSpan.innerHTML = 'فشل الحفظ'; }
+        }, 1000);
+    }
+
+    async function deleteCurrentNote() {
+        if(!confirm("حذف الملاحظة؟")) return;
+        try {
+            await fetch(`${API_BASE_URL}/Notes/${currentNoteId}`, { method: 'DELETE' });
+            document.getElementById('editor-area').classList.add('d-none');
+            document.getElementById('empty-state').classList.remove('d-none');
+            loadNotes();
+        } catch(e) { alert("فشل الحذف"); }
+    }
+
+// ============================================
+// 6. المراجع الذكي (Smart Revision) - النسخة النهائية
+// ============================================
+let surahsLoaded = false;
+
+// 1. تحميل السور
+async function loadSurahList() {
+    if(surahsLoaded) return;
+    
+    const select = document.getElementById('surah-select');
+    if (!select) return;
+
+    select.innerHTML = '<option>⏳ جاري التحميل...</option>';
+
+    try {
+        const res = await fetch('https://api.alquran.cloud/v1/surah');
+        const data = await res.json();
+        
+        select.innerHTML = '<option value="" disabled selected>اختر السورة للمراجعة...</option>';
+        data.data.forEach(surah => {
+            const option = document.createElement('option');
+            option.value = surah.number;
+            option.text = `${surah.number}. ${surah.name}`;
+            select.appendChild(option);
+        });
+        surahsLoaded = true;
+    } catch(e) {
+        select.innerHTML = '<option disabled>فشل التحميل</option>';
+    }
+}
+
+// 2. بدء الاختبار
+async function startRevision() {
+    const surahNumber = document.getElementById('surah-select').value;
+    const display = document.getElementById('quran-text-display');
+    const ratingBtns = document.getElementById('rating-buttons');
+
+    if(!surahNumber) { alert("⚠️ يرجى اختيار سورة أولاً!"); return; }
+
+    display.innerHTML = '<div class="text-center mt-5"><i class="fa-solid fa-circle-notch fa-spin fa-2x"></i><br>جاري جلب الآيات...</div>';
+    ratingBtns.classList.add('d-none'); // إخفاء أزرار التقييم مؤقتاً
+
+    try {
+        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`);
+        const data = await res.json();
+        
+        let htmlContent = '';
+        
+        // البسملة (ما عدا التوبة)
+        if(surahNumber != 9) {
+            htmlContent += `<div class="text-center mb-4 fs-5 text-info">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`;
+        }
+
+        // عرض الآيات
+        data.data.ayahs.forEach(ayah => {
+            let text = ayah.text;
+            // إزالة البسملة من بداية الآية الأولى لأننا أضفناها بالأعلى
+            if(surahNumber != 9 && ayah.numberInSurah === 1) {
+                text = text.replace("بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ ", "");
+            }
+
+            // تقسيم النص لكلمات قابلة للنقر
+            const words = text.split(" ").map(word => 
+                `<span class="quran-word" onclick="toggleBlur(this)">${word}</span>`
+            ).join(" ");
+
+            htmlContent += `
+                <span class="ayah-container">
+                    ${words} 
+                    <span class="ayah-symbol text-warning mx-1">۝${ayah.numberInSurah}</span>
+                </span>
+            `;
+        });
+
+        display.innerHTML = htmlContent;
+        ratingBtns.classList.remove('d-none'); // إظهار أزرار التقييم
+
+    } catch(e) {
+        display.innerHTML = '<div class="text-danger text-center mt-5">فشل تحميل السورة، تأكد من الإنترنت.</div>';
+    }
+}
+
+// 3. وظائف التحكم بالنص
+function toggleBlur(element) {
+    element.classList.toggle('blurred-text');
+    element.classList.toggle('revealed-text');
+}
+
+function randomizeBlur() {
+    document.querySelectorAll('.quran-word').forEach(span => {
+        // إخفاء 50% من الكلمات عشوائياً
+        if(Math.random() > 0.5) {
+            span.classList.add('blurred-text');
+            span.classList.remove('revealed-text');
+        } else {
+            span.classList.remove('blurred-text');
+        }
+    });
+}
+
+function hideAll() {
+    document.querySelectorAll('.quran-word').forEach(s => {
+        s.classList.add('blurred-text');
+        s.classList.remove('revealed-text');
+    });
+}
+
+function showAll() {
+    document.querySelectorAll('.quran-word').forEach(s => {
+        s.classList.remove('blurred-text');
+        s.classList.add('revealed-text');
+    });
+}
+
+// 4. حفظ النتيجة
+async function saveResult(status) {
+    const select = document.getElementById('surah-select');
+    const surahName = select.options[select.selectedIndex].text;
+    
+    // تأكد أنك خزنت هذه القيم عند تسجيل الدخول
+    const token = localStorage.getItem('authToken');
+    const studentId = localStorage.getItem('userId');
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Revision/log`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                studentId: studentId, 
+                surahName: surahName, 
+                status: status 
+            })
+        });
+
+        if (res.ok) {
+            alert(`✅ تم حفظ النتيجة: ${status === 'Excellent' ? 'أتقنت الحفظ' : 'تحتاج مراجعة'}`);
+        } else {
+            alert("فشل الحفظ");
+        }
+    } catch(e) { console.error(e); }
+}
+
+
+
+
+
+    // ============================================
+    // 7. تسجيل الخروج (Logout)
+    // ============================================
+    window.logoutUser = function() {
+        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+    };
+function openCourseContent(courseTitle) {
+    // إخفاء قسم المقررات
+    document.getElementById('dashboard-overview').classList.add('d-none');
+    
+    // إظهار قسم المحتوى وتحديث العنوان
+    const contentSection = document.getElementById('course-content-section');
+    contentSection.classList.remove('d-none');
+    document.getElementById('current-course-title').innerText = courseTitle;
+}
+
+// دالة التبديل بين تبويب الواجبات والامتحانات
+// دالة التبديل بين الواجبات والامتحانات داخل الدورة
+function switchCourseTab(tabName) {
+    // 1. إخفاء جميع التبويبات الداخلية
+    document.querySelectorAll('.course-tab').forEach(tab => tab.classList.add('d-none'));
+    
+    // 2. إظهار التبويب المطلوب
+    document.getElementById('tab-' + tabName).classList.remove('d-none');
+    
+    // 3. تحديث شكل الأزرار في القائمة الجانبية الداخلية
+    const btnAssignments = document.getElementById('btn-assignments');
+    const btnExams = document.getElementById('btn-exams');
+    
+    if (tabName === 'assignments') {
+        btnAssignments.classList.add('active', 'bg-primary', 'border-0');
+        btnExams.classList.remove('active', 'bg-primary', 'border-0');
+        btnExams.classList.add('bg-transparent');
+    } else {
+        btnExams.classList.add('active', 'bg-primary', 'border-0');
+        btnAssignments.classList.remove('active', 'bg-primary', 'border-0');
+        btnAssignments.classList.add('bg-transparent');
+    }
+}
+// ==========================================
+// دالة جلب كشف العلامات للطالب
+// ==========================================
+async function loadStudentGrades() {
+    const tbody = document.getElementById('marksTableBody');
+    const targetBody = tbody || document.querySelector('#marks tbody');
+    const studentId = localStorage.getItem('userId'); // أو STUDENT_ID حسب المتغير عندك
+    const token = localStorage.getItem('authToken');
+const formatScore = (val, max, isVisible) => {
+        if (!isVisible) return '<span class="text-white-50">--</span>';
+        return val > 0 ? `<span class="grade-box">${val} / ${max}</span>` : '<span class="text-white-50">--</span>';
+    };
+    // عرض مؤشر التحميل
+    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><i class="fa-solid fa-spinner fa-spin text-info fs-3"></i></td></tr>';
+if(targetBody) targetBody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><i class="fa-solid fa-spinner fa-spin text-info fs-3"></i></td></tr>';
+    try {
+        const res = await fetch(`${API_BASE_URL}/Student/grades/${studentId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const grades = await res.json();
+            tbody.innerHTML = ''; // مسح التحميل
+
+            if (grades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-white-50 py-4">لم يتم رصد أي علامات بعد.</td></tr>';
+                return;
+            }
+
+            grades.forEach(g => {
+                // تحديد التقدير واللون بناءً على المجموع
+                let gradeBadge = '';
+                let totalDisplay = '';
+                let totalClass = '';
+                let showDetails = true;
+                if (g.gradeStatus === 'Undefined') {
+                    // الحالة: غير محدد
+                    gradeBadge = '<span class="badge bg-secondary"></span>';
+                    totalDisplay = '--';
+                    totalClass = 'text-white-50';
+                    // showDetails = false;
+                } 
+                else if (g.gradeStatus === 'Pass') {
+                    // الحالة: ناجح (يدوياً أو تلقائياً)
+                    gradeBadge = '<span class="badge bg-success">ناجح</span>';
+                    totalDisplay = g.total;
+                    totalClass = 'text-success';
+                } 
+                else if (g.gradeStatus === 'Fail') {
+                    // الحالة: راسب
+                    gradeBadge = '<span class="badge bg-danger">راسب</span>';
+                    totalDisplay = g.total;
+                    totalClass = 'text-danger';
+                } 
+                else {
+                    // حماية إضافية (الوضع الافتراضي حسب الرقم)
+                    totalDisplay = g.total;
+                    if (g.total >= 50) {
+                        gradeBadge = '<span class="badge bg-success">ناجح</span>';
+                        totalClass = 'text-success';
+                    } else {
+                        gradeBadge = '<span class="badge bg-danger">راسب</span>';
+                        totalClass = 'text-danger';
+                    }
+                }
+const row = `
+                <tr>
+                    <td class="course-id text-info">${g.courseCode}</td>
+                    <td style="text-align: right;" class="fw-bold text-white">${g.courseName}</td>
+                    <td>${formatScore(g.participation, 10,showDetails)}</td>
+                    <td>${formatScore(g.midterm, 30,showDetails)}</td>
+                    <td>${formatScore(g.homework, 20,showDetails)}</td>
+                    <td>${formatScore(g.final, 40,showDetails)}</td>
+                    <td><span class="fw-bold ${totalClass} fs-5">${totalDisplay}</span></td>
+                    <td>${gradeBadge}</td>
+                </tr>
+                `;
+targetBody.innerHTML += row;
+            });
+        } else {
+targetBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">فشل تحميل العلامات</td></tr>';
+        }
+    } catch (e) {
+        console.error(e);
+targetBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">خطأ في الاتصال</td></tr>';
+    }
+}
+
+// [داخل تاج <script> في master-student-portal.html]
+
+// دالة جلب وعرض الواجبات في الأعمدة الثلاثة
+async function loadStudentAssignments() {
+    const todoCol = document.getElementById('col-todo');
+    const submittedCol = document.getElementById('col-submitted');
+    const gradedCol = document.getElementById('col-graded');
+
+    // عرض مؤشر التحميل
+    [todoCol, submittedCol, gradedCol].forEach(col => col.innerHTML = '<div class="text-center text-white-50 mt-3"><i class="fa-solid fa-circle-notch fa-spin"></i></div>');
+
+    const studentId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    try {
+        // نطلب الرابط الجديد kanban
+        const res = await fetch(`${API_BASE_URL}/Student/assignments-kanban/${studentId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const assignments = await res.json();
+            
+            // تفريغ الأعمدة
+            todoCol.innerHTML = '';
+            submittedCol.innerHTML = '';
+            gradedCol.innerHTML = '';
+
+            if (assignments.length === 0) {
+                todoCol.innerHTML = '<div class="text-center text-white-50 mt-5">لا توجد واجبات حالياً</div>';
+                return;
+            }
+
+            assignments.forEach(task => {
+                const dueDate = new Date(task.dueDate).toLocaleDateString('ar-EG');
+                // تجهيز النصوص للإرسال للدالة
+                const safeDesc = encodeURIComponent(task.description || '');
+                const safePath = encodeURIComponent(task.filePath || '');
+
+                let cardHtml = '';
+                let targetContainer = null;
+
+                // ==========================================
+                // 1. تصميم بطاقة (قيد الانتظار)
+                // ==========================================
+                if (task.status === 'ToDo') {
+                    targetContainer = todoCol;
+                    cardHtml = `
+                    <div class="task-card fade-in border-start border-4 border-secondary" onclick="openAssignmentDetails('${task.id}', '${task.title}', '${safeDesc}', '${dueDate}', '${safePath}')">
+                        <div class="d-flex justify-content-between">
+                            <span class="task-tag text-info bg-info bg-opacity-10">${task.courseName}</span>
+                        </div>
+                        <div class="task-title mt-2">${task.title}</div>
+                        <div class="task-meta text-warning">
+                            <span><i class="fa-regular fa-clock me-1"></i> آخر موعد: ${dueDate}</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary w-100 mt-2">حل الواجب</button>
+                    </div>`;
+                } 
+                // ==========================================
+                // 2. تصميم بطاقة (تم التسليم)
+                // ==========================================
+                else if (task.status === 'Submitted') {
+                    targetContainer = submittedCol;
+                    cardHtml = `
+                    <div class="task-card fade-in border-start border-4 border-warning" style="opacity: 0.8">
+                        <div class="d-flex justify-content-between">
+                            <span class="task-tag text-info bg-info bg-opacity-10">${task.courseName}</span>
+                            <span class="badge bg-warning text-dark">جارِ التصحيح</span>
+                        </div>
+                        <div class="task-title mt-2">${task.title}</div>
+                        <div class="task-meta">
+                            <span><i class="fa-solid fa-check me-1"></i> تم رفع الحل</span>
+                        </div>
+                    </div>`;
+                } 
+                // ==========================================
+                // 3. تصميم بطاقة (تم التقييم)
+                // ==========================================
+                else if (task.status === 'Graded') {
+    targetContainer = gradedCol;
+    
+    // تجهيز الملاحظات للعرض (إذا وجدت)
+    let feedbackHtml = '';
+    if (task.feedback && task.feedback !== 'null') {
+        feedbackHtml = `
+            <div class="mt-2 pt-2 border-top border-secondary border-opacity-25">
+                <small class="text-info fw-bold"><i class="fa-regular fa-comment-dots"></i> ملاحظات المعلم:</small>
+                <p class="text-white-50 small m-0 mt-1">${task.feedback}</p>
+            </div>
+        `;
+    }
+
+    cardHtml = `
+    <div class="task-card fade-in border-start border-4 border-success">
+        <div class="d-flex justify-content-between">
+            <span class="task-tag text-info bg-info bg-opacity-10">${task.courseName}</span>
+            <span class="badge bg-success">تم الرصد</span>
+        </div>
+        <div class="task-title mt-2">${task.title}</div>
+        
+        <div class="mt-3 text-center bg-success bg-opacity-25 rounded p-2 border border-success">
+            <span class="fw-bold text-success fs-5">${task.grade} / 100</span>
+        </div>
+
+        ${feedbackHtml}
+    </div>`;
+}                if (targetContainer) {
+                    targetContainer.innerHTML += cardHtml;
+                }
+            });
+        }
+    } catch (e) {
+        console.error("Error loading kanban:", e);
+        todoCol.innerHTML = '<div class="text-danger small text-center">فشل التحميل</div>';
+    }
+}
+
+
+
+// تحديث الدالة لتستقبل الملف وتعرضه
+function openAssignmentDetails(id, title, encodedDesc, dueDate, encodedFilePath) {
+    // فك تشفير النصوص
+    const desc = decodeURIComponent(encodedDesc);
+    const filePath = decodeURIComponent(encodedFilePath);
+
+    document.getElementById('submit-assign-id').value = id;
+    document.getElementById('submit-page-title').innerText = title;
+    
+    // عرض الوصف (تعليمات المعلم)
+    document.getElementById('submit-page-desc').innerText = desc && desc !== 'null' ? desc : 'لا توجد تعليمات إضافية.';
+    document.getElementById('submit-page-date').innerText = dueDate || 'غير محدد';
+    
+    // 🔥 منطق إظهار/إخفاء ملف المعلم
+    const fileContainer = document.getElementById('teacher-attachment-container');
+    const fileLink = document.getElementById('teacher-file-link');
+
+    if (filePath && filePath !== 'null' && filePath !== 'undefined' && filePath !== '') {
+        // نظهر الزر ونضع الرابط
+        fileContainer.classList.remove('d-none');
+        // تعريف رابط السيرفر الرئيسي (بدون /api)
+const SERVER_URL = "http://localhost:5220"; 
+
+// تنظيف المسار من أي شرطات مائلة زائدة في البداية
+const cleanPath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
+
+// بناء الرابط الصحيح
+fileLink.href = `${SERVER_URL}/${cleanPath}`;
+        
+    } else {
+        // نخفي الزر إذا لم يكن هناك ملف
+        fileContainer.classList.add('d-none');
+    }
+
+    // تصفير حقول الرفع الخاصة بالطالب
+    document.getElementById('submissionFile').value = '';
+    document.getElementById('submissionFileDisplay').innerText = 'لم يتم اختيار ملف';
+    document.getElementById('submissionNotes').value = '';
+
+    showSection('submit-assignment-section');
+}
+
+
+
+// كود جمالي: عرض اسم الملف عند الاختيار
+document.getElementById('submissionFile').addEventListener('change', function() {
+    const fileName = this.files[0] ? this.files[0].name : 'لم يتم اختيار ملف';
+    document.getElementById('submissionFileDisplay').innerText = fileName;
+    document.getElementById('submissionFileDisplay').classList.add('text-info');
+});
+
+// 2. إرسال الحل للسيرفر
+async function submitAssignmentResponse() {
+    const assignId = document.getElementById('submit-assign-id').value;
+    const notes = document.getElementById('submissionNotes').value;
+    const fileInput = document.getElementById('submissionFile');
+    const studentId = localStorage.getItem('userId');
+    const token = localStorage.getItem('authToken');
+
+    if (!fileInput.files[0] && !notes) {
+        alert("يرجى إرفاق ملف أو كتابة ملاحظة على الأقل.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('AssignmentId', assignId);
+    formData.append('StudentId', studentId);
+    formData.append('Notes', notes);
+    
+    if (fileInput.files[0]) {
+        formData.append('File', fileInput.files[0]);
+    }
+
+    // تغيير الزر لحالة التحميل
+    const btn = document.querySelector('#submissionForm button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/Student/assignment/submit`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+
+        if (res.ok) {
+            alert("✅ تم تسليم الواجب بنجاح!");
+            showSection('homework'); // العودة للوحة المهام
+            loadStudentAssignments(); // تحديث القائمة
+        } else {
+            const err = await res.json();
+            alert("خطأ: " + (err.message || "فشل التسليم"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في الاتصال");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+</script>
+
+</body>
+</html>

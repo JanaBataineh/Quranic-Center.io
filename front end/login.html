@@ -6,6 +6,8 @@
     <title>تسجيل الدخول - معاهد الوحي</title>
     <meta name="description" content="سجل دخولك إلى منصة معاهد الوحي للوصول إلى جميع الخدمات">
  <link rel="stylesheet" href="dist/main.css">
+   <link rel="stylesheet" href="css/utils/media.css">
+
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
@@ -85,13 +87,10 @@
                         <h2 id="loginTitle">تسجيل الدخول</h2>
                         <p id="loginSubtitle">أهلاً بك في منصة معاهد الوحي</p>
                     </div>
-                    <div id="accountToggle" class="segmented-control" role="tablist" aria-label="نوع الحساب">
-  <button type="button" class="segmented-btn active" data-type="login" aria-pressed="true">
-   طالب
-  </button>
-  <button type="button" class="segmented-btn" data-type="signup" aria-pressed="false">
-    مركز
-  </button>
+<div id="accountToggle" class="segmented-control" role="tablist">
+    <button type="button" class="segmented-btn active" data-type="student">طالب</button>
+    <button type="button" class="segmented-btn" data-type="teacher">معلم</button>
+    <button type="button" class="segmented-btn" data-type="center">مركز</button>
 </div>
                     <div class="error-message hidden" id="errorMessage">
                         <div class="error-content">
@@ -100,9 +99,8 @@
                         </div>
                     </div>
                <form class="login-form" id="loginForm">
-    
-    <div id="signupFields" class="hidden">
-        
+      
+<div id="studentFields" class="hidden">        
         <div class="form-group">
             <label for="firstName" class="form-label">الاسم الأول *</label>
             <input type="text" id="firstName" name="firstName" class="form-input" placeholder="مثال: خالد" />
@@ -124,6 +122,55 @@
         </div>
         
     </div>
+<div id="centerFields" class="hidden">
+    <div class="form-group">
+        <label for="centerName" class="form-label">اسم المركز *</label>
+        <input type="text" id="centerName" class="form-input" placeholder="مثال: مركز الإيمان القرآني" />
+    </div>
+    
+    <div class="form-group">
+        <label for="centerPhone" class="form-label">رقم الهاتف *</label>
+        <input type="tel" id="centerPhone" class="form-input" placeholder="07xxxxxxxx" />
+    </div>
+
+    <div class="form-group">
+        <label for="centerManager" class="form-label">اسم المدير / المسؤول *</label>
+        <input type="text" id="centerManager" class="form-input" placeholder="اسم المسؤول عن المركز" />
+    </div>
+</div>
+
+<div id="teacherFields" class="hidden">
+    <div class="form-group">
+        <label for="teacherFirstName" class="form-label">الاسم الأول *</label>
+        <input type="text" id="teacherFirstName" class="form-input" placeholder="الاسم الأول">
+    </div>
+
+    <div class="form-group">
+        <label for="teacherMiddleName" class="form-label">الاسم الثاني *</label>
+        <input type="text" id="teacherMiddleName" class="form-input" placeholder="اسم الأب">
+    </div>
+
+    <div class="form-group">
+        <label for="teacherLastName" class="form-label">الاسم الأخير *</label>
+        <input type="text" id="teacherLastName" class="form-input" placeholder="اسم العائلة">
+    </div>
+
+    <div class="form-group">
+        <label for="teacherPhone" class="form-label">رقم الهاتف *</label>
+        <input type="tel" id="teacherPhone" class="form-input" placeholder="07xxxxxxxx">
+    </div>
+
+    <div class="form-group">
+        <label for="teacherSpecialty" class="form-label">التخصص *</label>
+        <select id="teacherSpecialty" class="form-input" style="background:#333; color:white; border:1px solid #555">
+            <option value="تجويد">أحكام تجويد</option>
+            <option value="تحفيظ">تحفيظ قرآن</option>
+            <option value="قراءات">قراءات</option>
+            <option value="علوم شرعية">علوم شرعية</option>
+        </select>
+    </div>
+</div>
+
 
     <div class="form-group">
         <label for="email" class="form-label">البريد الإلكتروني *</label>

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using QuranCenters.API.Data;
 using QuranCenters.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer; // ✅ تأكد من وجود هذا
 using System;
 using System.Threading.Tasks;
 using System.Linq;
@@ -20,8 +21,7 @@ namespace QuranCenters.API.Controllers
             _context = context;
         }
 
-        // 1. إرسال رسالة (مفتوح للجميع - Public)
-        // POST: api/Contact
+        // 1. إرسال رسالة (مفتوح للجميع)
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] ContactMessage message)
         {
@@ -37,8 +37,8 @@ namespace QuranCenters.API.Controllers
         }
 
         // 2. عرض جميع الرسائل (للأدمن فقط)
-        // GET: api/Contact
-        [Authorize(Roles = "Admin")]
+        // ✅ التعديل هنا: حددنا AuthenticationSchemes لمنع التحويل لصفحة login
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllMessages()
         {
@@ -48,9 +48,8 @@ namespace QuranCenters.API.Controllers
             return Ok(messages);
         }
 
-        // 3. تمييز الرسالة كمقروءة (للأدمن فقط)
-        // PUT: api/Contact/{id}/mark-read
-        [Authorize(Roles = "Admin")]
+        // 3. تمييز الرسالة كمقروءة
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("{id}/mark-read")]
         public async Task<IActionResult> MarkAsRead(int id)
         {
@@ -62,9 +61,8 @@ namespace QuranCenters.API.Controllers
             return Ok(new { message = "تم تحديث حالة الرسالة." });
         }
 
-        // 4. حذف رسالة (للأدمن فقط)
-        // DELETE: api/Contact/{id}
-        [Authorize(Roles = "Admin")]
+        // 4. حذف رسالة
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMessage(int id)
         {

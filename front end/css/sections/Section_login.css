@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   /* 👇 إعدادات صورة الخلفية */
-  background-image: url('../../img/تصميم\ بدون\ عنوان\ \(1\).png'); /* استبدل هذا بالاسم الجديد إذا غيرته */
+  background-image: url('../../img/login-bg.png'); /* استبدل هذا بالاسم الجديد إذا غيرته */
 background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;

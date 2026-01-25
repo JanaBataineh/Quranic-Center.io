@@ -51,30 +51,50 @@ import '../css/dashboard/Dashboard_ContentArea.css';
 
 /* --- Logic Imports (الجافاسكربت) --- */
 import { initializeNavigation } from './components/navbar.js';
-import { loadApiData } from './data/api.js';
 import { setupModalListeners } from './components/ui.js';
 
 import { initializeHomePage } from './pages/home.js';
 import { initializeCentersPage } from './pages/centers.js';
 import { initializeCoursesPage } from './pages/courses.js';
 import { initializeContactPage } from './pages/contact.js';
-
+import './pages/center-dashboard.js';
 // =========================================================
 // Main Entry Point
 // =========================================================
 document.addEventListener('DOMContentLoaded', async function() {
+    // ربط زر تسجيل الخروج الموجود في السايد بار
+    document.addEventListener('click', function(e) {
+        // التحقق مما إذا كان العنصر المضغوط (أو أحد آبائه) هو زر الخروج الجانبي
+        const logoutBtn = e.target.closest('#logoutBtnSidebar');
+        
+        if (logoutBtn) {
+            e.preventDefault();
+            console.log("تم الضغط على زر الخروج من السايد بار"); // للتأكد في الكونسول
+            logoutUser();
+        }
+    });
     
     initializeNavigation();
     setupModalListeners();
     checkAuthStatus(); 
-    await loadApiData();
   
-    const page = document.body.getAttribute('data-page');
+    const path=window.location.pathname;
     
-    if (page === 'home') initializeHomePage();
-    else if (page === 'centers') initializeCentersPage();
-    else if (page === 'courses') initializeCoursesPage();
-    else if (page === 'contact' && typeof initializeContactPage === 'function') initializeContactPage();
+    if (path.includes('centers.html')) {
+        initializeCentersPage();
+    }
+    // إذا كان الرابط يحتوي على courses.html
+    else if (path.includes('courses.html')) {
+        initializeCoursesPage();
+    }
+    // إذا كان الرابط يحتوي على contact.html
+    else if (path.includes('contact.html') && typeof initializeContactPage === 'function') {
+        initializeContactPage();
+    }
+    // الصفحة الرئيسية (index.html أو الرابط فارغ)
+    else if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
+        initializeHomePage();
+    }
 
     // Dropdown Close Logic
     document.addEventListener('click', function(event) {
@@ -111,7 +131,7 @@ function checkAuthStatus() {
         if (dashboardLink) {
             if (userType === 'Center' || userType === 'center') dashboardLink.href = 'dashbordcenters.html';
             else if (userType === 'Admin' || userType === 'admin') dashboardLink.href = 'dashbord.html';
-            else dashboardLink.href = 'student-dashboard.html';
+            else dashboardLink.href = 'master-student-portal.html';
         }
     } else {
         if(guestNav) guestNav.classList.remove('hidden'); 
@@ -133,3 +153,5 @@ window.logoutUser = function() {
     localStorage.removeItem('isAdmin');
     window.location.href = 'login.html';
 };
+// هذا السطر يجعل الدالة متاحة للمتصفح (لأغراض الاختبار والكونسول)
+window.submitAddTeacher = submitAddTeacher;

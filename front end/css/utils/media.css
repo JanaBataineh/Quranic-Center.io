@@ -1,45 +1,124 @@
 @media (max-width: 992px) {
   
-  /* --- 1. القائمة العلوية (Navigation) --- */
-  .navbar-content {
-    padding: 0 1.5rem;
+  /* 1. ضبط هوامش الناف بار */
+    .navbar-content {
+        padding: 0 1.5rem;
+    }
+
+    /* 2. زر القائمة (الهمبرغر) */
+    .mobile-menu-btn {
+        display: block !important;
+        color: var(--text-light, #ffffff); /* لون أبيض */
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        
+        /* هام جداً: تثبيت الزر ليبقى ظاهراً فوق القائمة الجانبية */
+        position: relative; 
+        z-index: 1005; /* رقم أعلى من القائمة (1001) */
+    }
+
+    /* تكبير الأيقونة */
+    .mobile-menu-btn svg, .mobile-menu-btn i {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* 3. القائمة الجانبية (Sidebar) */
+    .nav-menu {
+        display: none; /* مخفية افتراضياً */
+        
+        /* الخصائص التي تجعلها قائمة جانبية */
+        position: fixed; 
+        top: 0;
+        left: 0;      /* تبدأ من أقصى اليسار */
+        bottom: 0;    /* تمتد لأسفل الشاشة */    
+        margin: 0;            /* ضمان عدم وجود مسافات خارجية */
+
+        width: 75%; 
+        max-width: 300px; 
+        height: 100vh;
+        /* العرض: تغطي 75% من الموبايل بحد أقصى 300 بكسل */
+
+        /* === تأثير الزجاج الداكن === */
+        background: rgba(15, 15, 20, 0.99); 
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px); /* دعم Safari */
+        
+        /* حدود من اليمين فقط */
+        border-right: 1px solid rgba(255, 255, 255, 0.1); 
+        /* تدوير الزوايا من الجهة اليمنى فقط لجمالية التصميم */
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        box-shadow: 5px 0 30px rgba(0,0,0,0.5); /* ظل لليمين */
+        
+        /* ترتيب العناصر داخلياً */
+        flex-direction: column;
+        justify-content: center; /* توسيط العناصر عمودياً */
+        padding: 2rem;
+        gap: 1.5rem;
+        
+        z-index: 1001; /* طبقة أقل من الزر */
+    }
+
+    /* حالة الفتح (عندما يضغط المستخدم) */
+    .nav-menu.active {
+        display: flex !important;
+        /* تشغيل حركة الدخول من اليسار */
+        animation: slideInFromLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* 4. تنسيق الروابط داخل القائمة */
+    .nav-item {
+        width: 100%;
+        list-style: none;
+    }
+
+    .nav-link {
+        display: flex; /* لضبط الأيقونة مع النص */
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        
+        /* النصوص */
+        color: #ffffff !important; 
+        opacity: 1 !important;
+        font-size: 1.1rem;
+        text-decoration: none;
+        
+        /* شكل الزر */
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05); /* خلفية خفيفة */
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    /* تأثير عند اللمس */
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px); /* حركة بسيطة لليمين */
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* أيقونات داخل الروابط (إن وجدت) */
+    .nav-link svg, .nav-link i {
+        width: 20px;
+        height: 20px;
+    }
+    
+  /* --- 6. لوحة التحكم (Dashboard) --- */
+  .modern-sidebar {
+    transform: translateX(100%); /* إخفاء القائمة الجانبية */
+    transition: transform 0.3s ease;
   }
   
-  .nav-menu {
-    display: none; /* مخفي افتراضياً */
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    
-    background: var(--secondary); /* لون الخلفية الداكن */
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    flex-direction: column;
-    padding: 1.5rem;
-    gap: 1rem;
-    
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    z-index: 1000;
+  .modern-sidebar.open {
+    transform: translateX(0);
   }
+  
 
-  .nav-menu.active {
-    display: flex;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-    color: var(--text-light);
-  }
-
-  .nav-link {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-  }
 
   /* --- 2. الهيرو (Hero Section) --- */
   .hero-content-wrapper {
@@ -101,15 +180,6 @@
 
 
 
-  /* --- 6. لوحة التحكم (Dashboard) --- */
-  .modern-sidebar {
-    transform: translateX(100%); /* إخفاء القائمة الجانبية */
-    transition: transform 0.3s ease;
-  }
-  
-  .modern-sidebar.open {
-    transform: translateX(0);
-  }
   
   .dashboard-main {
     margin-right: 0;
@@ -136,4 +206,25 @@
   .user-info {
     display: none;
   }
+
 }
+
+/* =========================================================
+   تعريف الحركات (Animations)
+   ========================================================= */
+
+/* حركة الدخول من اليسار */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%); /* خارج الشاشة يساراً */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0); /* مكانها الطبيعي */
+    }
+}
+
+
+
+

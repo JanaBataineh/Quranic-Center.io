@@ -56,19 +56,17 @@ namespace QuranCenters.API.Controllers
         // 2) جلب الدورات (المعتمدة فقط)
         // ================================
         [HttpGet("courses")]
-        public async Task<IActionResult> GetCourses([FromQuery] string centerId, [FromQuery] string city = "all", [FromQuery] string level = "all")
-        {
+public async Task<IActionResult> GetCourses([FromQuery] string? centerId = null, [FromQuery] string city = "all", [FromQuery] string level = "all")        {
             var query = _context.Courses
                 .Include(c => c.Center)
-                .Where(c => c.Status == "approved") // فقط الدورات المعتمدة
+                // .Where(c => c.Status == "approved") // فقط الدورات المعتمدة
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(centerId))
                 query = query.Where(c => c.CenterId == centerId);
-
-            if (!string.IsNullOrWhiteSpace(city) && city != "all")
+        /*    if (!string.IsNullOrWhiteSpace(city) && city != "all")
                 query = query.Where(c => c.Center.City == city);
-
+*/
             if (!string.IsNullOrWhiteSpace(level) && level != "all")
                 query = query.Where(c => c.Level == level);
 
@@ -84,8 +82,8 @@ namespace QuranCenters.API.Controllers
                     Schedule = "يحدد لاحقا",
                     CenterId = c.Center.Id,
                     CenterName = c.Center.Name,
-                    CenterCity = c.Center.City
-                })
+                    CenterCity = "عمان"})
+ // قيمة مؤقتة حتى تضيف المدينة لقاعدة البيانات                })
                 .ToListAsync();
 
             return Ok(data);

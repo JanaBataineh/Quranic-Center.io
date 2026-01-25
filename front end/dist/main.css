@@ -1,67 +1,29 @@
 /* Colors */
 :root {
-/* ========================
-     نظام الألوان (Color Palette)
-     ======================== */ 
-     /* اللون الرئيسي (فضي مائل للبيج):
-      يستخدم لخلفيات الأزرار الأساسية، 
-      الروابط النشطة في القائمة، وأيقونات التمييز */
+
  --primary: #a5a5a0;
- /* درجة أغمق من الرئيسي: يستخدم عند تمرير الماوس 
- (Hover) على الأزرار ليعطي تفاعلاً بصرياً */
   --primary-dark: #81837c;
-/* اللون الثانوي (أسود حالك): يستخدم كخلفية أساسية للصفحة 
-(Body) وخلفية الفوتر والأقسام الداكنة */
   --secondary: #000000;
-  /* لون النصوص الأساسي (أبيض): يستخدم للعناوين الرئيسية 
-  (h1-h6) والنصوص داخل البطاقات الزجاجية */
   --text-light: #ffffff;
-  /* لون النصوص الفرعية (أبيض شفاف): يستخدم للوصف تحت 
-  العناوين، التواريخ، والنصوص الأقل أهمية لتقليل التشتت */
   --text-muted: rgba(255, 255, 255, 0.7);
-
-
-/* ========================
-     إعدادات الزجاج (Glassmorphism System)
-     تستخدم في: الكروت (Cards)
-      والنوافذ المنبثقة (Modals)
-     ======================== */
-     /* خلفية الزجاج: تدرج لوني شفاف يعطي لمعة خفيفة */
+--sidebar-bg: #000000;
+--text-muted-dash: #888888;
   --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1),
    rgba(255, 255, 255, 0.05));
-   /* حدود الزجاج: إطار أبيض شفاف جداً لتحديد حواف العنصر */
   --glass-border: 1px solid rgba(255, 255, 255, 0.18);
-  /* ظل الزجاج: يعطي عمقاً ويرفع العنصر عن الخلفية السوداء */
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  /* التغبيش: أهم عنصر، يقوم بطمس ما خلف العنصر لزيادة وضوح النص */
   --glass-blur: blur(20px);
-  
-/* ========================
-     المسافات والأبعاد (Spacing & Sizing)
-     ======================== */
-     /* المسافة القياسية: تستخدم للهوامش الداخلية 
-     (Padding) في البطاقات */
   --spacing-md: 1.5rem;
-  /* تدوير الحواف: يستخدم لزوايا
-   البطاقات والأزرار الكبيرة */
   --radius-lg: 20px;
 }
-/* =========================================
-   Reset & Base Styles (تصفير الإعدادات)
-   الهدف: توحيد السلوك عبر جميع المتصفحات وإلغاء الهوامش الافتراضية
-   ========================================= */
+
    * {
   margin: 0;
   padding: 0;
-  /* حساب العرض يشمل الحواف والهوامش 
-  الداخلية لمنع تكسر التصميم */
+  
   box-sizing: border-box;
 }
-/* =========================================
-   Global Body Styles (إعدادات الصفحة الرئيسية)
-   الهدف: ضبط الخطوط، الاتجاه العربي، 
-   والألوان الأساسية باستخدام المتغيرات
-   ========================================= */
+
 body {
   /* الخطوط: نبدأ بأفضل خط للنظام وننتهي بخط عام */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana,
@@ -577,46 +539,125 @@ border-radius: 50px;
 
 @media (max-width: 992px) {
   
-  /* --- 1. القائمة العلوية (Navigation) --- */
-  .navbar-content {
-    padding: 0 1.5rem;
+  /* 1. ضبط هوامش الناف بار */
+    .navbar-content {
+        padding: 0 1.5rem;
+    }
+
+    /* 2. زر القائمة (الهمبرغر) */
+    .mobile-menu-btn {
+        display: block !important;
+        color: var(--text-light, #ffffff); /* لون أبيض */
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        
+        /* هام جداً: تثبيت الزر ليبقى ظاهراً فوق القائمة الجانبية */
+        position: relative; 
+        z-index: 1005; /* رقم أعلى من القائمة (1001) */
+    }
+
+    /* تكبير الأيقونة */
+    .mobile-menu-btn svg, .mobile-menu-btn i {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* 3. القائمة الجانبية (Sidebar) */
+    .nav-menu {
+        display: none; /* مخفية افتراضياً */
+        
+        /* الخصائص التي تجعلها قائمة جانبية */
+        position: fixed; 
+        top: 0;
+        left: 0;      /* تبدأ من أقصى اليسار */
+        bottom: 0;    /* تمتد لأسفل الشاشة */    
+        margin: 0;            /* ضمان عدم وجود مسافات خارجية */
+
+        width: 75%; 
+        max-width: 300px; 
+        height: 100vh;
+        /* العرض: تغطي 75% من الموبايل بحد أقصى 300 بكسل */
+
+        /* === تأثير الزجاج الداكن === */
+        background: rgba(15, 15, 20, 0.99); 
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px); /* دعم Safari */
+        
+        /* حدود من اليمين فقط */
+        border-right: 1px solid rgba(255, 255, 255, 0.1); 
+        /* تدوير الزوايا من الجهة اليمنى فقط لجمالية التصميم */
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        box-shadow: 5px 0 30px rgba(0,0,0,0.5); /* ظل لليمين */
+        
+        /* ترتيب العناصر داخلياً */
+        flex-direction: column;
+        justify-content: center; /* توسيط العناصر عمودياً */
+        padding: 2rem;
+        gap: 1.5rem;
+        
+        z-index: 1001; /* طبقة أقل من الزر */
+    }
+
+    /* حالة الفتح (عندما يضغط المستخدم) */
+    .nav-menu.active {
+        display: flex !important;
+        /* تشغيل حركة الدخول من اليسار */
+        animation: slideInFromLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* 4. تنسيق الروابط داخل القائمة */
+    .nav-item {
+        width: 100%;
+        list-style: none;
+    }
+
+    .nav-link {
+        display: flex; /* لضبط الأيقونة مع النص */
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        
+        /* النصوص */
+        color: #ffffff !important; 
+        opacity: 1 !important;
+        font-size: 1.1rem;
+        text-decoration: none;
+        
+        /* شكل الزر */
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05); /* خلفية خفيفة */
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    /* تأثير عند اللمس */
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px); /* حركة بسيطة لليمين */
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* أيقونات داخل الروابط (إن وجدت) */
+    .nav-link svg, .nav-link i {
+        width: 20px;
+        height: 20px;
+    }
+    
+  /* --- 6. لوحة التحكم (Dashboard) --- */
+  .modern-sidebar {
+    transform: translateX(100%); /* إخفاء القائمة الجانبية */
+    transition: transform 0.3s ease;
   }
   
-  .nav-menu {
-    display: none; /* مخفي افتراضياً */
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    
-    background: var(--secondary); /* لون الخلفية الداكن */
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    flex-direction: column;
-    padding: 1.5rem;
-    gap: 1rem;
-    
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    z-index: 1000;
+  .modern-sidebar.open {
+    transform: translateX(0);
   }
+  
 
-  .nav-menu.active {
-    display: flex;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-    color: var(--text-light);
-  }
-
-  .nav-link {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-  }
 
   /* --- 2. الهيرو (Hero Section) --- */
   .hero-content-wrapper {
@@ -678,15 +719,6 @@ border-radius: 50px;
 
 
 
-  /* --- 6. لوحة التحكم (Dashboard) --- */
-  .modern-sidebar {
-    transform: translateX(100%); /* إخفاء القائمة الجانبية */
-    transition: transform 0.3s ease;
-  }
-  
-  .modern-sidebar.open {
-    transform: translateX(0);
-  }
   
   .dashboard-main {
     margin-right: 0;
@@ -713,7 +745,29 @@ border-radius: 50px;
   .user-info {
     display: none;
   }
+
 }
+
+/* =========================================================
+   تعريف الحركات (Animations)
+   ========================================================= */
+
+/* حركة الدخول من اليسار */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%); /* خارج الشاشة يساراً */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0); /* مكانها الطبيعي */
+    }
+}
+
+
+
+
+
 :root {
 /* ========================
      نظام الألوان (Color Palette)
@@ -1770,7 +1824,7 @@ align-items: center;
   align-items: center;
   justify-content: center;
   /* 👇 إعدادات صورة الخلفية */
-  background-image: url(images/b5329f59fc61e51da8d2.png); /* استبدل هذا بالاسم الجديد إذا غيرته */
+  background-image: url(images/205f5a7b35c2b5418155.png); /* استبدل هذا بالاسم الجديد إذا غيرته */
 background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;
@@ -2064,7 +2118,7 @@ body[data-page="login"],
 body[data-page="contact"],
 body[data-page="courses"],
 body[data-page="centers"] {
-  background-image: url(images/b5329f59fc61e51da8d2.png);
+  background-image: url(images/205f5a7b35c2b5418155.png);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

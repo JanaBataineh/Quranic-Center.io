@@ -1,25 +1,53 @@
-import { apiCourses, apiStats, currentFilters, updateFilter } from '../data/api.js';
 import { createCourseCard, setupCustomDropdown } from '../components/ui.js';
 import { debounce } from '../utils/helpers.js';
 
+let allCourses = []; 
+let filters = {
+    searchTerm: '',
+    selectedLevel: 'all'
+};
+
 export function initializeCoursesPage() {
     initSearch();
-    loadCourses();
+    fetchCourses();
 }
+
+async function fetchCourses() {
+    const container = document.getElementById('courses-grid');
+    if (!container) return;
+    
+    container.innerHTML = '<p class="text-center text-muted">جاري تحميل الدورات...</p>';
+
+    try {
+        // استخدام CONFIG العام (الموجود في HTML)
+        const baseUrl = window.CONFIG
+         ? window.CONFIG.getUrl(window.CONFIG.ENDPOINTS.PUBLIC) 
+         : 'http://localhost:5220/api/Public';
+
+        const response = await fetch(`${baseUrl}/courses`);
+        
+        if (!response.ok) throw new Error("فشل الجلب");
+        
+        allCourses = await response.json();
+        loadCourses(); // عرض البيانات بعد وصولها
+        
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p class="text-center text-danger">حدث خطأ في الاتصال.</p>';
+    }
+}
+
 
 function initSearch() {
     const searchInput = document.getElementById('courses-search-input');
-    
-    // إعداد القوائم (المدينة، المستوى، الترتيب)
-    // ... (نفس منطق setupCustomDropdown لباقي الفلاتر) ...
-    setupCustomDropdown('courses-level-dropdown', 'courses-level-select', (val) => {
-        updateFilter('selectedLevel', val);
+        setupCustomDropdown('courses-level-dropdown', 'courses-level-select', (val) => {
+        filters.selectedLevel = val;
         loadCourses();
     });
 
     if (searchInput) {
         searchInput.addEventListener('input', debounce((e) => {
-            updateFilter('searchTerm', e.target.value);
+            filters.searchTerm = e.target.value;
             loadCourses();
         }, 300));
     }
@@ -29,13 +57,18 @@ function loadCourses() {
     const container = document.getElementById('courses-grid');
     if (!container) return;
 
-    const filtered = apiCourses.filter(c => {
-        const search = currentFilters.searchTerm.toLowerCase();
+    const filtered = allCourses.filter(c => {
+
+
+const search = filters.searchTerm.toLowerCase();
+
         const matchSearch = c.name.toLowerCase().includes(search);
-        const matchLevel = currentFilters.selectedLevel === 'all' || c.level === currentFilters.selectedLevel;
+        const level = c.level || 'عام';
+        const matchLevel = filters.selectedLevel === 'all' || level === filters.selectedLevel;
         return matchSearch && matchLevel;
     });
 
     if(filtered.length === 0) container.innerHTML = '<p style="text-align:center;">لا توجد دورات.</p>';
-    else container.innerHTML = filtered.map(c => createCourseCard(c)).join('');
+    else 
+        container.innerHTML = filtered.map(c => createCourseCard(c)).join('');
 }

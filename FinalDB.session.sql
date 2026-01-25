@@ -1,3 +1,3 @@
-UPDATE "Centers" 
-SET "Status" = 'approved' 
-WHERE "Status" = 'pending';
+UPDATE "Users"
+SET "UserType" = 'Admin'
+WHERE "Email" = 'admin@admin.com';
